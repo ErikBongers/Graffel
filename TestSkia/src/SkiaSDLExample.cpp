@@ -61,26 +61,6 @@ static void handle_events(ApplicationState* state, SkCanvas* canvas) {
     }
 }
 
-// Creates a star type shape using a SkPath
-static SkPath create_star() {
-    static const int kNumPoints = 5;
-    SkPath concavePath;
-    SkPoint points[kNumPoints] = {{0, SkIntToScalar(-50)} };
-    SkMatrix rot;
-    rot.setRotate(SkIntToScalar(360) / kNumPoints);
-    for (int i = 1; i < kNumPoints; ++i) {
-        rot.mapPoints(points + i, points + i - 1, 1);
-    }
-    concavePath.moveTo(points[0]);
-    for (int i = 0; i < kNumPoints; ++i) {
-        concavePath.lineTo(points[(2 * i) % kNumPoints]);
-    }
-    concavePath.setFillType(SkPathFillType::kEvenOdd);
-    SkASSERT(!concavePath.isConvex());
-    concavePath.close();
-    return concavePath;
-}
-
 #undef main
 int main(int argc, char** argv) {
     uint32_t windowFlags = 0;
@@ -215,17 +195,6 @@ int main(int argc, char** argv) {
 
     SkPaint paint;
 
-    // create a surface for CPU rasterization
-    sk_sp<SkSurface> cpuSurface(SkSurface::MakeRaster(canvas->imageInfo()));
-
-    SkCanvas* offscreen = cpuSurface->getCanvas();
-    offscreen->save();
-    offscreen->translate(50.0f, 50.0f);
-    offscreen->drawPath(create_star(), paint);
-    offscreen->restore();
-
-    sk_sp<SkImage> image = cpuSurface->makeImageSnapshot();
-
     int rotation = 0;
     SkFont font;
     while (!state.fQuit) { // Our application loop
@@ -239,13 +208,6 @@ int main(int argc, char** argv) {
             paint.setColor(rand.nextU() | 0x44808080);
             canvas->drawRect(state.fRects[i], paint);
         }
-
-        // draw offscreen canvas
-        canvas->save();
-        canvas->translate(dm.w / 2.0, dm.h / 2.0);
-        canvas->rotate(rotation++);
-        canvas->drawImage(image, -50.0f, -50.0f);
-        canvas->restore();
 
         canvas->flush();
         SDL_GL_SwapWindow(window);
