@@ -1,11 +1,3 @@
-/*
- * Copyright 2015 Google Inc.
- *
- * Use of this source code is governed by a BSD-style license that can be
- * found in the LICENSE file.
- *
- */
-
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/GrContext.h"
 #include "SDL.h"
@@ -20,14 +12,6 @@
 #define NOMINMAX
 #include <windows.h>
 #include <GL/gl.h>
-
- /*
- * This application is a simple example of how to combine SDL and Skia it demonstrates:
- *   how to setup gpu rendering to the main window
- *   how to perform cpu-side rendering and draw the result to the gpu-backed screen
- *   draw simple primitives (rectangles)
- *   draw more complex primitives (star)
- */
 
 struct ApplicationState {
     ApplicationState() : fQuit(false) {}
@@ -97,30 +81,19 @@ static SkPath create_star() {
     return concavePath;
 }
 
-#if defined(SK_BUILD_FOR_ANDROID)
-int SDL_main(int argc, char** argv) {
-#else
 #undef main
 int main(int argc, char** argv) {
-#endif
     uint32_t windowFlags = 0;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
     SDL_GLContext glContext = nullptr;
-#if defined(SK_BUILD_FOR_ANDROID) || defined(SK_BUILD_FOR_IOS)
-    // For Android/iOS we need to set up for OpenGL ES and we make the window hi res & full screen
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
-                  SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN_DESKTOP |
-                  SDL_WINDOW_ALLOW_HIGHDPI;
-#else
     // For all other clients we use the core profile and operate in a window
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-#endif
+
     static const int kStencilBits = 8;  // Skia needs 8 stencil bits
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
