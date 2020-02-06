@@ -1,0 +1,32 @@
+
+Language definition
+----------------------
+
+ operators:
+ n->m  ; move from n to m
+ n~>m : soft start and soft end
+ n>fn>m ; move from n to m using fn as a function
+ -> = fn ; set default move function
+ n->+m ; move n to m+n
+
+ positions;
+ n ; a number is an absolute position
+ +n or -n ; relative position to parent.
+
+ * All graphics live in a timeline - linear or loop
+   - loop can be implicit or explicit duration
+     - implicit requires inner timelines to determine outer duration.
+
+* allow block comments:
+  /{  --> comments out the whole block
+  .....
+   }
+
+
+    Build compiler
+---------------
+- tokenize
+- build tree (syntax analysis)
+- verify tree (semantic analysis)
+- create code (see three address code or 3AC, for semi asm code)
+

@@ -1,0 +1,66 @@
+BLOCK
+----------------
+eg: canvas =  { ...}
+- top level is an implicit frame {} that fills the full canvas.
+- where does the canvas live?
+  > in a window...that is not part of graffel?
+  > so, the top graffel object is a...see skia.
+- can be commented out:
+  /{ ...multi line block... }
+
+
+  - a graphical frame
+    - at a location on parent
+    - has transforms
+    - can reference all above timelines.
+    - named
+    - template
+      - instanciated (copies)
+    - how to distinguish between template and instance?
+
+TIMELINE
+------------
+* shorthand notation:
+ --marker1--marker2--
+* multiline notation:
+mytimeline = 
+--marker1
+--marker2
+--;
+eg:
+  time1 = startMarker--midmarker--endMarker; //equally devided markers across timeline.
+  time2 = --marker1--marker2--marker3--; //where do markers start and end? maybe defined in other timelines. Compiler must check that each -- can be calculated.
+  time3 = start--marker1; //time2.marker1 starts after time3.start--?
+  timeAbsolute = --10:00; //starts at 0:00 and lasts 10 seconds
+  time notation = HH:MM:SS.mmm; 
+    - oneSecond = 1;
+    - oneMinute = 1:00;
+    - oneAndHaflMinute = 1:30;
+    - ...andFiveMillis = 1:30.005
+    - onMilli = .001;
+
+  - is linear (or stretchable?)
+  - has nodes/markers/keys/bullets/timepoints
+    > these can be absolute or relative
+    > these have a name and can be referenced by others.
+    > hashtags for names?
+  - nested
+      - eg: 
+        - main timeline for bike and background
+        - timeline for wheel (loop)
+        - each bird has a timeline (with random elements)
+  - timelines have a starting point:
+    - marker from parent
+    - random
+
+TRANSFORMS
+---------------
+- translate, rotate, matrix,...
+- degrees/radians: 90d, PI, 0.2r -> usage as a number gives warning, that can be solved with explicit conversion.
+
+Variables
+----------
+- type explicitely or implicitely defined at init and cannot be changed.
+- number != degrees; //warning? - what about multipliyng degrees?
+- degrees != radians; //but implicit conversion - no warning;
+  > maybe radians and degrees should be same type...
