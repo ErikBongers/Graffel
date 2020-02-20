@@ -19,21 +19,43 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Block.cpp" />
     <ClCompile Include="src\HelloWorld.cpp" />
-    <ClCompile Include="src\SkiaSDLExample.cpp" />
+    <ClCompile Include="src\SkiaSDLExample.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="src\sk_app\GLWindowContext.cpp" />
     <ClCompile Include="src\sk_app\Window.cpp" />
     <ClCompile Include="src\sk_app\win\GLWindowContext_win.cpp" />
     <ClCompile Include="src\sk_app\win\RasterWindowContext_win.cpp" />
     <ClCompile Include="src\sk_app\win\Window_win.cpp" />
+    <ClCompile Include="src\Timeline.cpp" />
+    <ClCompile Include="src\Tick.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Block.h" />
+    <ClInclude Include="src\Fps.h" />
     <ClInclude Include="src\HelloWorld.h" />
+    <ClCompile Include="src\pch.cpp">
+      <FileType>CppCode</FileType>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\sk_app\GLWindowContext.h" />
     <ClInclude Include="src\sk_app\Window.h" />
     <ClInclude Include="src\sk_app\WindowContext.h" />
     <ClInclude Include="src\sk_app\win\WindowContextFactory_win.h" />
     <ClInclude Include="src\sk_app\win\Window_win.h" />
+    <ClInclude Include="src\Timeline.h" />
+    <ClInclude Include="src\Tick.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -89,7 +111,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,6 +132,9 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,6 +179,9 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

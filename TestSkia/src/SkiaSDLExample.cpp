@@ -1,17 +1,8 @@
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContext.h"
-#include "SDL.h"
-#include "include/core/SkCanvas.h"
-#include "include/core/SkFont.h"
-#include "include/core/SkSurface.h"
-#include "include/utils/SkRandom.h"
-
-#include "include/gpu/gl/GrGLInterface.h"
-#include "src/gpu/gl/GrGLUtil.h"
-
-#define NOMINMAX
-#include <windows.h>
-#include <GL/gl.h>
+#include "pch.h"
+#include "Timeline.h"
+#include "Tick.h"
+#include "Block.h"
+#include "Fps.h"
 
 struct ApplicationState {
     ApplicationState() : fQuit(false) {}
@@ -26,15 +17,15 @@ static void handle_error() {
     SDL_ClearError();
 }
 
-static void handle_events(ApplicationState* state, SkCanvas* canvas) {
+static void handle_events(ApplicationState* state) {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_MOUSEMOTION:
                 if (event.motion.state == SDL_PRESSED) {
                     SkRect& rect = state->fRects.back();
-                    rect.fRight = event.motion.x;
-                    rect.fBottom = event.motion.y;
+                    rect.fRight = (SkScalar)event.motion.x;
+                    rect.fBottom = (SkScalar)event.motion.y;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
@@ -191,33 +182,50 @@ int main(int argc, char** argv) {
 
     ApplicationState state;
 
-    const char* helpMessage = "Click and drag to create rects.  Press esc to quit.";
-
-    SkPaint paint;
-
     int rotation = 0;
     SkFont font;
+
+    graffel::Timeline& masterTimeline = graffel::Timeline::createMasterTimeline();
+    //masterTimeline.setTick(new graffel::IntervalTick(1000));
+    graffel::Timeline& halfTime = masterTimeline.createChild();
+    halfTime.setTick(new graffel::IntervalTick(500));
+
+    graffel::Block b;
+    masterTimeline.setBlock(&b);
+
+    graffel::Fps fps;
+    SkPaint paint;
+
     while (!state.fQuit) { // Our application loop
-        SkRandom rand;
-        canvas->clear(SK_ColorWHITE);
-        handle_events(&state, canvas);
+        handle_events(&state);
 
-        paint.setColor(SK_ColorBLACK);
-        canvas->drawString(helpMessage, 100.0f, 100.0f, font, paint);
-        for (int i = 0; i < state.fRects.count(); i++) {
-            paint.setColor(rand.nextU() | 0x44808080);
-            canvas->drawRect(state.fRects[i], paint);
+        if (masterTimeline.tick())
+            {
+            fps.beginFrame();
+
+            SkRandom rand;
+            canvas->clear(SK_ColorWHITE);
+
+            b.draw(masterTimeline, *canvas);
+
+            std::string strFps = std::to_string(fps.getFps());
+            std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "msxxxxxxxxxxx";
+            paint.setColor(SK_ColorBLACK); // move to init function?
+            canvas->drawString(strFps.c_str(), 100.0f, 160.0f, font, paint);
+            canvas->drawString(strMs.c_str(), 100.0f, 180.0f, font, paint);
+
+            fps.endFrame();
+
+            canvas->flush();
+            SDL_GL_SwapWindow(window);
+            }
+
         }
-
-        canvas->flush();
-        SDL_GL_SwapWindow(window);
-    }
 
     if (glContext) {
         SDL_GL_DeleteContext(glContext);
     }
 
-    //Destroy window
     SDL_DestroyWindow(window);
 
     //Quit SDL subsystems

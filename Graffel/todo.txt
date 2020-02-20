@@ -1,3 +1,66 @@
+* add FPS counter.
+* state
+  > block state?
+  > timeline state?
+
+* draw()
+  - a timeline only has ONE block, to avoid confusion in the example below.
+  > who draws? Timeline or Block?
+  - a block HAS a timeline.
+  - can a sub-timeline be faster than master?
+    - YES! otherwise too restrictive.
+    - NO! otherwise, no option to slow down full animation.
+    > make distinction between time and ticks.
+      > time has hightest and undetermined resolution.
+      > tick has parent's resolution.
+
+
+//////////EXAMPLE CODE /////////////////
+
+
+master_timeline
+  { //base block
+    { //sub block one, inherits timeline if none specified
+    
+    } //no comma - this would be annoying when copying/moving blocks.
+    { //sub block two, same timeline.
+    
+    }
+    another_timeline //could be a faster timeline.
+    {
+    }
+    { //which timeline? master or another_timeline?
+      
+      // block inherits master_timeline!
+    }
+    copyof timeline_var //a copy of a timeline
+    {
+    }
+  }
+
+
+///////////////////////////////////////
+
+
+
+* draw()
+  - as frequent as possible (avoid this: have a separate draw() function that ignores the timeline ticks: continuousDraw(), forcedDraw(), drawNow(),...)
+    - the default timeline.Tick always returns true and thus draws continuously.
+  - or at fixed intervals
+  - or at calculated intervals (speed up?)
+  - or at markers only.
+* add masterTimeline as param to draw()
+  > easy access to:
+    - absolute time since start of THIS timeline.
+    - pointer to timeline of *this* block
+    - active markers.
+* timelines can be defined before a block or assigned to a variable that is used before a block, to be able to separate complex timelines definitions from block definitions
+* markers
+  - remain ON until next marker.
+  - have a 'reported' flag when the main loop informed the listeners (?) the flag was set, to avoid reporting it multiple times.
+
+* how to show a constant speed, independent of FPS or tick-speed?
+ - a 60 FPS tick and a 30FPS tick should show a movement at the same speed.
 
 Language definition
 ----------------------
@@ -30,3 +93,9 @@ Language definition
 - verify tree (semantic analysis)
 - create code (see three address code or 3AC, for semi asm code)
 
+
+SKIA
+------
+* Split SDL and Skia code.
+* Check out sk_app/main_win.
+  > remove SDL code?
