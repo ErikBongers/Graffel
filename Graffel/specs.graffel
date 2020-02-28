@@ -7,7 +7,10 @@ eg: canvas =  { ...}
   > so, the top graffel object is a...see skia.
 - can be commented out:
   /{ ...multi line block... }
-
+- static block:
+  > rendered via SkPicture(Recorder)
+  > can be assigned to a static/const var.
+> can a block be assigned to a var? (and reused?)
 
   - a graphical frame
     - at a location on parent
@@ -20,18 +23,6 @@ eg: canvas =  { ...}
 
 TIMELINE
 ------------
-* shorthand notation:
- --marker1--marker2--
-* multiline notation:
-mytimeline = 
---marker1
---marker2
---;
-eg:
-  time1 = startMarker--midmarker--endMarker; //equally devided markers across timeline.
-  time2 = --marker1--marker2--marker3--; //where do markers start and end? maybe defined in other timelines. Compiler must check that each -- can be calculated.
-  time3 = start--marker1; //time2.marker1 starts after time3.start--?
-  timeAbsolute = --10:00; //starts at 0:00 and lasts 10 seconds
   time notation = HH:MM:SS.mmm; 
     - oneSecond = 1;
     - oneMinute = 1:00;
@@ -64,3 +55,90 @@ Variables
 - number != degrees; //warning? - what about multipliyng degrees?
 - degrees != radians; //but implicit conversion - no warning;
   > maybe radians and degrees should be same type...
+
+ SHAPE/PATH
+ ------------
+ - verbs: move,close,...
+   > skia allows multiple contours (=closed path) in ONE path
+- segment types: line, quad bezier, cube bezier, conic (ellipse, parabola, hyperbola) // conic sections (cuts). A cut parallel to side of cone = parabolla, smaller angle: ellipse (and circle), larger: hyperbola.
+ - All drawable stuff
+ - both polygons and lines?
+ - Every shape has a path.
+
+ PATH
+ ------
+ - Every path can have a user defined starting point
+   > an offset to the default starting point.
+ - Every path can have markers.
+   > just like timeline markers - similar syntax.
+
+ MARKERS/DIVISIONS/RANGES
+ -------------------------
+ - Ranges like Timelines and paths, can have markers along the way.
+ - shorthand notation:
+ ..marker1..marker2..
+* multiline notation: see MARKERS
+mytimeline = 
+..marker1
+..marker2
+..;
+eg:
+  time1 = startMarker..midmarker..endMarker; //equally devided markers across timeline.
+  time2 = ..marker1..marker2..marker3; //where do markers start and end? maybe defined in other timelines. Compiler must check that each -- can be calculated.
+  time3 = start--marker1; //time2.marker1 starts after time3.start--?
+  timeAbsolute = --10:00; //starts at 0:00 and lasts 10 seconds
+
+- Timeline/range Restrictions
+------------------------------
+- a range can be assigned to a var and be reused: thus a range var is a DEFINITION, not an instantiation.
+
+TYPES/PRIMITIVES
+------------------
+1.23 // number, no distinction between sub-types of numeric values
+  > an implicit trunc will give a warning during compilation (and at runtime?)
+[n..m] // range see range syntax
+1ms //miliseconds
+1s //seconds
+1m //minutes
+1h //hours
+1d //days
+(1,2) // 2-tuple, can be used as Point or Vector
+(1,2,3,4) // 4-tuple, van be used as rect, bounds, clip,...
+(1,2,+3,+4) // LTWH rect
+(+3, +4) //WH rect with (0,0) starting point
+(+-3, +4), //4-tupple negative offset
+
+DYNAMIC RANGE
+--------------
+- Ranges are continuous: no discrete intervals.
+  > Usage will be discrete.
+  > begin and end point
+- last subrange (dummy marker - EOF) can go to infinity.
+- all other subranges must be (eventually) finite.
+- length of range defined by siblings.
+- range ends with INFINITE, ENDPOINT or LOOPPOINT
+
+*Syntax:
+range = [slice, slice, slice] : sequencial/chronological slices
+  - Slices:
+    .. : slice, as in 1..99 or mark1..mark2
+    ,  : after comma, next slice starts immediately with endpoint of prev slice.
+    *n : weighted range : *10 atTen *40 atFifty * 50 atCent
+    =n : absolute division: =0s atBegin =50s atFifty =100s atCent =200s atTwoCents
+    =*n: absolute weighted: =*0 atBegin =*50 atMiddle =*100 atEnd
+    - a slice starts where the previous one ended, not repeating the previous endpoint.
+      > what about the first slice in a range? It references the previous slice endpoint as a starting point. Thus, a range starts with a dummy-slice that has one value and is executed once:
+      > 1..10/0.1
+        > range execution: 
+          - execute 1
+          - execute 1+0.1
+          - repeat to 10
+      > what if there is a remainder?
+        > then the remainder gets trimmed, as in loop until 10/.3 and we end up with 9.9, that's the last valid value.
+
+* Validation
+- all values in a range of same type (time, number,...)
+- a fill range must be validated by inserting the sub-ranges and slices.
+  > in short, the minute there is no longer an absolute point, no absolute point can follow.
+- a constant value (absolute) must be preceded by an absolute endpoint.
+(- a loop can have an absolute endpoint if it has an absolute loopcount, as in an absolute loopcount or an actual endpoint (where the loop should end))

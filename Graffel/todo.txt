@@ -1,4 +1,25 @@
-* add FPS counter.
+* testRange()
+  - create weighted and relative values.
+    > a weighed range needs a absolute begin and endpoint
+    > weights only have meaning in combination with markers.
+    > test case:
+      1#begin..#middle..10#end
+      > for a slice, a begin or endpoint can have a marker attached to it.
+      > just a string will do.
+      > in above example, the weights are implicit, but the generated slices will have explicit values.
+        > when creating the range, the slices get determined.
+  - create a marker: just a string?
+  - create ranges as lists of slices and markers.
+    > or...a timeline is a list of ranges and markers?
+    > no, better allow markers in ranges, otherwise we would need time-slices.
+
+
+* timer speed
+  > since a timer.tick() function may be called slower than the expected ticks, a timer should not assume being called for every tick.
+  > this means, that timer.tick() should return true even if a number of ticks have been missed.
+  > this also means that a timer should not assume all ticks were encountered/registered.
+    > in the most extreme case, a loop timer may already have looped a couple of times before the nect tick() call.
+
 * state
   > block state?
   > timeline state?
@@ -66,9 +87,9 @@ Language definition
 ----------------------
 
  operators:
- n->m  ; move from n to m
- n~>m : soft start and soft end
- n>fn>m ; move from n to m using fn as a function
+ n..m  ; move from n to m
+ ~n..m~ : soft start and soft end
+ n.fn.m ; move from n to m using fn as a function
  -> = fn ; set default move function
  n->+m ; move n to m+n
 

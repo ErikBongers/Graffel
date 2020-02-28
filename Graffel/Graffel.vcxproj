@@ -74,12 +74,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Documents\Programming\CppProjects\Graffel\TestSkia\src;D:\Documents\Programming\CppProjects\libraries\skia\skia;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>D:\Documents\Programming\CppProjects\Graffel\TestSkia\src;D:\Documents\Programming\CppProjects\libraries\skia\skia;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,6 +107,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>skia.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -135,9 +140,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>skia.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\TestSkia\src\graffel\Block.cpp" />
+    <ClCompile Include="..\TestSkia\src\graffel\Range.cpp" />
+    <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp" />
+    <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
@@ -148,6 +158,10 @@
     <None Include="test.graffel" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\TestSkia\src\graffel\Block.h" />
+    <ClInclude Include="..\TestSkia\src\graffel\Range.h" />
+    <ClInclude Include="..\TestSkia\src\graffel\Tick.h" />
+    <ClInclude Include="..\TestSkia\src\graffel\Timeline.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Tokenizer.h" />

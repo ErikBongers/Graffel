@@ -187,8 +187,8 @@ int main(int argc, char** argv) {
 
     graffel::Timeline& masterTimeline = graffel::Timeline::createMasterTimeline();
     //masterTimeline.setTick(new graffel::IntervalTick(1000));
-    graffel::Timeline& halfTime = masterTimeline.createChild();
-    halfTime.setTick(new graffel::IntervalTick(500));
+    //graffel::Timeline& halfTime = masterTimeline.createChild();
+    //halfTime.setTick(new graffel::IntervalTick(100));
 
     graffel::Block b;
     masterTimeline.setBlock(&b);
@@ -196,9 +196,13 @@ int main(int argc, char** argv) {
     graffel::Fps fps;
     SkPaint paint;
 
-    while (!state.fQuit) { // Our application loop
-        handle_events(&state);
+    int loopCounter = 0;
 
+    while (!state.fQuit) { // Our application loop
+        loopCounter++;
+        
+        handle_events(&state);
+        
         if (masterTimeline.tick())
             {
             fps.beginFrame();
@@ -209,10 +213,12 @@ int main(int argc, char** argv) {
             b.draw(masterTimeline, *canvas);
 
             std::string strFps = std::to_string(fps.getFps());
-            std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "msxxxxxxxxxxx";
+            std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "ms";
+            std::string strLoopCnt = std::to_string(loopCounter) + "loop iterations";
             paint.setColor(SK_ColorBLACK); // move to init function?
             canvas->drawString(strFps.c_str(), 100.0f, 160.0f, font, paint);
             canvas->drawString(strMs.c_str(), 100.0f, 180.0f, font, paint);
+            canvas->drawString(strLoopCnt.c_str(), 100.0f, 200.0f, font, paint);
 
             fps.endFrame();
 

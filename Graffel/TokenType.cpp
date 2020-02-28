@@ -27,7 +27,7 @@ std::ostream& operator << (std::ostream& os, const TokenType& tokenType)
 		case TokenType::MINUS: tokenTypeName = "-"; break;
 		case TokenType::MULTIPLY: tokenTypeName = "*"; break;
 		case TokenType::DIVIDE: tokenTypeName = "/"; break;
-		case TokenType::RANGE: tokenTypeName = "RANGE"; break;
+		case TokenType::SLICE: tokenTypeName = "SLICE"; break;
 		case TokenType::DOT: tokenTypeName = "DOT"; break;
 		default: tokenTypeName = "???"; break;
 		}

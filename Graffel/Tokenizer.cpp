@@ -48,7 +48,7 @@ Token Tokenizer::next()
             getChar();
             if (curr_c == '.')
                 {
-                return Token(TokenType::RANGE, curr_line, curr_pos);
+                return Token(TokenType::SLICE, curr_line, curr_pos);
                 }
             else
                 {

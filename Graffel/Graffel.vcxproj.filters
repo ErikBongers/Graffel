@@ -16,6 +16,9 @@
     <Filter Include="Data">
       <UniqueIdentifier>{5c669fcf-a370-4019-b070-8bd383b8a908}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graffel">
+      <UniqueIdentifier>{4057f7c3-f4d1-442a-b554-429010e73ed7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -29,6 +32,18 @@
     </ClCompile>
     <ClCompile Include="TokenType.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestSkia\src\graffel\Block.cpp">
+      <Filter>graffel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestSkia\src\graffel\Range.cpp">
+      <Filter>graffel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp">
+      <Filter>graffel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp">
+      <Filter>graffel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +66,18 @@
     </ClInclude>
     <ClInclude Include="TokenType.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TestSkia\src\graffel\Range.h">
+      <Filter>graffel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TestSkia\src\graffel\Tick.h">
+      <Filter>graffel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TestSkia\src\graffel\Timeline.h">
+      <Filter>graffel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TestSkia\src\graffel\Block.h">
+      <Filter>graffel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

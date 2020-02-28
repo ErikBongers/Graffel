@@ -12,7 +12,7 @@ enum class TokenType : int
 	EQ, // ==
 	NEQ,
 	GT, LT, GE, LE,
-	RANGE, // ..
+	SLICE, // ..
 	TRIPLE_EQ, // === just for test...
 	DOT,
 
