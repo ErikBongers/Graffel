@@ -1,4 +1,20 @@
 * testRange()
+  - combine slices into ranges.
+    > just a list of slices.
+    > validate()
+    > iterate?
+      > in order to iterate, the full range should be 'resolved'.
+        > since a range is just a definition, the resolved range should be a sort of temp object (within the iterator)?
+  - how do ticks work with ranges?
+    > for testing purposes, just use ints that represent milliseconds.
+    > an imaginary master timeline (range!) loops over ints : 0, 1...
+      > the int is passed to the child range
+      > the child range checks if a marker was passed and does...what?
+      > what is a tick?
+        > a tick is a predefined point in time that has been reached.
+          > can be a marker
+          > can be an interval (1 second,...)
+          > maybe the function should be called checkTicks().
   - create weighted and relative values.
     > a weighed range needs a absolute begin and endpoint
     > weights only have meaning in combination with markers.

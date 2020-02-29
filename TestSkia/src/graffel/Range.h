@@ -1,27 +1,31 @@
 # pragma once
 #include <list>
+#include <string>
 
 namespace graffel
 {
 
-template <typename T>
+template <typename T=double>
 class Slice
     {
     public:
         struct Value {
-            enum class Type { NORMAL, UNDEFINED, RELATIVE, WEIGHTED};
+            enum class Type { NORMAL, UNDEFINED, RELATIVE, WEIGHTED }; //compiled separately for every template implementation. Not really needed. Move out of Slice template? SliceValueType?
             T value;
             Type type;
-            Value(T value, Type type) : value(value), type(type) {}
+            Value(T value, Type type = Type::NORMAL) : value(value), type(type) {}
             Value(Type type) : type(type) {}
             };
         Value begin;
+        std::string beginMarker;
         Value end;
+        std::string endMarker;
         int repeat = 0;
-        Slice(T begin, T end) : begin(Value{ begin, Value::Type::NORMAL }), end(Value{ end, Value::Type::NORMAL }) {};
-        Slice(T begin) : begin(Value{ begin, Value::Type::NORMAL }), end(Value{ Value::Type::UNDEFINED }) {}; //using 'begin' as value for 'end' is a bit of a hack here...
-        Slice(bool beginUndefined, T end) : begin(Value{ end, true, false, false }), end({ end, false, false, false}) {};
-    
+        Slice(T begin, T end) : begin(begin), end(end) {};
+        Slice(Value begin, Value end) : begin(begin), end(end) {};
+        Slice(T begin) : begin(begin), end(Value{ T(), Value::Type::UNDEFINED }) {};
+        Slice(typename Value::Type undefined, T end) : begin(Value{ T(), Value::Type::UNDEFINED }), end(end) {};
+
         class Iterator
             {
             private:
@@ -50,4 +54,6 @@ class Range
             }
 
     };
+
+
 }
