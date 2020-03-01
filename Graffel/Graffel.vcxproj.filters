@@ -36,9 +36,6 @@
     <ClCompile Include="..\TestSkia\src\graffel\Block.cpp">
       <Filter>graffel</Filter>
     </ClCompile>
-    <ClCompile Include="..\TestSkia\src\graffel\Range.cpp">
-      <Filter>graffel</Filter>
-    </ClCompile>
     <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp">
       <Filter>graffel</Filter>
     </ClCompile>
@@ -77,6 +74,9 @@
       <Filter>graffel</Filter>
     </ClInclude>
     <ClInclude Include="..\TestSkia\src\graffel\Block.h">
+      <Filter>graffel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TestSkia\src\graffel\Error.h">
       <Filter>graffel</Filter>
     </ClInclude>
   </ItemGroup>

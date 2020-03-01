@@ -21,17 +21,24 @@ int main(int argc, char* argv[])
 
 void testRange()
     {
+    gf::Slice oneTen(1, 11);
+    gf::Slice<int> tenPlusTen(gf::Value(10), gf::Value(10, gf::ValueType::RELATIVE));
     // [1..10]
-    gf::Range range(gf::Slice(1.3, 10.3));
+    gf::Range range(oneTen);
     // [10..+10]
-    gf::Range range2(gf::Slice(gf::Slice<int>::Value(10), gf::Slice<int>::Value(10, gf::Slice<int>::Value::Type::RELATIVE)));
+    gf::Range range2(tenPlusTen);
     //...
+    // [1..10, 10..+10]
+    range += tenPlusTen;
+    auto errors = range.validate();
+    for(auto const &error : errors)
+        std::cout << (std::string)error;
     }
 
 void testSlices()
     {
     gf::Slice<int> beginner(1); // test of default value for 'end'
-    gf::Slice<int> ender(gf::Slice<int>::Value::Type::UNDEFINED, 1); // test of default value for 'end'
+    gf::Slice<int> ender(gf::ValueType::UNDEFINED, 1);
     gf::Slice<double> slice(1.0, 5.0);
     for (auto it = slice.iterator(0.3); it.hasNext(); it++)
         {

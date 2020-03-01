@@ -147,7 +147,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\TestSkia\src\graffel\Block.cpp" />
-    <ClCompile Include="..\TestSkia\src\graffel\Range.cpp" />
     <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp" />
     <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp" />
     <ClCompile Include="main.cpp" />
@@ -161,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TestSkia\src\graffel\Block.h" />
+    <ClInclude Include="..\TestSkia\src\graffel\Error.h" />
     <ClInclude Include="..\TestSkia\src\graffel\Range.h" />
     <ClInclude Include="..\TestSkia\src\graffel\Tick.h" />
     <ClInclude Include="..\TestSkia\src\graffel\Timeline.h" />
