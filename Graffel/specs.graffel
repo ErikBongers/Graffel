@@ -1,3 +1,31 @@
+TEST SCENARIOS
+----------------
+
+1. Hop along a path.
+-----------------------
+- A [path] is defined with a fixed length.
+- A fixed length [timeline] is defined to travel along the path.
+- A hop animation has a loop [timeline].
+- Syntax?
+path = ...;
+path_timeline = ..100s;
+hop_animation = 
+[hop_timeline_loop]
+{
+position_along_path = ...;
+position_upward = hop_timeline_loop.value?;
+}
+
+
+COMMENTS
+---------
+// single line
+///to end...
+of statement; //Note that this requires the statement to be parseable.
+/{
+} // to end of block, again, block must be parsable.
+* A comment parser will recognize all tokens, including strings and other comments, but no semantics.
+
 BLOCK
 ----------------
 eg: canvas =  { ...}
@@ -87,6 +115,12 @@ eg:
   time2 = ..marker1..marker2..marker3; //where do markers start and end? maybe defined in other timelines. Compiler must check that each -- can be calculated.
   time3 = start--marker1; //time2.marker1 starts after time3.start--?
   timeAbsolute = --10:00; //starts at 0:00 and lasts 10 seconds
+  weightedRange = 
+  *1 #BEGIN
+  ..
+  *10 #AT_TEN
+  ..
+  *50 #AtFifty;
 
 - Timeline/range Restrictions
 ------------------------------
@@ -137,8 +171,15 @@ range = [slice, slice, slice] : sequencial/chronological slices
         > then the remainder gets trimmed, as in loop until 10/.3 and we end up with 9.9, that's the last valid value.
 
 * Validation
+ - a Range must be fully defined before it can be used.
+   > except for an infinite timeline.
 - all values in a range of same type (time, number,...)
 - a fill range must be validated by inserting the sub-ranges and slices.
   > in short, the minute there is no longer an absolute point, no absolute point can follow.
 - a constant value (absolute) must be preceded by an absolute endpoint.
 (- a loop can have an absolute endpoint if it has an absolute loopcount, as in an absolute loopcount or an actual endpoint (where the loop should end))
+
+
+Optional
+-------------
+* use ANTLR as a tokenizer (lexer) and to find ambiguous syntax.

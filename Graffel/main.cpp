@@ -1,12 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "TokenType.h"
-#include "Token.h"
-#include "Tokenizer.h"
+#include "parser/TokenType.h"
+#include "parser/Token.h"
+#include "parser/Tokenizer.h"
+#include "parser/Parser.h"
 #include <graffel\Range.h>
 
 std::string path = R"(D:\Documents\Programming\CppProjects\Graffel\Graffel\test.graffel)";
+int parseTokens(const std::string& filename);
 int parseGraffel(const std::string& filename);
 void testRange();
 void testSlices();
@@ -15,8 +17,9 @@ namespace gf = graffel;
 
 int main(int argc, char* argv[])
     {
-    //return parseGraffel(path);
-    testRange();
+    //return parseTokens(path);
+    //testRange();
+    parseAssign();
     }
 
 void testRange()
@@ -50,20 +53,7 @@ void testSlices()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-int parseGraffel(const std::string& filename)
+int parseTokens(const std::string& filename)
     {
     try {
         std::ifstream ifs(filename);
@@ -84,5 +74,24 @@ int parseGraffel(const std::string& filename)
         std::cerr << "ERROR: " << msg << std::endl;
         return -1;
         }
-
     }
+
+int parseGraffel(const std::string& filename)
+    {
+    try {
+        std::ifstream ifs(filename);
+
+        Tokenizer tok(ifs);
+
+        Parser parser(tok);
+
+        ifs.close();
+        return 0;
+        }
+    catch (const char* msg)
+        {
+        std::cerr << "ERROR: " << msg << std::endl;
+        return -1;
+        }
+    }
+

@@ -1,8 +1,11 @@
+/*
 a = {
   test = 1;
   volgende = (3+ 4) * 2;
-  }; //semi-colon is optional.
 
   rad = 1.2r;
   deg = 90d;
   range = 3.4..5.6;
+  }; //semi-colon is optional.
+*/
+a = 1;

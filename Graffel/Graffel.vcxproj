@@ -150,6 +150,7 @@
     <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp" />
     <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="TokenType.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="..\TestSkia\src\graffel\Tick.h" />
     <ClInclude Include="..\TestSkia\src\graffel\Timeline.h" />
     <ClInclude Include="defines.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Tokenizer.h" />
     <ClInclude Include="TokenType.h" />

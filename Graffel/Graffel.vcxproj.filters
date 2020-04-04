@@ -42,6 +42,9 @@
     <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp">
       <Filter>graffel</Filter>
     </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.graffel">
@@ -78,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="..\TestSkia\src\graffel\Error.h">
       <Filter>graffel</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -67,7 +67,7 @@ Errors Range<T>::validate()
     {
     Errors errors;
 
-    for (int i = 0; i < slices.size()-1; i++)
+    for (long i = 0; i < slices.size()-1; i++)
         {
         Slice<T>& left = slices[i];
         Slice<T>& right = slices[i+1];

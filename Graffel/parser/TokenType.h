@@ -4,6 +4,7 @@
 
 enum class TokenType : int
 	{
+	UNDEFINED,
 	//operators
 	PLUS, MINUS, MULTIPLY, DIVIDE,
 	ARROW, // ->
