@@ -149,11 +149,13 @@
     <ClCompile Include="..\TestSkia\src\graffel\Block.cpp" />
     <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp" />
     <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp" />
+    <ClCompile Include="Error.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="Token.cpp" />
-    <ClCompile Include="Tokenizer.cpp" />
-    <ClCompile Include="TokenType.cpp" />
+    <ClCompile Include="parser\Parser.cpp" />
+    <ClCompile Include="parser\Token.cpp" />
+    <ClCompile Include="parser\Tokenizer.cpp" />
+    <ClCompile Include="parser\TokenType.cpp" />
+    <ClCompile Include="syntaxtree\nodes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="specs.graffel" />
@@ -166,10 +168,13 @@
     <ClInclude Include="..\TestSkia\src\graffel\Tick.h" />
     <ClInclude Include="..\TestSkia\src\graffel\Timeline.h" />
     <ClInclude Include="defines.h" />
-    <ClInclude Include="Parser.h" />
-    <ClInclude Include="Token.h" />
-    <ClInclude Include="Tokenizer.h" />
-    <ClInclude Include="TokenType.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="parser\Parser.h" />
+    <ClInclude Include="parser\Token.h" />
+    <ClInclude Include="parser\Tokenizer.h" />
+    <ClInclude Include="parser\TokenType.h" />
+    <ClInclude Include="syntaxtree\nodes.h" />
+    <ClInclude Include="syntaxtree\printTree.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt" />

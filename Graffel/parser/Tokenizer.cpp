@@ -1,5 +1,5 @@
 #include "Tokenizer.h"
-#include "defines.h"
+#include "..\defines.h"
 #include "Token.h"
 
 bool Tokenizer::nextTokenChar()
@@ -23,6 +23,8 @@ Token Tokenizer::next()
             return parseNumber();
         else if (curr_c == '"')
             return parseString();
+        else if (curr_c == ';')
+            return Token(TokenType::SEMICOLON, curr_line, curr_pos);
         else if (curr_c == '(')
             return Token(TokenType::PAR_OPEN, curr_line, curr_pos);
         else if (curr_c == ')')
@@ -77,6 +79,8 @@ Token Tokenizer::next()
                 return Token(TokenType::DIVIDE, curr_line, curr_pos);
                 }
             }
+        else
+            return Token(TokenType::UNKNOWN, curr_line, curr_pos);
 
         }
     return Token(TokenType::EOT, curr_line, curr_pos);

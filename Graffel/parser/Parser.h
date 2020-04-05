@@ -1,5 +1,6 @@
 #pragma once
 #include "Tokenizer.h"
+#include "..\syntaxtree\nodes.h"
 
 class Parser
     {
@@ -9,12 +10,12 @@ class Parser
         Token back;
         void next();
         void push_back();
-        bool parseAssign();
+        Statement* parseStatement();
+        Assign* parseAssign();
         bool parseBlock();
-        bool parseStatement();
-        void parseRVal();
-        void parseTerm();
-        void parseFactor();
+        AddExpr* parseRVal();
+        MultExpr* parseTerm();
+        Factor* parseFactor();
     public:
         Parser(Tokenizer& tok) : tok(tok) {}
         void reportError(const std::string& msg, Token& tok);

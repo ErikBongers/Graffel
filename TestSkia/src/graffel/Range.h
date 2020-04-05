@@ -67,10 +67,10 @@ Errors Range<T>::validate()
     {
     Errors errors;
 
-    for (long i = 0; i < slices.size()-1; i++)
+    for (size_t i = 0; i < slices.size()-1; i++)
         {
         Slice<T>& left = slices[i];
-        Slice<T>& right = slices[i+1];
+        Slice<T>& right = slices[i + 1];
         //absolute end, absolute begin
         if (left.end.type == ValueType::NORMAL && right.begin.type == ValueType::NORMAL)
             {

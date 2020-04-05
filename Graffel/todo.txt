@@ -1,3 +1,5 @@
+* rename nodes according to C++ EBNF doc.
+* implement unaryExpr
 * testRange()
   - combine slices into ranges.
     > just a list of slices.

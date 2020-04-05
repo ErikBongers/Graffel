@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     {
     //return parseTokens(path);
     //testRange();
-    parseAssign();
+    parseGraffel(path);
     }
 
 void testRange()
@@ -84,6 +84,8 @@ int parseGraffel(const std::string& filename)
         Tokenizer tok(ifs);
 
         Parser parser(tok);
+
+        parser.parse();
 
         ifs.close();
         return 0;

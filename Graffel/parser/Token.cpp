@@ -10,3 +10,4 @@ std::ostream& operator << (std::ostream& os, const Token& token)
 
 
 
+Token Token::UNDEFINED = Token(TokenType::UNDEFINED, -1, -1);
