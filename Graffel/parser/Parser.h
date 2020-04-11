@@ -12,10 +12,12 @@ class Parser
         void push_back();
         Statement* parseStatement();
         Assign* parseAssign();
-        bool parseBlock();
-        AddExpr* parseRVal();
-        MultExpr* parseTerm();
-        Factor* parseFactor();
+        Block* parseBlock();
+        AddExpr* parseAddExpr();
+        MultExpr* parseMultExpr();
+        UnaryExpr* parseUnaryExpr();
+        PrimaryExpr* parsePrimaryExpr();
+        bool parseBlockComment();
     public:
         Parser(Tokenizer& tok) : tok(tok) {}
         void reportError(const std::string& msg, Token& tok);

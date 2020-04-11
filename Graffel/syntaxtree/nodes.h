@@ -1,35 +1,71 @@
 #pragma once
 #include "..\parser\Token.h"
+#include <vector>
 
 struct AddExpr;
 
-struct Factor
+struct PrimaryExpr
     {
     Token const_or_id;
     //or
-    AddExpr* rval = NULL;
+    AddExpr* addExpr = NULL;
     Token getConstValue();
     void optimize();
+    };
+
+
+struct UnaryExpr
+    {
+    PrimaryExpr* primExpr;
+    //or
+    Token unaryOp;
+    UnaryExpr* unaryExpr;
+    Token getConstValue()
+        {
+        if (primExpr)
+            return primExpr->getConstValue();
+        Token const1 = unaryExpr->getConstValue();
+        if (const1 == TokenType::NUMBER)
+            {
+            double sign = (unaryOp == TokenType::MINUS) ? -1 : 1;
+            return Token(TokenType::NUMBER, "", sign * const1.double_value, 0, 0);
+            }
+        return Token();
+        }
+    void optimize()
+        {
+        if (primExpr)
+            return primExpr->optimize();
+        Token const1 = unaryExpr->getConstValue();
+        if (const1 == TokenType::NUMBER)
+            {
+            double sign = (unaryOp == TokenType::MINUS) ? -1 : 1;
+            primExpr = new PrimaryExpr();
+            primExpr->const_or_id = Token(TokenType::NUMBER, "", sign * const1.double_value, 0, 0);
+            unaryOp = Token();
+            unaryExpr = NULL;
+            }
+        }
     };
 
 struct MultExpr
     {
     //optional
-    MultExpr* term = NULL;
+    MultExpr* mulExpr = NULL;
     Token op; // MULT or DIV
     
     //mandatory
-    Factor* factor = NULL;
+    UnaryExpr* unaryExpr = NULL;
     
     MultExpr() = default;
-    MultExpr(MultExpr* term, Token op) :term(term), op(op) {}
+    MultExpr(MultExpr* mulExpr, Token op) :mulExpr(mulExpr), op(op) {}
     Token getConstValue() 
         { 
-        if (!term)
-            return factor->getConstValue();
+        if (!mulExpr)
+            return unaryExpr->getConstValue();
 
-        Token const1 =  term->getConstValue();
-        Token const2 = factor->getConstValue();
+        Token const1 =  mulExpr->getConstValue();
+        Token const2 = unaryExpr->getConstValue();
         if (const1 != TokenType::NUMBER || const2 != TokenType::NUMBER)
             return Token();
         
@@ -42,12 +78,12 @@ struct MultExpr
         }
     void optimize()
         {
-        factor->optimize();
-        if (term)
+        unaryExpr->optimize();
+        if (mulExpr)
             {
-            term->optimize();
-            Token const1 = term->getConstValue();
-            Token const2 = factor->getConstValue();
+            mulExpr->optimize();
+            Token const1 = mulExpr->getConstValue();
+            Token const2 = unaryExpr->getConstValue();
             if (const1 != TokenType::NUMBER || const2 != TokenType::NUMBER)
                 return;
 
@@ -56,9 +92,10 @@ struct MultExpr
                 d = const1.double_value * const2.double_value;
             else
                 d = const1.double_value / const2.double_value;
-            term = NULL;
+            mulExpr = NULL;
             op = Token();
-            factor->const_or_id = Token(TokenType::NUMBER, "", d, 0, 0);
+            unaryExpr->primExpr->const_or_id = Token(TokenType::NUMBER, "", d, 0, 0);
+            unaryExpr->primExpr->addExpr = NULL;
             }
         }
     };
@@ -66,20 +103,20 @@ struct MultExpr
 struct AddExpr
     {
     // optional
-    AddExpr* rval = NULL;
+    AddExpr* addExpr = NULL;
     Token op; // PLUS or MIN
 
     //mandatory
-    MultExpr* term = NULL;
+    MultExpr* mulExpr = NULL;
     AddExpr() = default;
-    AddExpr(AddExpr* rval, Token op) :rval(rval), op(op) {}
+    AddExpr(AddExpr* addExpr, Token op) :addExpr(addExpr), op(op) {}
     Token getConstValue()
         {
-        if (!rval)
-            return term->getConstValue();
+        if (!addExpr)
+            return mulExpr->getConstValue();
 
-        Token const1 = rval->getConstValue();
-        Token const2 = term->getConstValue();
+        Token const1 = addExpr->getConstValue();
+        Token const2 = mulExpr->getConstValue();
         if (const1 != TokenType::NUMBER || const2 != TokenType::NUMBER)
             return Token();
 
@@ -92,12 +129,12 @@ struct AddExpr
         }
     void optimize()
         {
-        term->optimize();
-        if (rval)
+        mulExpr->optimize();
+        if (addExpr)
             {
-            rval->optimize();
-            Token const1 = rval->getConstValue();
-            Token const2 = term->getConstValue();
+            addExpr->optimize();
+            Token const1 = addExpr->getConstValue();
+            Token const2 = mulExpr->getConstValue();
             if (const1 != TokenType::NUMBER || const2 != TokenType::NUMBER)
                 return;
             
@@ -106,23 +143,41 @@ struct AddExpr
                 d = const1.double_value + const2.double_value;
             else
                 d = const1.double_value - const2.double_value;
-            rval = NULL;
+            addExpr = NULL;
             op = Token();
-            term->factor->const_or_id = Token(TokenType::NUMBER, "", d, 0, 0);
+            mulExpr->unaryExpr->primExpr->const_or_id = Token(TokenType::NUMBER, "", d, 0, 0);
             }
         }
     };
 
+struct Block;
 struct Assign
     {
     Token id;
-    AddExpr* rval = NULL;
-    void optimize() { rval->optimize(); }
+    AddExpr* addExpr = NULL;
+    std::string str;
+    Block* block;
+    void optimize() 
+        { 
+        if(addExpr)
+            addExpr->optimize(); 
+        }
     };
 
 struct Statement
     {
     Assign* assignment = NULL;
-    //TODO: or Block* block;
-    void optimize() { assignment->optimize(); }
+    Block* block;
+    void optimize();
+    };
+
+struct Block
+    {
+    std::vector<Statement*> statements;
+    void optimize()
+        {
+        for (auto it = std::begin(statements); it != std::end(statements); ++it) {
+            (*it)->optimize();
+            }
+        }
     };

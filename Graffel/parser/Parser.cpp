@@ -25,24 +25,6 @@ void Parser::reportError(const std::string& msg, Token& tok)
     std::cout << msg << std::endl;
     }
 
-/*
-EBNF of C++ : http://www.externsoft.ch/download/cpp-iso.html
-left or right associativity: https://stackoverflow.com/questions/41784524/preferred-way-of-removing-left-recursion-of-ebnf
-
-graffel = comment* | assign*
-comment = xxx // already removed by tokenizer
-assignment = id "=" ( rval | block)
-block = "{" statement* "}" ";"* // zero or one statement allowed, semi-colon optional
-statement = ( assignment ";" | block )
-
-expressions: top line has lowest precedence:
-addexpr = multexpr |  
-       addexpr ("+" | "-") multexpr 
-multexpr = factor |
-       multexpr ("*" | "/") factor
-factor = const | id | "(", addexpr, ")"
-*/
-
 void Parser::parse()
     {
     Statement* statement = NULL;
@@ -52,60 +34,26 @@ void Parser::parse()
     else
         {
         reportError("Compiled successfully.");
-        printProgram(*statement);
+        printProgram(*statement, 999);
         statement->optimize();
         reportError("Optimized:");
-        printProgram(*statement);
+        printProgram(*statement, 999);
         }
-    }
-
- Assign* Parser::parseAssign()
-    {
-    next();
-    if (t != TokenType::ID)
-        return NULL;
-    Assign* assign = new Assign();
-    assign->id = t;
-    next();
-    if (t != TokenType::ASSIGN)
-        reportError("Expecting '='", t);
-    if(!parseBlock())
-        assign->rval = parseRVal();
-    if (!assign->rval)
-        reportError("Expecting r-value for assignment.");
-    return assign;
-    }
-
-bool Parser::parseBlock()
-    {
-    next();
-    if (t != TokenType::BRAC_OPEN)
-        {
-        push_back();
-        return false;
-        }
-    while (parseStatement()) {}
-    next();
-
-    if (t == TokenType::BRAC_CLOSE)
-        next();
-    else
-        reportError("Expecting '}'", t);
-    
-    if (t != TokenType::SEMICOLON)
-        push_back();
-    return true;
     }
 
 Statement* Parser::parseStatement()
     {
+    parseBlockComment();
     Statement* stat = new Statement();
-    if (parseBlock())
+    stat->block = parseBlock();
+    if (stat->block)
         {
-        stat->assignment = NULL; //TODO: should be block!
+        stat->assignment = NULL;
         return stat;
         }
     stat->assignment = parseAssign();
+    if (!stat->assignment)
+        return NULL;
     next();
     if (t != TokenType::SEMICOLON)
         {
@@ -115,67 +63,159 @@ Statement* Parser::parseStatement()
     return stat;
     }
 
-AddExpr* Parser::parseRVal()
+Assign* Parser::parseAssign()
     {
-    AddExpr* rval = new AddExpr();
-    rval->term = parseTerm();
-    if (!rval->term)
+    next();
+    if (t != TokenType::ID)
+        {
+        push_back();
+        return NULL;
+        }
+    Assign* assign = new Assign();
+    assign->id = t;
+    next();
+    if (t != TokenType::ASSIGN)
+        reportError("Expecting '='", t);
+    if(!(assign->block = parseBlock()))
+        if (!(assign->addExpr = parseAddExpr()))
+            {
+            next();
+            if (t == TokenType::STRING)
+                assign->str = t.str_value;
+            else
+                reportError("Expecting value for assignment.");
+            }
+    return assign;
+    }
+
+Block* Parser::parseBlock()
+    {
+    next();
+    if (t != TokenType::BRAC_OPEN)
+        {
+        push_back();
+        return NULL;
+        }
+    Block* block = new Block();
+    Statement* stat = parseStatement();
+    while (stat) 
+        {
+        block->statements.push_back(stat);
+        stat = parseStatement();
+        }
+    next();
+
+    if (t == TokenType::BRAC_CLOSE)
+        next();
+    else
+        reportError("Expecting '}'", t);
+    
+    if (t != TokenType::SEMICOLON)
+        push_back();
+    return block;
+    }
+
+bool Parser::parseBlockComment()
+    {
+    next();
+    if (t != TokenType::BLOCK_COMMENT_OPEN)
+        {
+        push_back();
+        return false;
+        }
+    int braceCounter = 0;
+    do
+        {
+        next();
+        if (t == TokenType::BRAC_OPEN || t == TokenType::BLOCK_COMMENT_OPEN)
+            braceCounter++;
+        else
+            if (t == TokenType::BRAC_CLOSE)
+                braceCounter--;
+        } while (braceCounter >= 0);
+        return true;
+    }
+
+AddExpr* Parser::parseAddExpr()
+    {
+    AddExpr* addExpr = new AddExpr();
+    addExpr->mulExpr = parseMultExpr();
+    if (!addExpr->mulExpr)
         return NULL;
     next();
     while(t == TokenType::PLUS || t == TokenType::MINUS)
         {
-        rval = new AddExpr(rval, t);
-        rval->term = parseTerm();
+        addExpr = new AddExpr(addExpr, t);
+        addExpr->mulExpr = parseMultExpr();
         next();
         }
     push_back();
-    return rval;
+    return addExpr;
     }
 
-MultExpr* Parser::parseTerm()
+MultExpr* Parser::parseMultExpr()
     {
-    MultExpr* term = new MultExpr();
-    term->factor = parseFactor();
-    if (!term->factor)
+    MultExpr* mulExpr = new MultExpr();
+    mulExpr->unaryExpr = parseUnaryExpr();
+    if (!mulExpr->unaryExpr)
         return NULL;
     next();
     while(t == TokenType::MULTIPLY || t == TokenType::DIVIDE)
         {
-        term = new MultExpr(term, t);
-        term->factor = parseFactor();
+        mulExpr = new MultExpr(mulExpr, t);
+        mulExpr->unaryExpr = parseUnaryExpr();
         next();
         }
     push_back();
-    return term;
+    return mulExpr;
     }
 
-Factor* Parser::parseFactor()
+UnaryExpr* Parser::parseUnaryExpr()
     {
-    Factor* factor = NULL;
+    UnaryExpr* unaryExpr = new UnaryExpr();
+    next();
+    if (t == TokenType::MINUS)
+        {
+        unaryExpr->unaryOp = t;
+        unaryExpr->unaryExpr = parseUnaryExpr();
+        }
+    else
+        {
+        push_back();
+        unaryExpr->primExpr = parsePrimaryExpr();
+        }
+    if (unaryExpr->primExpr || unaryExpr->unaryExpr)
+        return unaryExpr;
+    else
+        return NULL;
+    }
+
+PrimaryExpr* Parser::parsePrimaryExpr()
+    {
+    PrimaryExpr* primary = NULL;
     next();
     if (t == TokenType::PAR_OPEN)
         {
-        factor = new Factor();
-        factor->rval = parseRVal();
+        primary = new PrimaryExpr();
+        primary->addExpr = parseAddExpr();
         next();
         if (t != TokenType::PAR_CLOSE)
             reportError("Expecting '('");
         }
     else if (t == TokenType::ID)
         {
-        factor = new Factor();
-        factor->const_or_id = t;
+        primary = new PrimaryExpr();
+        primary->const_or_id = t;
         }
     else if (t == TokenType::NUMBER)
         {
-        factor = new Factor();
-        factor->const_or_id = t;
+        primary = new PrimaryExpr();
+        primary->const_or_id = t;
         }
     else
         {
         reportError("Expecting identifier, value or expression");
         push_back();
         }
-    return factor;
+    return primary;
     }
-

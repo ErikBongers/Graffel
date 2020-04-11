@@ -158,6 +158,7 @@
     <ClCompile Include="syntaxtree\nodes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="graffel.ebnf" />
     <None Include="specs.graffel" />
     <None Include="test.graffel" />
   </ItemGroup>

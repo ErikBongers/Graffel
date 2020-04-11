@@ -49,6 +49,7 @@
     <None Include="specs.graffel">
       <Filter>Data</Filter>
     </None>
+    <None Include="graffel.ebnf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TestSkia\src\graffel\Range.h">

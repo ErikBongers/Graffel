@@ -1,22 +1,30 @@
 #include "nodes.h"
 
-Token Factor::getConstValue()
+Token PrimaryExpr::getConstValue()
     {
-    if (rval)
-        return rval->getConstValue();
+    if (addExpr)
+        return addExpr->getConstValue();
     else
         return const_or_id == TokenType::NUMBER ? const_or_id : Token();
     }
-void Factor::optimize()
+void PrimaryExpr::optimize()
     {
-    if (rval)
+    if (addExpr)
         {
-        rval->optimize();
-        Token const1 = rval->getConstValue();
+        addExpr->optimize();
+        Token const1 = addExpr->getConstValue();
         if (const1 == TokenType::NUMBER)
             {
-            rval = NULL;
+            addExpr = NULL;
             const_or_id = const1;
             }
         }
+    }
+
+void Statement::optimize()
+    {
+    if (block)
+        block->optimize();
+    else
+        assignment->optimize();
     }

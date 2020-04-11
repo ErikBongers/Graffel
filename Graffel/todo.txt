@@ -1,5 +1,6 @@
-* rename nodes according to C++ EBNF doc.
-* implement unaryExpr
+* assignment of strings (and other values that are not numeric expressions)
+* test : escapes in strings.
+
 * testRange()
   - combine slices into ranges.
     > just a list of slices.

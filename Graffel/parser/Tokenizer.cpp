@@ -187,6 +187,12 @@ Token Tokenizer::parseString()
             {
             return Token(TokenType::STRING, str, line, pos);
             }
+        else if (curr_c == '\\')
+            {
+            str.push_back(curr_c);
+            getChar();
+            str.push_back(curr_c);
+            }
         else
             str.push_back(curr_c);
         }

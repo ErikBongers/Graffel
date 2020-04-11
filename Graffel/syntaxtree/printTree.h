@@ -2,90 +2,145 @@
 #include <iomanip>
 #include <string>
 
-const int indent = 2;
+const std::streamsize indent = 2;
+std::streamsize maxLvl = 999;
 
 void printNumber(Token t, int lvl)
     {
+    if (lvl > maxLvl)
+        return;
     std::string number = t.str_value;
     if (t.str_value == "")
         number = std::to_string(t.double_value);
-    std::cout << std::setw(lvl) << ' ' << "number: " << number << std::endl;
+    std::cout << std::setw(lvl*indent) << ' ' << "number: " << number << std::endl;
     }
 
 void printId(Token t, int lvl)
     {
-    std::cout << std::setw(lvl) << ' ' << "id: " << t.str_value << std::endl;
+    if (lvl > maxLvl)
+        return;
+    std::cout << std::setw(lvl*indent) << ' ' << "id: " << t.str_value << std::endl;
     }
 
 void printOp(Token t, int lvl)
     {
-    std::cout << std::setw(lvl) << ' ' << "op: " << t.type << std::endl;
+    if (lvl > maxLvl)
+        return;
+    std::cout << std::setw(lvl*indent) << ' ' << "op: " << t.type << std::endl;
     }
 
-void printAddExpr(AddExpr& rval, int lvl);
-void printFactor(Factor& factor, int lvl)
+void printAddExpr(AddExpr& addExpr, int lvl);
+
+void printPrimary(PrimaryExpr& primary, int lvl)
     {
-    if (!&factor)
+    if (lvl > maxLvl)
+        return;
+    if (!&primary)
         {
-        std::cout << std::setw(lvl) << ' ' << "factor: ???" << std::endl;
+        std::cout << std::setw(lvl*indent) << ' ' << "primary: ???" << std::endl;
         return;
         }
-    std::cout << std::setw(lvl) << ' ' << "factor: " << std::endl;
-    if (factor.const_or_id == TokenType::ID)
-        printId(factor.const_or_id, lvl + indent);
-    else if (factor.const_or_id == TokenType::NUMBER)
-        printNumber(factor.const_or_id, lvl + indent);
+    std::cout << std::setw(lvl*indent) << ' ' << "primary: " << std::endl;
+    if (primary.const_or_id == TokenType::ID)
+        printId(primary.const_or_id, ++lvl);
+    else if (primary.const_or_id == TokenType::NUMBER)
+        printNumber(primary.const_or_id, ++lvl);
     else
-        printAddExpr(*factor.rval, lvl+indent);
+        printAddExpr(*primary.addExpr, ++lvl);
     }
 
-void printMultExpr(MultExpr& term, int lvl)
+void printUnary(UnaryExpr& unary, int lvl)
     {
-    if (!&term)
-        {
-        std::cout << std::setw(lvl) << ' ' << "multexpr: ???" << std::endl;
+    if (lvl > maxLvl)
         return;
-        }
-    std::cout << std::setw(lvl) << ' ' << "multexpr: " << std::endl;
-    if (term.op != TokenType::UNDEFINED)
+    std::cout << std::setw(lvl*indent) << ' ' << "unary: " << std::endl;
+    if (unary.primExpr)
+        printPrimary(*unary.primExpr, ++lvl);
+    else
         {
-        printMultExpr(*term.term, lvl + indent);
-        printOp(term.op, lvl + indent);
+        printOp(unary.unaryOp, ++lvl);
+        printUnary(*unary.unaryExpr, ++lvl);
         }
-    printFactor(*term.factor, lvl + indent);
     }
 
-void printAddExpr(AddExpr& rval, int lvl)
+void printMultExpr(MultExpr& mulExpr, int lvl)
     {
-    if (!&rval)
+    if (lvl > maxLvl)
+        return;
+    if (!&mulExpr)
         {
-        std::cout << std::setw(lvl) << ' ' << "addexpr: ???" << std::endl;
+        std::cout << std::setw(lvl*indent) << ' ' << "multexpr: ???" << std::endl;
         return;
         }
-    std::cout << std::setw(lvl) << ' ' << "addexpr: " << std::endl;
-    if (rval.op != TokenType::UNDEFINED)
+    std::cout << std::setw(lvl*indent) << ' ' << "multexpr: " << std::endl;
+    if (mulExpr.op != TokenType::UNDEFINED)
         {
-        printAddExpr(*rval.rval, lvl + indent);
-        printOp(rval.op, lvl + indent);
+        printMultExpr(*mulExpr.mulExpr, ++lvl);
+        printOp(mulExpr.op, ++lvl);
         }
-    printMultExpr(*rval.term, lvl + indent);
+    printUnary(*mulExpr.unaryExpr, ++lvl);
+    }
+
+void printAddExpr(AddExpr& addExpr, int lvl)
+    {
+    if (lvl > maxLvl)
+        return;
+    if (!&addExpr)
+        {
+        std::cout << std::setw(lvl*indent) << ' ' << "addexpr: ???" << std::endl;
+        return;
+        }
+    std::cout << std::setw(lvl*indent) << ' ' << "addexpr: " << std::endl;
+    if (addExpr.op != TokenType::UNDEFINED)
+        {
+        printAddExpr(*addExpr.addExpr, ++lvl);
+        printOp(addExpr.op, ++lvl);
+        }
+    printMultExpr(*addExpr.mulExpr, ++lvl);
+    }
+
+void printStatement(Statement& statement, int lvl);
+void printBlock(Block& block, int lvl)
+    {
+    std::cout << std::setw(lvl*indent) << ' ' << "block: " << std::endl;
+    lvl++;
+    for (auto it = std::begin(block.statements); it != std::end(block.statements); ++it) {
+        printStatement(**it, lvl);
+        }
+    }
+
+void printString(const std::string& str, int lvl)
+    {
+    std::cout << std::setw(lvl) << ' ' << "string: \"" << str << "\"" << std::endl;
     }
 
 void printAssign(Assign& assign, int lvl)
     {
-    std::cout << std::setw(lvl) << ' ' << "assign: " << std::endl;
-    printId(assign.id, lvl + indent);
-    printAddExpr(*assign.rval, lvl + indent);
+    if (lvl > maxLvl)
+        return;
+    std::cout << std::setw(lvl*indent) << ' ' << "assign: " << std::endl;
+    printId(assign.id, ++lvl);
+    if (assign.addExpr)
+        printAddExpr(*assign.addExpr, ++lvl);
+    else if (assign.block)
+        printBlock(*assign.block, ++lvl);
+    else if (!assign.str.empty())
+        printString(assign.str, ++lvl);
     }
 
 void printStatement(Statement& statement, int lvl)
     {
-    std::cout << std::setw(lvl) << ' ' << "statement: " << std::endl;
-    //if(statement.block == NULL)
-    printAssign(*statement.assignment, lvl + indent);
+    if (lvl > maxLvl)
+        return;
+    std::cout << std::setw(lvl*indent) << ' ' << "statement: " << std::endl;
+    if (statement.block)
+        printBlock(*statement.block, ++lvl);
+    else if(statement.assignment)
+        printAssign(*statement.assignment, ++lvl);
     }
 
-void printProgram(Statement& statement)
+void printProgram(Statement& statement, int maxLevel)
     {
+    maxLvl = maxLevel;
     printStatement(statement, 0);
     }
