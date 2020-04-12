@@ -1,5 +1,4 @@
-* assignment of strings (and other values that are not numeric expressions)
-* test : escapes in strings.
+* create a SkiaQt project as a GUI for testing Graffel
 
 * testRange()
   - combine slices into ranges.
@@ -139,3 +138,11 @@ SKIA
 * Split SDL and Skia code.
 * Check out sk_app/main_win.
   > remove SDL code?
+
+SKIA documentation
+--------------------
+Image:. A read-only source of pixels.  May refer to encoded data.
+Surface: A destination for drawing, either CPU or GPU.
+Canvas: the abstract drawing interface.  Can point at a Surface, a Picture recorder, or Document.
+Picture: a sequence of drawing commands; i.e. a command buffer
+(Bitmap: before Surface and Image, was a source and a destination for drawing. Image/Source allows for more optimizationa.)

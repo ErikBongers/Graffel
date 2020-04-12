@@ -1,8 +1,9 @@
 #include "pch.h"
-#include "Timeline.h"
-#include "Tick.h"
-#include "Block.h"
+#include "graffel\Timeline.h"
+#include "graffel\Tick.h"
+#include "graffel\Block.h"
 #include "Fps.h"
+#include <iostream>
 
 struct ApplicationState {
     ApplicationState() : fQuit(false) {}
@@ -16,6 +17,22 @@ static void handle_error() {
     SkDebugf("SDL Error: %s\n", error);
     SDL_ClearError();
 }
+
+//TODO: put these globals in a window class
+SDL_Window* window = NULL;
+int dw, dh;
+GrGLint buffer;
+GrGLFramebufferInfo info;
+SkColorType colorType;
+sk_sp<SkSurface> surface;
+SkCanvas* canvas;
+
+void resizeViewportToWindow(SDL_Window* window)
+    {
+    SDL_GL_GetDrawableSize(window, &dw, &dh);
+
+    glViewport(0, 0, dw, dh);
+    }
 
 static void handle_events(ApplicationState* state) {
     SDL_Event event;
@@ -36,13 +53,26 @@ static void handle_events(ApplicationState* state) {
                                                                  SkIntToScalar(event.button.y));
                 }
                 break;
-            case SDL_KEYDOWN: {
+            case SDL_KEYDOWN: 
+                {
                 SDL_Keycode key = event.key.keysym.sym;
                 if (key == SDLK_ESCAPE) {
                     state->fQuit = true;
                 }
                 break;
-            }
+                }
+            case SDL_WINDOWEVENT:
+                switch (event.window.event)
+                    {
+                    case SDL_WINDOWEVENT_RESIZED: //called after SIZE_CHANGED user or system changes window size.
+                        break;
+                    case SDL_WINDOWEVENT_SIZE_CHANGED: //always called
+                        std::cout << "SDL: window size changed\n";
+                        resizeViewportToWindow(window);
+                        canvas = NULL;
+                        break;
+                    }
+                break;
             case SDL_QUIT:
                 state->fQuit = true;
                 break;
@@ -51,6 +81,40 @@ static void handle_events(ApplicationState* state) {
         }
     }
 }
+
+SkCanvas* createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac, uint32_t windowFormat, int contextType, int kMsaaSampleCount, int kStencilBits, sk_sp<GrContext> grContext)
+    {
+    // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can render to it
+    GR_GL_GetIntegerv(interfac.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
+    info.fFBOID = (GrGLuint)buffer;
+
+    //SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
+    // TODO: the windowFormat is never any of these?
+    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
+        info.fFormat = GR_GL_RGBA8;
+        colorType = kRGBA_8888_SkColorType;
+        }
+    else {
+        colorType = kBGRA_8888_SkColorType;
+        if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
+            info.fFormat = GR_GL_BGRA8;
+            }
+        else {
+            // We assume the internal format is RGBA8 on desktop GL
+            info.fFormat = GR_GL_RGBA8;
+            }
+        }
+
+    // setup SkSurface
+    // To use distance field text, use commented out SkSurfaceProps instead
+    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag, SkSurfaceProps::kLegacyFontHost_InitType);
+    SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
+
+    GrBackendRenderTarget target(dw, dh, kMsaaSampleCount, kStencilBits, info);
+    surface = SkSurface::MakeFromBackendRenderTarget(grContext.get(), target, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, &props);
+
+    return surface->getCanvas();
+    }
 
 #undef main
 int main(int argc, char** argv) {
@@ -96,7 +160,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    SDL_Window* window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_CENTERED,
+    window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_CENTERED,
                                           SDL_WINDOWPOS_CENTERED, dm.w, dm.h, windowFlags);
 
     if (!window) {
@@ -125,10 +189,7 @@ int main(int argc, char** argv) {
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
 
 
-    int dw, dh;
-    SDL_GL_GetDrawableSize(window, &dw, &dh);
-
-    glViewport(0, 0, dw, dh);
+    resizeViewportToWindow(window);
     glClearColor(1, 1, 1, 1);
     glClearStencil(0);
     glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -142,43 +203,8 @@ int main(int argc, char** argv) {
     sk_sp<GrContext> grContext(GrContext::MakeGL(interfac));
     SkASSERT(grContext);
 
-    // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can
-    // render to it
-    GrGLint buffer;
-    GR_GL_GetIntegerv(interfac.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
-    GrGLFramebufferInfo info;
-    info.fFBOID = (GrGLuint) buffer;
-    SkColorType colorType;
-
-    //SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
-    // TODO: the windowFormat is never any of these?
-    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
-        info.fFormat = GR_GL_RGBA8;
-        colorType = kRGBA_8888_SkColorType;
-    } else {
-        colorType = kBGRA_8888_SkColorType;
-        if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
-            info.fFormat = GR_GL_BGRA8;
-        } else {
-            // We assume the internal format is RGBA8 on desktop GL
-            info.fFormat = GR_GL_RGBA8;
-        }
-    }
-
-    GrBackendRenderTarget target(dw, dh, kMsaaSampleCount, kStencilBits, info);
-
-    // setup SkSurface
-    // To use distance field text, use commented out SkSurfaceProps instead
-    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
-    //                      SkSurfaceProps::kLegacyFontHost_InitType);
-    SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
-
-    sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(grContext.get(), target,
-                                                                    kBottomLeft_GrSurfaceOrigin,
-                                                                    colorType, nullptr, &props));
-
-    SkCanvas* canvas = surface->getCanvas();
-    canvas->scale((float)dw/dm.w, (float)dh/dm.h);
+    canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, kMsaaSampleCount, kStencilBits, grContext);
+    //canvas->scale((float)dw/dm.w, (float)dh/dm.h); //scales to about 1:1
 
     ApplicationState state;
 
@@ -207,6 +233,8 @@ int main(int argc, char** argv) {
             {
             fps.beginFrame();
 
+            if(canvas == NULL)
+                canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, kMsaaSampleCount, kStencilBits, grContext);
             SkRandom rand;
             canvas->clear(SK_ColorWHITE);
 
