@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Functions.cpp" />
     <ClCompile Include="src\graffel\Block.cpp" />
     <ClCompile Include="src\graffel\Range.cpp" />
     <ClCompile Include="src\HelloWorld.cpp" />
+    <ClCompile Include="src\SDLWindow.cpp" />
     <ClCompile Include="src\SkiaSDLExample.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
@@ -37,6 +39,7 @@
     <ClCompile Include="src\graffel\Tick.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\graffel\Block.h" />
     <ClInclude Include="src\Fps.h" />
     <ClInclude Include="src\graffel\Range.h" />
@@ -51,6 +54,7 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\SDLWindow.h" />
     <ClInclude Include="src\sk_app\GLWindowContext.h" />
     <ClInclude Include="src\sk_app\Window.h" />
     <ClInclude Include="src\sk_app\WindowContext.h" />

@@ -31,7 +31,7 @@ class Timeline
     public:
         bool tick();
         Timeline(Timeline& parent);
-        static Timeline& createMasterTimeline();
+        static Timeline* createMasterTimeline();
         long long getEllapsedSeconds() { return std::chrono::floor<std::chrono::seconds>(ellapsedTime).count(); }
         std::chrono::nanoseconds getEllapsedTime() { return ellapsedTime; }
         Timeline& createChild();

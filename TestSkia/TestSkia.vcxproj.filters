@@ -13,12 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{0ae32288-89cf-45a6-a004-905d71a9737b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\HelloWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SkiaSDLExample.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\sk_app\GLWindowContext.cpp">
@@ -50,6 +50,15 @@
     </ClCompile>
     <ClCompile Include="src\graffel\Range.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SkiaSDLExample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Functions.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="src\graffel\Range.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDLWindow.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Functions.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
