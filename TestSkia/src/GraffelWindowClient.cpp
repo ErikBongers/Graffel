@@ -10,27 +10,35 @@ void GraffelWindowClient::initialize(SDLSkiaWindow& window)
     masterTimeline->setBlock(&b);
 
 
-    full.backgroundColor = SK_ColorDKGRAY;
-    full.rect = SkRect::MakeWH((SkScalar)window.getWidth(), (SkScalar)window.getHeight());
+    full.backgroundColor = SK_ColorWHITE;
     full.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
         e.rect = SkRect::MakeWH((SkScalar)window.getWidth(), (SkScalar)window.getHeight());
         window.setInvalid();
         };
 
-    UIElement& toolbar = *new UIElement();
     toolbar.rect = SkRect::MakeXYWH(10, 10, 500, 40);
     toolbar.backgroundColor = SK_ColorLTGRAY;
     full += toolbar;
 
-    UIElement* button1 = new UIElement();
-    button1->rect = SkRect::MakeXYWH(5, 5, 20, 20);
-    button1->backgroundColor = SK_ColorDKGRAY;
+    button1.rect = SkRect::MakeXYWH(5, 5, 20, 20);
+    button1.backgroundColor = SK_ColorDKGRAY;
     toolbar += button1;
 
-    UIElement* button2 = new UIElement();
-    button2->rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
-    button2->backgroundColor = SK_ColorDKGRAY;
+    button2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
+    button2.backgroundColor = SK_ColorDKGRAY;
     toolbar += button2;
+
+    infiniteCanvas.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
+        e.rect = SkRect::MakeLTRB(20, 50, (SkScalar)window.getWidth() - 30, (SkScalar)window.getHeight() - 30);
+        window.setInvalid();
+        };
+    infiniteCanvas.backgroundColor = SK_ColorDKGRAY;
+    full += infiniteCanvas;
+
+    square1.rect = SkRect::MakeXYWH(200, 200, 20, 20);
+    square1.backgroundColor = SK_ColorBLUE;
+    infiniteCanvas += square1; 
+
     }
 
 void GraffelWindowClient::update(SDLSkiaWindow& window)
@@ -54,22 +62,23 @@ void GraffelWindowClient::draw(SDLSkiaWindow& window)
 
 void GraffelWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
     {
-    //if (event.motion.state == SDL_PRESSED) {
-//    SkRect& rect = state->fRects.back();
-//    rect.fRight = (SkScalar)event.motion.x;
-//    rect.fBottom = (SkScalar)event.motion.y;
-//    }
+    if(button1.hitTest(event.x, event.y))
+        button1.backgroundColor = SK_ColorYELLOW;
+    else
+        button1.backgroundColor = SK_ColorDKGRAY;
+    window.setInvalid();//TODO: don't invalidate on every mouseMove
+    infiniteCanvas.mouseMoved(event, window);
     }
 
-void GraffelWindowClient::mouseClicked(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+void GraffelWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     window.setInvalid();
-    //if (event.button.state == SDL_PRESSED) {
-//    state->fRects.push_back() = SkRect::MakeLTRB(SkIntToScalar(event.button.x),
-//                                                 SkIntToScalar(event.button.y),
-//                                                 SkIntToScalar(event.button.x),
-//                                                 SkIntToScalar(event.button.y));
-//    }
+    infiniteCanvas.mouseDown(event, window);
+    }
+
+void GraffelWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+    {
+    infiniteCanvas.mouseUp(event, window);
     }
 
 void GraffelWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)

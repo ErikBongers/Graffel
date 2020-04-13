@@ -1,5 +1,9 @@
-* create a UIElement class
-  - hittest
+* create infinite canvas
+  - use scale and translate.
+  - (later) only paints what is in view.
+
+* no redraw on mousemove without invalidation.
+
 
 * testRange()
   - combine slices into ranges.

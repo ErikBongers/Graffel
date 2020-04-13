@@ -66,6 +66,9 @@
     <ClCompile Include="src\UIElement.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\InfiniteCanvas.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\HelloWorld.h">
@@ -114,6 +117,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\UIElement.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InfiniteCanvas.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -24,6 +24,7 @@
     <ClCompile Include="src\graffel\Block.cpp" />
     <ClCompile Include="src\graffel\Range.cpp" />
     <ClCompile Include="src\HelloWorld.cpp" />
+    <ClCompile Include="src\InfiniteCanvas.cpp" />
     <ClCompile Include="src\SDLSkiaWindow.cpp" />
     <ClCompile Include="src\SkiaSDLExample.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -56,6 +57,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClInclude Include="src\InfiniteCanvas.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\SDLSkiaWindow.h" />
     <ClInclude Include="src\sk_app\GLWindowContext.h" />

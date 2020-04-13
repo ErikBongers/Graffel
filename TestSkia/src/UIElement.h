@@ -13,13 +13,16 @@ class UIElement
         SkRect rect;
         SkColor backgroundColor = SK_ColorTRANSPARENT;
         std::vector<UIElement*> children;
-        void drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
+        virtual void drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
         UIElement& operator+=(UIElement* child);
         UIElement& operator+=(UIElement& child) { return *this += &child; }
         void trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window);
         PResize resize = nullptr;
-    private:
+        bool hitTest(int x, int y);
+        SkRect absoluteRect();
+    protected:
         //virtual void resize(SDL_WindowEvent& event, , SDLSkiaWindow& window) {}
-
+        void drawBackground(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
+        void drawChildren(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
         virtual void drawMe(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window) {}
     };

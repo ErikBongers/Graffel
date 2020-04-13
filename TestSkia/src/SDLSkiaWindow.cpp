@@ -105,6 +105,9 @@ bool  SDLSkiaWindow::createWindow(int width, int height, int stencilBits, int ms
     //canvas->scale((float)dw/dm.w, (float)dh/dm.h); //scales to about 1:1
 
     client.initialize(*this);
+    SDL_WindowEvent event;
+    event.type = SDL_EventType::SDL_WINDOWEVENT;
+    client.resize(event, *this);
     return true;
     }
 
@@ -163,7 +166,10 @@ bool SDLSkiaWindow::handleEvents()
                 client.mouseMoved(event.motion, *this);
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                client.mouseClicked(event.motion, *this);
+                client.mouseDown(event.button, *this);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                client.mouseUp(event.button, *this);
                 break;
             case SDL_KEYDOWN:
                 {
