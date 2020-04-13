@@ -15,9 +15,9 @@ class WindowClient
         virtual void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}
         virtual void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
         virtual void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
+        virtual void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window) {}
         virtual void resize(SDL_WindowEvent& event, SDLSkiaWindow& window) {}
     };
-
 
 class SDLSkiaWindow
     {

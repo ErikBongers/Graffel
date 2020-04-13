@@ -171,6 +171,9 @@ bool SDLSkiaWindow::handleEvents()
             case SDL_MOUSEBUTTONUP:
                 client.mouseUp(event.button, *this);
                 break;
+            case SDL_MOUSEWHEEL:
+                client.mouseWheel(event.wheel, *this);
+                break;
             case SDL_KEYDOWN:
                 {
                 SDL_Keycode key = event.key.keysym.sym;

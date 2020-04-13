@@ -1,6 +1,5 @@
-* create infinite canvas
-  - use scale and translate.
-  - (later) only paints what is in view.
+* infiniteCanvas: create translatePointToPixel and translatePixelToPoint functions
+  > other names?
 
 * no redraw on mousemove without invalidation.
 

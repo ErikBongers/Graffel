@@ -25,5 +25,6 @@ class GraffelWindowClient : public WindowClient
         void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) override;
         void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
         void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
+        void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window) override;
         void resize(SDL_WindowEvent& event, SDLSkiaWindow& window) override;
     };
