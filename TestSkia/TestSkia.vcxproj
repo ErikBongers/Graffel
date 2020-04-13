@@ -20,10 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Functions.cpp" />
+    <ClCompile Include="src\GraffelWindowClient.cpp" />
     <ClCompile Include="src\graffel\Block.cpp" />
     <ClCompile Include="src\graffel\Range.cpp" />
     <ClCompile Include="src\HelloWorld.cpp" />
-    <ClCompile Include="src\SDLWindow.cpp" />
+    <ClCompile Include="src\SDLSkiaWindow.cpp" />
     <ClCompile Include="src\SkiaSDLExample.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
@@ -37,9 +38,11 @@
     <ClCompile Include="src\sk_app\win\Window_win.cpp" />
     <ClCompile Include="src\graffel\Timeline.cpp" />
     <ClCompile Include="src\graffel\Tick.cpp" />
+    <ClCompile Include="src\UIElement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Functions.h" />
+    <ClInclude Include="src\GraffelWindowClient.hpp" />
     <ClInclude Include="src\graffel\Block.h" />
     <ClInclude Include="src\Fps.h" />
     <ClInclude Include="src\graffel\Range.h" />
@@ -54,7 +57,7 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\SDLWindow.h" />
+    <ClInclude Include="src\SDLSkiaWindow.h" />
     <ClInclude Include="src\sk_app\GLWindowContext.h" />
     <ClInclude Include="src\sk_app\Window.h" />
     <ClInclude Include="src\sk_app\WindowContext.h" />
@@ -62,6 +65,7 @@
     <ClInclude Include="src\sk_app\win\Window_win.h" />
     <ClInclude Include="src\graffel\Timeline.h" />
     <ClInclude Include="src\graffel\Tick.h" />
+    <ClInclude Include="src\UIElement.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

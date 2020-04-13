@@ -51,13 +51,19 @@
     <ClCompile Include="src\graffel\Range.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SDLWindow.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\SkiaSDLExample.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Functions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraffelWindowClient.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLSkiaWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UIElement.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,10 +104,16 @@
     <ClInclude Include="src\graffel\Range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SDLWindow.h">
+    <ClInclude Include="src\Functions.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Functions.h">
+    <ClInclude Include="src\GraffelWindowClient.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDLSkiaWindow.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UIElement.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,5 @@
-* create a SkiaQt project as a GUI for testing Graffel
+* create a UIElement class
+  - hittest
 
 * testRange()
   - combine slices into ranges.

@@ -1,44 +1,61 @@
-#include "SDLWindow.h"
+#include "SDLSkiaWindow.h"
 #include "Functions.h"
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
-void SDLWindow::startEventLoop()
+int SDLCALL SDLSkiaWindow::onEventsReceived(void* userdata, SDL_Event* event)
     {
-    int loopCounter = 0;
+    ((SDLSkiaWindow*)userdata)->loopOnce();
+    return 0;//ignored
+    }
+
+void SDLSkiaWindow::startEventLoop() 
+    {
+    //SDL_AddEventWatch(onEventsReceived, (void*)this);
 
     while (!quit) { // Our application loop
-        loopCounter++;
-
-        handleEvents();
-
-        if (masterTimeline->tick())
-            {
-            fps.beginFrame();
-
-            if (canvas == NULL)
-                canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
-            SkRandom rand;
-            canvas->clear(SK_ColorWHITE);
-
-            b.draw(*masterTimeline, *canvas);
-
-            std::string strFps = std::to_string(fps.getFps());
-            std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "ms";
-            std::string strLoopCnt = std::to_string(loopCounter) + "loop iterations";
-            paint.setColor(SK_ColorBLACK); // move to init function?
-            canvas->drawString(strFps.c_str(), 100.0f, 160.0f, font, paint);
-            canvas->drawString(strMs.c_str(), 100.0f, 180.0f, font, paint);
-            canvas->drawString(strLoopCnt.c_str(), 100.0f, 200.0f, font, paint);
-
-            fps.endFrame();
-
-            canvas->flush();
-            SDL_GL_SwapWindow(window);
-            }
-
+        loopOnce();
+        Sleep(10);
         }
     }
 
-bool  SDLWindow::createWindow(int width, int height, int stencilBits, int msaaSampleCount)
+void SDLSkiaWindow::loopOnce()
+    {
+    loopCounter++;
+
+    if (handleEvents())
+        client.update(*this);
+    if (canvas == NULL)
+        canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
+
+    if (invalid)
+        {
+        fps.beginFrame();
+
+        canvas->clear(SK_ColorWHITE);
+
+        client.draw(*this);
+
+        std::string strFps = std::to_string(fps.getFps());
+        std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "ms";
+        std::string strLoopCnt = std::to_string(loopCounter) + "loop iterations";
+        paint.setColor(SK_ColorBLACK); // move to init function?
+        canvas->drawString(strFps.c_str(), 100.0f, 160.0f, font, paint);
+        canvas->drawString(strMs.c_str(), 100.0f, 180.0f, font, paint);
+        canvas->drawString(strLoopCnt.c_str(), 100.0f, 200.0f, font, paint);
+
+        fps.endFrame();
+
+        canvas->flush();
+        SDL_GL_SwapWindow(window);
+        invalid = false;
+        }
+    }
+
+bool  SDLSkiaWindow::createWindow(int width, int height, int stencilBits, int msaaSampleCount)
     {
     this->stencilBits = stencilBits;
     this->msaaSampleCount = msaaSampleCount;
@@ -87,16 +104,11 @@ bool  SDLWindow::createWindow(int width, int height, int stencilBits, int msaaSa
     canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
     //canvas->scale((float)dw/dm.w, (float)dh/dm.h); //scales to about 1:1
 
-
-    masterTimeline = graffel::Timeline::createMasterTimeline();
-    //masterTimeline.setTick(new graffel::IntervalTick(1000));
-    //graffel::Timeline& halfTime = masterTimeline.createChild();
-    //halfTime.setTick(new graffel::IntervalTick(100));
-    masterTimeline->setBlock(&b);
-
+    client.initialize(*this);
+    return true;
     }
 
-void SDLWindow::destroyWindow()
+void SDLSkiaWindow::destroyWindow()
     {
     if (glContext) {
         SDL_GL_DeleteContext(glContext);
@@ -106,7 +118,7 @@ void SDLWindow::destroyWindow()
     }
 
 
-SkCanvas* SDLWindow::createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac, uint32_t windowFormat, int contextType, sk_sp<GrContext> grContext)
+SkCanvas* SDLSkiaWindow::createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac, uint32_t windowFormat, int contextType, sk_sp<GrContext> grContext)
     {
     // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can render to it
     GR_GL_GetIntegerv(interfac.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
@@ -140,25 +152,18 @@ SkCanvas* SDLWindow::createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac,
     return surface->getCanvas();
     }
 
-void SDLWindow::handleEvents()
+bool SDLSkiaWindow::handleEvents()
     {
+    bool eventsHappened = false;
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        eventsHappened = true;
         switch (event.type) {
             case SDL_MOUSEMOTION:
-                //if (event.motion.state == SDL_PRESSED) {
-                //    SkRect& rect = state->fRects.back();
-                //    rect.fRight = (SkScalar)event.motion.x;
-                //    rect.fBottom = (SkScalar)event.motion.y;
-                //    }
+                client.mouseMoved(event.motion, *this);
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                //if (event.button.state == SDL_PRESSED) {
-                //    state->fRects.push_back() = SkRect::MakeLTRB(SkIntToScalar(event.button.x),
-                //                                                 SkIntToScalar(event.button.y),
-                //                                                 SkIntToScalar(event.button.x),
-                //                                                 SkIntToScalar(event.button.y));
-                //    }
+                client.mouseClicked(event.motion, *this);
                 break;
             case SDL_KEYDOWN:
                 {
@@ -175,6 +180,7 @@ void SDLWindow::handleEvents()
                     case SDL_WINDOWEVENT_SIZE_CHANGED: //always called
                         std::cout << "SDL: window size changed\n";
                         resizeViewportToWindow(window);
+                        client.resize(event.window, *this);
                         canvas = NULL;
                         break;
                     }
@@ -186,10 +192,12 @@ void SDLWindow::handleEvents()
                 break;
             }
         }
+    return eventsHappened;
     }
 
-void SDLWindow::resizeViewportToWindow(SDL_Window* window)
+void SDLSkiaWindow::resizeViewportToWindow(SDL_Window* window)
     {
     SDL_GL_GetDrawableSize(window, &dw, &dh);
     glViewport(0, 0, dw, dh);
     }
+

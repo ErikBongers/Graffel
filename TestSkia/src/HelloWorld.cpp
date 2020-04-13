@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "HelloWorld.h"
 
 #include "include/core/SkCanvas.h"

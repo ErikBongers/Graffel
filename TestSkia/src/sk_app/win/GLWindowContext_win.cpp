@@ -5,7 +5,7 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
+#include "../../pch.h"
 #include "include/gpu/gl/GrGLInterface.h"
 #include "src/utils/win/SkWGL.h"
 #include "tools/sk_app/GLWindowContext.h"
@@ -79,9 +79,9 @@ sk_sp<const GrGLInterface> GLWindowContext_win::onInitializeContext() {
 
     // Look to see if RenderDoc is attached. If so, re-create the context with a core profile
     if (wglMakeCurrent(dc, fHGLRC)) {
-        auto interface = GrGLMakeNativeInterface();
-        bool renderDocAttached = interface->hasExtension("GL_EXT_debug_tool");
-        interface.reset(nullptr);
+        auto interfac = GrGLMakeNativeInterface();
+        bool renderDocAttached = interfac->hasExtension("GL_EXT_debug_tool");
+        interfac.reset(nullptr);
         if (renderDocAttached) {
             wglDeleteContext(fHGLRC);
             fHGLRC = SkCreateWGLContext(dc, fDisplayParams.fMSAASampleCount, false /* deepColor */,
