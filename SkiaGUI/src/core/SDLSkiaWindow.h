@@ -1,8 +1,10 @@
 #pragma once
 #include "pch.h"
 #include "Fps.h"
+#include <vector>
 
 class SDLSkiaWindow;
+class UIElement;
 class WindowClient
     {
     public:
@@ -47,7 +49,7 @@ class SDLSkiaWindow
         void resizeViewportToWindow(SDL_Window* window);
         void loopOnce();
         static int onEventsReceived(void* userdata, SDL_Event* event);
-
+        std::vector<UIElement*> mouseCaptures;
     public:
         SDLSkiaWindow(WindowClient& client) : client(client) {}
         void startEventLoop();
@@ -57,5 +59,7 @@ class SDLSkiaWindow
         int getHeight() { return dh; }
         SkCanvas& Canvas() { return *canvas; }
         void setInvalid() { invalid = true; }
+        void addMouseCapture(UIElement& e);
+        void removeMouseCapture(UIElement& e);
     };
 

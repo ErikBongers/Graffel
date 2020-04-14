@@ -5,6 +5,7 @@
 #else
 #include <unistd.h>
 #endif
+#include "UIElement.h"
 
 int SDLCALL SDLSkiaWindow::onEventsReceived(void* userdata, SDL_Event* event)
     {
@@ -120,6 +121,23 @@ void SDLSkiaWindow::destroyWindow()
     SDL_DestroyWindow(window);
     }
 
+void SDLSkiaWindow::addMouseCapture(UIElement& e)
+    {
+    if ((std::find(mouseCaptures.begin(), mouseCaptures.end(), &e) == mouseCaptures.end()))
+        {
+        mouseCaptures.push_back(&e);
+        }
+    }
+
+void SDLSkiaWindow::removeMouseCapture(UIElement& e)
+    {
+    auto found = std::find(mouseCaptures.begin(), mouseCaptures.end(), &e);
+    if (found != mouseCaptures.end())
+        {
+        mouseCaptures.erase(found);
+        }
+    }
+
 
 SkCanvas* SDLSkiaWindow::createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac, uint32_t windowFormat, int contextType, sk_sp<GrContext> grContext)
     {
@@ -163,6 +181,10 @@ bool SDLSkiaWindow::handleEvents()
         eventsHappened = true;
         switch (event.type) {
             case SDL_MOUSEMOTION:
+                for (UIElement* el : mouseCaptures)
+                    {
+                    el->mouseMove(*el, event.motion, *this);
+                    }
                 client.mouseMoved(event.motion, *this);
                 break;
             case SDL_MOUSEBUTTONDOWN:

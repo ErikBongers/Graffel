@@ -3,5 +3,10 @@
 
 class Button : public UIElement
     {
-    SkColor highlightColor = SK_ColorTRANSPARENT;
+    private:
+        SkColor originalBkcColor = SK_ColorTRANSPARENT;
+    public:
+        SkColor highlightColor = SK_ColorTRANSPARENT;
+        Button();
+        void highlight(bool high, SDLSkiaWindow& window);
     };

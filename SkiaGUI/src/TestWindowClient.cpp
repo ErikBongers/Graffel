@@ -15,6 +15,7 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
 
     button1.rect = SkRect::MakeXYWH(5, 5, 20, 20);
     button1.backgroundColor = SK_ColorDKGRAY;
+    button1.highlightColor = SK_ColorYELLOW;
     toolbar += button1;
 
     button2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
@@ -51,11 +52,7 @@ void TestWindowClient::draw(SDLSkiaWindow& window)
 
 void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
     {
-    if(button1.hitTest(event.x, event.y))
-        button1.backgroundColor = SK_ColorYELLOW;
-    else
-        button1.backgroundColor = SK_ColorDKGRAY;
-    //window.setInvalid();//TODO: don't invalidate on every mouseMove
+    full.trickleMouseMoveEvent(event, window);
     infiniteCanvas.mouseMoved(event, window);
     }
 
