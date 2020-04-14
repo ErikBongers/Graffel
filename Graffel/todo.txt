@@ -14,7 +14,7 @@
       > the int is passed to the child range
       > the child range checks if a marker was passed and does...what?
       > what is a tick?
-        > a tick is a predefined point in time that has been reached.
+        > a tick is a predefined point in time that has been reached. 
           > can be a marker
           > can be an interval (1 second,...)
           > maybe the function should be called checkTicks().

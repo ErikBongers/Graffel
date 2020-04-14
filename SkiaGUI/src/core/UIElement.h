@@ -5,6 +5,7 @@
 class UIElement;
 typedef std::function<void(UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window)> PResize;
 typedef std::function<void(UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window)> PMouseMove;
+typedef std::function<void(UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window)> PMouseUp;
 
 class UIElement
     {
@@ -18,12 +19,14 @@ class UIElement
         UIElement& operator+=(UIElement& child) { return *this += &child; }
         void trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window);
         bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window);
+        bool trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
         bool hitTest(int x, int y);
         SkRect absoluteRect();
         
         //event callbacks
         PResize resize = nullptr;
         PMouseMove mouseMove = nullptr;
+        PMouseUp mouseUp = nullptr;
 
     protected:
         void drawBackground(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);

@@ -16,6 +16,11 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     button1.rect = SkRect::MakeXYWH(5, 5, 20, 20);
     button1.backgroundColor = SK_ColorDKGRAY;
     button1.highlightColor = SK_ColorYELLOW;
+    button1.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
+        std::cout << "Clicked!" << std::endl;
+        this->button2.backgroundColor = SK_ColorRED;
+        window.setInvalid();
+        };
     toolbar += button1;
 
     button2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
@@ -64,6 +69,7 @@ void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& win
 
 void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
+    full.trickleMouseUpEvent(event, window);
     infiniteCanvas.mouseUp(event, window);
     }
 
