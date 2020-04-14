@@ -45,32 +45,47 @@ void InfiniteCanvas::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& windo
     auto state = SDL_GetMouseState(nullptr, nullptr);
     if (SDL_BUTTON(SDL_BUTTON_MIDDLE) & state)
         return; //accidentally scrolled while pressing the middle (wheel) button
-    SkMatrix matrix;
-    matrix.reset();
-    matrix = matrix.setTranslate(xTranslate, yTranslate);
-    matrix = matrix.preScale(scaleFactor, scaleFactor);
-    SkMatrix invertedMatrix;
-    invertedMatrix.reset();
-    matrix.invert(&invertedMatrix);
-    SkPoint mouseLoc;
-    SkPoint canvasLoc;
+
     int x, y;
     SDL_GetMouseState(&x, &y);
+
+    SkPoint mouseLoc;
+    SkPoint canvasLoc;
     mouseLoc.set((SkScalar)x, (SkScalar)y);
-    invertedMatrix.mapPoints(&canvasLoc, &mouseLoc, 1);
+    mapPixelsToPoints(&canvasLoc, &mouseLoc, 1);
 
     if (event.y > 0)
         scaleFactor *= 1 + scaleSpeed;
     else
         scaleFactor *= 1 - scaleSpeed;
 
-    matrix.reset();
-    matrix = matrix.setTranslate(xTranslate, yTranslate);
-    matrix = matrix.preScale(scaleFactor, scaleFactor);
     SkPoint newMouseLoc;
-    matrix.mapPoints(&newMouseLoc, &canvasLoc, 1);
+    mapPointsToPixels(&newMouseLoc, &canvasLoc, 1);
     xTranslate += mouseLoc.fX - newMouseLoc.fX;
     yTranslate += mouseLoc.fY - newMouseLoc.fY;
 
     window.setInvalid();
     }
+
+SkMatrix InfiniteCanvas::createMatrix()
+    {
+    SkMatrix matrix;
+    matrix.reset();
+    matrix = matrix.setTranslate(xTranslate, yTranslate)
+        .preScale(scaleFactor, scaleFactor);
+    return matrix;
+    }
+
+void InfiniteCanvas::mapPixelsToPoints(SkPoint* dst, SkPoint* src, int count)
+    {
+    SkMatrix invertedMatrix;
+    invertedMatrix.reset();
+    createMatrix().invert(&invertedMatrix);
+    invertedMatrix.mapPoints(dst, src, 1);
+    }
+
+void InfiniteCanvas::mapPointsToPixels(SkPoint* dst, SkPoint* src, int count)
+    {
+    createMatrix().mapPoints(dst, src, 1);
+    }
+
