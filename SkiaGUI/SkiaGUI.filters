@@ -39,18 +39,6 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graffel\Block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\graffel\Tick.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\graffel\Timeline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\graffel\Range.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SkiaSDLExample.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -93,18 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graffel\Block.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graffel\Tick.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graffel\Timeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graffel\Range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Functions.h">

@@ -2,7 +2,6 @@
 #include "pch.h"
 #include "SDLSkiaWindow.h"
 
-//typedef void (*PResize)(SDL_WindowEvent& event, SDLSkiaWindow& window);
 class UIElement;
 typedef std::function<void(UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window)> PResize;
 
@@ -21,7 +20,6 @@ class UIElement
         bool hitTest(int x, int y);
         SkRect absoluteRect();
     protected:
-        //virtual void resize(SDL_WindowEvent& event, , SDLSkiaWindow& window) {}
         void drawBackground(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
         void drawChildren(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
         virtual void drawMe(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window) {}

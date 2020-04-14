@@ -3,13 +3,6 @@
 
 void GraffelWindowClient::initialize(SDLSkiaWindow& window)
     {
-    masterTimeline = graffel::Timeline::createMasterTimeline();
-    //masterTimeline.setTick(new graffel::IntervalTick(1000));
-    //graffel::Timeline& halfTime = masterTimeline.createChild();
-    //halfTime.setTick(new graffel::IntervalTick(100));
-    masterTimeline->setBlock(&b);
-
-
     full.backgroundColor = SK_ColorWHITE;
     full.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
         e.rect = SkRect::MakeWH((SkScalar)window.getWidth(), (SkScalar)window.getHeight());
@@ -43,15 +36,11 @@ void GraffelWindowClient::initialize(SDLSkiaWindow& window)
 
 void GraffelWindowClient::update(SDLSkiaWindow& window)
     {
-    //if (masterTimeline->tick())
-    //    window.setInvalid();
     }
 
 void GraffelWindowClient::draw(SDLSkiaWindow& window)
     {
     SkCanvas& c = window.Canvas();
-    //SkRandom rand;
-    b.draw(*masterTimeline, c);
     SkPaint paint;
     paint.setColor(SK_ColorLTGRAY);
     paint.setStyle(SkPaint::Style::kFill_Style);

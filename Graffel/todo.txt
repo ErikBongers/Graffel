@@ -1,8 +1,12 @@
 * infiniteCanvas: create translatePointToPixel and translatePixelToPoint functions
   > other names?
-
+* handle button clicks
 * no redraw on mousemove without invalidation.
-
+* this project has nothing to do with graffel.
+  > split and move to other project. 
+    > start from copy?
+    - a SkiaGUI project
+    - a GraffelWindow project
 
 * testRange()
   - combine slices into ranges.
