@@ -13,7 +13,7 @@ void InfiniteCanvas::drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& 
     window.Canvas().restore();
     }
 
-void InfiniteCanvas::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
     {
     if (isDragging)
         {
@@ -35,7 +35,7 @@ void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& windo
         }
     }
 
-void InfiniteCanvas::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::_mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     isDragging = false;
     }

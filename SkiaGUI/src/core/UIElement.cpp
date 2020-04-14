@@ -34,6 +34,7 @@ bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow
     {
     if (!hitTest(event.x, event.y))
         return false;
+    _mouseMove(event, window);
     if (mouseMove)
         mouseMove(*this, event, window);
     for (auto el : children)
@@ -48,6 +49,7 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     {
     if (!hitTest(event.x, event.y))
         return false;
+    _mouseUp(event, window);
     if (mouseUp)
         mouseUp(*this, event, window);
     for (auto el : children)

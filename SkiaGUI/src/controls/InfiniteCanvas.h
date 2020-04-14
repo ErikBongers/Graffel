@@ -16,8 +16,8 @@ class InfiniteCanvas : public UIElement
         inline void mapPixelsToPoints(SkPoint* dst, SkPoint* src, int count);
         inline void mapPointsToPixels(SkPoint* dst, SkPoint* src, int count);
     public:
-        void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window);
+        void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) override;
         void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
-        void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
+        void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
         void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window);
     };

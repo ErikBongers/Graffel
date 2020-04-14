@@ -32,4 +32,6 @@ class UIElement
         void drawBackground(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
         void drawChildren(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
         virtual void drawMe(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window) {}
+        virtual void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}
+        virtual void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
     };

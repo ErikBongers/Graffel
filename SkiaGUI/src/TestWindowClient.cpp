@@ -37,7 +37,6 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     square1.rect = SkRect::MakeXYWH(200, 200, 20, 20);
     square1.backgroundColor = SK_ColorBLUE;
     infiniteCanvas += square1; 
-
     }
 
 void TestWindowClient::update(SDLSkiaWindow& window)
@@ -58,7 +57,6 @@ void TestWindowClient::draw(SDLSkiaWindow& window)
 void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
     {
     full.trickleMouseMoveEvent(event, window);
-    infiniteCanvas.mouseMoved(event, window);
     }
 
 void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
@@ -70,7 +68,6 @@ void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& win
 void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     full.trickleMouseUpEvent(event, window);
-    infiniteCanvas.mouseUp(event, window);
     }
 
 void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window)

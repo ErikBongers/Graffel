@@ -1,5 +1,3 @@
-* handle button clicks
-* no redraw on mousemove without invalidation.
 
 * testRange()
   - combine slices into ranges.
