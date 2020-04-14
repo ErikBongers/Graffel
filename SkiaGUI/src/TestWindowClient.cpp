@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "GraffelWindowClient.hpp"
+#include "TestWindowClient.hpp"
 
-void GraffelWindowClient::initialize(SDLSkiaWindow& window)
+void TestWindowClient::initialize(SDLSkiaWindow& window)
     {
     full.backgroundColor = SK_ColorWHITE;
     full.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
@@ -19,7 +19,7 @@ void GraffelWindowClient::initialize(SDLSkiaWindow& window)
 
     button2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
     button2.backgroundColor = SK_ColorDKGRAY;
-    toolbar += button2;
+    toolbar += button2; 
 
     infiniteCanvas.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
         e.rect = SkRect::MakeLTRB(20, 50, (SkScalar)window.getWidth() - 30, (SkScalar)window.getHeight() - 30);
@@ -34,11 +34,11 @@ void GraffelWindowClient::initialize(SDLSkiaWindow& window)
 
     }
 
-void GraffelWindowClient::update(SDLSkiaWindow& window)
+void TestWindowClient::update(SDLSkiaWindow& window)
     {
     }
 
-void GraffelWindowClient::draw(SDLSkiaWindow& window)
+void TestWindowClient::draw(SDLSkiaWindow& window)
     {
     SkCanvas& c = window.Canvas();
     SkPaint paint;
@@ -49,33 +49,33 @@ void GraffelWindowClient::draw(SDLSkiaWindow& window)
     full.drawAll(0, 0, window);
     }
 
-void GraffelWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
     {
     if(button1.hitTest(event.x, event.y))
         button1.backgroundColor = SK_ColorYELLOW;
     else
         button1.backgroundColor = SK_ColorDKGRAY;
-    window.setInvalid();//TODO: don't invalidate on every mouseMove
+    //window.setInvalid();//TODO: don't invalidate on every mouseMove
     infiniteCanvas.mouseMoved(event, window);
     }
 
-void GraffelWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     window.setInvalid();
     infiniteCanvas.mouseDown(event, window);
     }
 
-void GraffelWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     infiniteCanvas.mouseUp(event, window);
     }
 
-void GraffelWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window)
     {
     infiniteCanvas.mouseWheel(event, window);
     }
 
-void GraffelWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
     {
     full.trickleResizeEvent(event, window);
     }

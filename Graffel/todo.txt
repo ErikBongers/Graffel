@@ -1,3 +1,5 @@
+* handle mouseMoves
+  > to handle the mouse leaving, a UIElement can register to mouseCapture.
 * handle button clicks
 * no redraw on mousemove without invalidation.
 

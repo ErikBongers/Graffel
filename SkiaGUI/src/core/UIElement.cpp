@@ -30,6 +30,20 @@ void UIElement::trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window
         }
     }
 
+bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+    {
+    if (!hitTest(event.x, event.y))
+        return false;
+    if (mouseMove)
+        mouseMove(*this, event, window);
+    for (auto el : children)
+        {
+        if (el->trickleMouseMoveEvent(event, window))
+            break; //assuming no overlapping UIElements.
+        }
+    return true;
+    }
+
 bool UIElement::hitTest(int x, int y)
     {
     return absoluteRect().contains((SkScalar)x, (SkScalar)y);

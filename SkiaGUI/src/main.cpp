@@ -1,8 +1,8 @@
 #include "pch.h"
 #include <iostream>
-#include "SDLSkiaWindow.h"
-#include "Functions.h"
-#include "GraffelWindowClient.hpp"
+#include "core/SDLSkiaWindow.h"
+#include "core/Functions.h"
+#include "TestWindowClient.hpp"
 
 
 #undef main
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    GraffelWindowClient* client = new GraffelWindowClient();
+    TestWindowClient* client = new TestWindowClient();
     SDLSkiaWindow* wnd = new SDLSkiaWindow(*client);
     
     if(wnd->createWindow((int)(dm.w*0.7), (int)(dm.h*0.7), kStencilBits, kMsaaSampleCount))

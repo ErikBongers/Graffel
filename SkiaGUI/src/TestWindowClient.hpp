@@ -1,16 +1,16 @@
 #include "pch.h"
-#include "SDLSkiaWindow.h"
-#include "UIElement.h"
-#include "InfiniteCanvas.h"
+#include "core/SDLSkiaWindow.h"
+#include "controls/Button.h"
+#include "controls/InfiniteCanvas.h"
 
 
-class GraffelWindowClient : public WindowClient
+class TestWindowClient : public WindowClient
     {
     private:
         UIElement full;
         UIElement toolbar;
-        UIElement button1;
-        UIElement button2;
+        Button button1;
+        Button button2;
         InfiniteCanvas infiniteCanvas;
         UIElement square1;
 

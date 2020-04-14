@@ -1,21 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Functions.cpp" />
-    <ClCompile Include="src\GraffelWindowClient.cpp" />
-    <ClCompile Include="src\InfiniteCanvas.cpp" />
-    <ClCompile Include="src\SDLSkiaWindow.cpp" />
-    <ClCompile Include="src\SkiaSDLExample.cpp" />
-    <ClCompile Include="src\UIElement.cpp" />
+    <ClCompile Include="src\TestWindowClient.cpp" />
     <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\core\UIElement.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\SDLSkiaWindow.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controls\Button.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controls\InfiniteCanvas.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\core\Functions.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Functions.h" />
-    <ClInclude Include="src\GraffelWindowClient.hpp" />
+    <ClInclude Include="src\TestWindowClient.hpp" />
     <ClInclude Include="src\Fps.h" />
-    <ClInclude Include="src\InfiniteCanvas.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\SDLSkiaWindow.h" />
-    <ClInclude Include="src\UIElement.h" />
+    <ClInclude Include="src\core\UIElement.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\SDLSkiaWindow.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controls\Button.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controls\InfiniteCanvas.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Functions.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{cded109b-7fb1-4dee-bad3-6e6cdd8bee56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="controls">
+      <UniqueIdentifier>{1a11453c-f021-4638-8a3a-8fdfcd1d557e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
