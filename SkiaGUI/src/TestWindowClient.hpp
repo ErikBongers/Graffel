@@ -3,6 +3,17 @@
 #include "controls/Button.h"
 #include "controls/InfiniteCanvas.h"
 
+class Bullet : public UIElement
+    {
+    void drawMe(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window) override
+        {
+        SkPaint paint;
+        paint.setColor(SK_ColorBLUE);
+        SkScalar radius = rect.width() / 2;
+        window.Canvas().drawCircle(SkPoint::Make(xOffset+ radius, yOffset+ radius), radius, paint);
+        }
+    };
+
 
 class TestWindowClient : public WindowClient
     {
@@ -13,6 +24,7 @@ class TestWindowClient : public WindowClient
         Button button2;
         InfiniteCanvas infiniteCanvas;
         UIElement square1;
+        Bullet bullet;
 
     public:
         void initialize(SDLSkiaWindow& window) override;

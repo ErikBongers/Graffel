@@ -1,4 +1,3 @@
-* infiniteCanvas does not drag itself when an object is clicked.
 * create draggable object.
   > only within InfiniteCanvas?
   > who drags?

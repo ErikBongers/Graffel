@@ -3,7 +3,7 @@
 void UIElement::drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window)
     {
     drawBackground(xOffset, yOffset, window);
-    drawMe(xOffset, yOffset, window);
+    drawMe(xOffset + rect.fLeft, yOffset + rect.fTop, window);
     drawChildren(xOffset, yOffset, window);
     }
 
