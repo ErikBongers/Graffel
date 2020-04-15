@@ -1,142 +1,64 @@
+* infiniteCanvas does not drag itself when an object is clicked.
+* create draggable object.
+  > only within InfiniteCanvas?
+  > who drags?
+    > the parent, because the dragee does not know what is allowed and how to interact with other objects.
+      > an object is "being" dragged, it does not drag itself.
 
-* testRange()
-  - combine slices into ranges.
-    > just a list of slices.
-    > validate()
-    > iterate?
-      > in order to iterate, the full range should be 'resolved'.
-        > since a range is just a definition, the resolved range should be a sort of temp object (within the iterator)?
-  - how do ticks work with ranges?
-    > for testing purposes, just use ints that represent milliseconds.
-    > an imaginary master timeline (range!) loops over ints : 0, 1...
-      > the int is passed to the child range
-      > the child range checks if a marker was passed and does...what?
-      > what is a tick?
-        > a tick is a predefined point in time that has been reached. 
-          > can be a marker
-          > can be an interval (1 second,...)
-          > maybe the function should be called checkTicks().
-  - create weighted and relative values.
-    > a weighed range needs a absolute begin and endpoint
-    > weights only have meaning in combination with markers.
-    > test case:
-      1#begin..#middle..10#end
-      > for a slice, a begin or endpoint can have a marker attached to it.
-      > just a string will do.
-      > in above example, the weights are implicit, but the generated slices will have explicit values.
-        > when creating the range, the slices get determined.
-  - create a marker: just a string?
-  - create ranges as lists of slices and markers.
-    > or...a timeline is a list of ranges and markers?
-    > no, better allow markers in ranges, otherwise we would need time-slices.
+* Test curves
+* Hittest curves
+  > getFillPath()
+  > SkPath.contains(x, y) //for a closed contour!
+  >       .dump() text dump of path
+          .interpolate() > morph path1 to path2
+  > SkTrimPathEffect: shortens path, pixel by pixel
+    > Can be used to traverse a path?
+  > get segments (points) of path?
+
+  > if intersection has 2 contours, 
+  > https://fiddle.skia.org/c/@pathops
+  > feature request: "intersection point for two SkPaths https://groups.google.com/forum/#!msg/skia-discuss/7kp0d5dcQq4/oGKRxz_xAgAJ
+ 
+
+Needed for iDea
+----------------
+* text editor. : skia/modules/skplaintexteditor
+* animations for transitions.
 
 
-* timer speed
-  > since a timer.tick() function may be called slower than the expected ticks, a timer should not assume being called for every tick.
-  > this means, that timer.tick() should return true even if a number of ticks have been missed.
-  > this also means that a timer should not assume all ticks were encountered/registered.
-    > in the most extreme case, a loop timer may already have looped a couple of times before the nect tick() call.
+* Adorners?
+* Styles for nodes? (set of preferences, like fixed size, set of colors,...)
 
-* state
-  > block state?
-  > timeline state?
+iDea v2
+------------
+- Goal is combine Word with Whiteboard
+- no OneNote !!!!! Too loose.
+- more like Whiteboard, but with more functionality.
+- also a bit like Word.
+-Nodes
+  - all nodes have 3 levels: thumb, post-it and full
+  > text
+    - a title for thumb 
+    - small note for post it
+    - full text (or subcanvas for detailed view)
+  > image
+  > subCanvas
 
-* draw()
-  - a timeline only has ONE block, to avoid confusion in the example below.
-  > who draws? Timeline or Block?
-  - a block HAS a timeline.
-  - can a sub-timeline be faster than master?
-    - YES! otherwise too restrictive.
-    - NO! otherwise, no option to slow down full animation.
-    > make distinction between time and ticks.
-      > time has hightest and undetermined resolution.
-      > tick has parent's resolution.
+- Lists and hierarchies.
+  > different auto-sorts
+    > but can be broken
+      > bit like windows desktop - layout of icons.
+      > items can be selected and grouped.
+  > group boundaries not necessarily constantly visible.
+  > multiple lists of same items ("create duplicate group")
+- view a group as a document (like Word)
+  > continuous view
+  > page view
 
-
-//////////EXAMPLE CODE /////////////////
-
-
-master_timeline
-  { //base block
-    { //sub block one, inherits timeline if none specified
-    
-    } //no comma - this would be annoying when copying/moving blocks.
-    { //sub block two, same timeline.
-    
-    }
-    another_timeline //could be a faster timeline.
-    {
-    }
-    { //which timeline? master or another_timeline?
-      
-      // block inherits master_timeline!
-    }
-    copyof timeline_var //a copy of a timeline
-    {
-    }
-  }
-
-
-///////////////////////////////////////
-
-
-
-* draw()
-  - as frequent as possible (avoid this: have a separate draw() function that ignores the timeline ticks: continuousDraw(), forcedDraw(), drawNow(),...)
-    - the default timeline.Tick always returns true and thus draws continuously.
-  - or at fixed intervals
-  - or at calculated intervals (speed up?)
-  - or at markers only.
-* add masterTimeline as param to draw()
-  > easy access to:
-    - absolute time since start of THIS timeline.
-    - pointer to timeline of *this* block
-    - active markers.
-* timelines can be defined before a block or assigned to a variable that is used before a block, to be able to separate complex timelines definitions from block definitions
-* markers
-  - remain ON until next marker.
-  - have a 'reported' flag when the main loop informed the listeners (?) the flag was set, to avoid reporting it multiple times.
-
-* how to show a constant speed, independent of FPS or tick-speed?
- - a 60 FPS tick and a 30FPS tick should show a movement at the same speed.
-
-Language definition
-----------------------
-
- operators:
- n..m  ; move from n to m
- ~n..m~ : soft start and soft end
- n.fn.m ; move from n to m using fn as a function
- -> = fn ; set default move function
- n->+m ; move n to m+n
-
- positions;
- n ; a number is an absolute position
- +n or -n ; relative position to parent.
-
- * All graphics live in a timeline - linear or loop
-   - loop can be implicit or explicit duration
-     - implicit requires inner timelines to determine outer duration.
-
-* allow block comments:
-  /{  --> comments out the whole block
-  .....
-   }
-
-
-    Build compiler
----------------
-- tokenize
-- build tree (syntax analysis)
-- verify tree (semantic analysis)
-- create code (see three address code or 3AC, for semi asm code)
-
-
-SKIA
-------
-* Split SDL and Skia code.
-* Check out sk_app/main_win.
-  > remove SDL code?
+- Layouts
+  > for lists, linear, tiled, all in differnt directions.
+  > for trees?
+    > every subtree is a group and can thus be copied to diffent layouts.
 
 SKIA documentation
 --------------------

@@ -27,6 +27,12 @@ void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& windo
     {
     if (isDragging)
         return;
+    SkPoint mouse = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
+    SkPoint point;
+    mapPixelsToPoints(&point, &mouse, 1);
+    for (auto e : children)
+        if (e->hitTest(point.fX, point.fY))
+            return;
     if (event.state == SDL_PRESSED && event.button == SDL_BUTTON_MIDDLE)
         {
         startDrag.set((SkScalar)event.x, (SkScalar)event.y);
