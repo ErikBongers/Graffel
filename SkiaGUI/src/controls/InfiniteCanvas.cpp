@@ -17,10 +17,28 @@ void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& wind
     {
     if (isDragging)
         {
-        xTranslate = startDragTranslate.fX + event.x - startDrag.fX;
-        yTranslate = startDragTranslate.fY + event.y - startDrag.fY;
+        if (dragee == this)
+            {
+            xTranslate = dragStartDrageePos.fX + event.x - dragStartMousePos.fX;
+            yTranslate = dragStartDrageePos.fY + event.y - dragStartMousePos.fY;
+            }
+        else
+            {
+            SkScalar newDrageePosX = dragStartDrageePos.fX + event.x - dragStartMousePos.fX;
+            SkScalar newDrageePosY = dragStartDrageePos.fY + event.y - dragStartMousePos.fY;
+            //convert newDrageePos to Points
+            SkPoint newDrageePos = SkPoint::Make(newDrageePosX, newDrageePosY);
+            SkPoint newDrageePoint;
+            mapPixelsToPoints(&newDrageePoint, &newDrageePos, 1);
+            dragee->rect = SkRect::MakeXYWH(newDrageePoint.fX, newDrageePoint.fY, dragee->rect.width(), dragee->rect.height());
+            }
         window.setInvalid();
         }
+    SkPoint mouseLoc;
+    SkPoint canvasLoc;
+    mouseLoc.set((SkScalar)event.x, (SkScalar)event.y);
+    mapPixelsToPoints(&canvasLoc, &mouseLoc, 1);
+    std::cout << canvasLoc.fX << ", " << canvasLoc.fY << std::endl;
     }
 
 void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
@@ -30,13 +48,27 @@ void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& windo
     SkPoint mouse = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
     SkPoint point;
     mapPixelsToPoints(&point, &mouse, 1);
-    for (auto e : children)
-        if (e->hitTest(point.fX, point.fY))
+    for (std::vector<UIElement*>::reverse_iterator it = children.rbegin(); it != children.rend(); ++it)
+        {
+        UIElement* e = *it;
+        if (e->hitTest(point.fX, point.fY, true))
+            {
+            //start drag of object
+            //TODO: ask first
+            dragee = e;
+            dragStartMousePos.set((SkScalar)event.x, (SkScalar)event.y);
+            SkPoint p = SkPoint::Make(e->rect.fLeft, e->rect.fTop);
+            mapPointsToPixels(&dragStartDrageePos, &p, 1);
+
+            isDragging = true;
             return;
+            }
+        }
     if (event.state == SDL_PRESSED && event.button == SDL_BUTTON_MIDDLE)
         {
-        startDrag.set((SkScalar)event.x, (SkScalar)event.y);
-        startDragTranslate.set(xTranslate, yTranslate);
+        dragee = this;
+        dragStartMousePos.set((SkScalar)event.x, (SkScalar)event.y);
+        dragStartDrageePos.set(xTranslate, yTranslate);
         isDragging = true;
         }
     }
@@ -86,12 +118,17 @@ void InfiniteCanvas::mapPixelsToPoints(SkPoint* dst, SkPoint* src, int count)
     {
     SkMatrix invertedMatrix;
     invertedMatrix.reset();
-    createMatrix().invert(&invertedMatrix);
+    SkRect abs = absoluteRect();
+    SkMatrix mat = createMatrix();
+    mat.preTranslate(abs.fLeft, abs.fTop);
+    mat.invert(&invertedMatrix);
     invertedMatrix.mapPoints(dst, src, 1);
     }
 
 void InfiniteCanvas::mapPointsToPixels(SkPoint* dst, SkPoint* src, int count)
     {
-    createMatrix().mapPoints(dst, src, 1);
+    SkRect abs = absoluteRect();
+    SkMatrix mat = createMatrix();
+    mat.preTranslate(abs.fLeft, abs.fTop);
+    mat.mapPoints(dst, src, 1);
     }
-

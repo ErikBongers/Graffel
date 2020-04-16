@@ -8,7 +8,7 @@ class Bullet : public UIElement
     void drawMe(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window) override
         {
         SkPaint paint;
-        paint.setColor(SK_ColorBLUE);
+        paint.setColor(SK_ColorRED);
         SkScalar radius = rect.width() / 2;
         window.Canvas().drawCircle(SkPoint::Make(xOffset+ radius, yOffset+ radius), radius, paint);
         }

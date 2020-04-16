@@ -38,8 +38,7 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     square1.backgroundColor = SK_ColorBLUE;
     infiniteCanvas += square1;
 
-    bullet.rect = SkRect::MakeXYWH(300, 300, 10, 10);
-    bullet.backgroundColor = SK_ColorYELLOW;
+    bullet.rect = SkRect::MakeXYWH(300, 300, 20, 20);
     infiniteCanvas += bullet;
     }
 

@@ -21,7 +21,7 @@ class UIElement
         bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window);
         bool trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
         SkRect absoluteRect();
-        virtual bool hitTest(int x, int y);
+        virtual bool hitTest(SkScalar x, SkScalar y, bool ignoreOffset = false);
         
         //event callbacks
         PResize resize = nullptr;

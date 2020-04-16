@@ -4,7 +4,7 @@ Button::Button()
     {
     mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
         Button& button = (Button&)e;
-        if(button.hitTest(event.x, event.y))
+        if(button.hitTest((SkScalar)event.x, (SkScalar)event.y))
             button.highlight(true, window);
         else
             {

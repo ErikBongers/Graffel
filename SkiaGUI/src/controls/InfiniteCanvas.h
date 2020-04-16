@@ -6,9 +6,11 @@ class InfiniteCanvas : public UIElement
     {
     private:
         void drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
-        SkPoint startDrag;
-        SkPoint startDragTranslate;
+        SkPoint dragStartMousePos;
+        SkPoint dragStartDrageePos;
         bool isDragging = false;
+        UIElement* dragee = nullptr;
+
         SkScalar xTranslate = 0, yTranslate = 0;
         SkScalar scaleFactor = 1;
         SkScalar scaleSpeed = 0.1f;

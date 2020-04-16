@@ -1,8 +1,5 @@
 * create draggable object.
-  > only within InfiniteCanvas?
-  > who drags?
-    > the parent, because the dragee does not know what is allowed and how to interact with other objects.
-      > an object is "being" dragged, it does not drag itself.
+  > canvas to client: 
 
 * Test curves
 * Hittest curves

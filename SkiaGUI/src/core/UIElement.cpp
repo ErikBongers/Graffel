@@ -32,7 +32,7 @@ void UIElement::trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window
 
 bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
     {
-    if (!hitTest(event.x, event.y))
+    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
     _mouseMove(event, window);
     if (mouseMove)
@@ -47,7 +47,7 @@ bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow
 
 bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
-    if (!hitTest(event.x, event.y))
+    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
     _mouseUp(event, window);
     if (mouseUp)
@@ -60,9 +60,12 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     return true;
     }
 
-bool UIElement::hitTest(int x, int y)
+bool UIElement::hitTest(SkScalar x, SkScalar y, bool ignoreOffset)
     {
-    return absoluteRect().contains((SkScalar)x, (SkScalar)y);
+    if(ignoreOffset)
+        return rect.contains((SkScalar)x, (SkScalar)y);
+    else
+        return absoluteRect().contains((SkScalar)x, (SkScalar)y);
     }
 
 SkRect UIElement::absoluteRect()
