@@ -14,14 +14,15 @@ class UIElement
         SkRect rect;
         SkColor backgroundColor = SK_ColorTRANSPARENT;
         std::vector<UIElement*> children;
-        virtual void drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
+        virtual void drawAll(SDLSkiaWindow& window);
         UIElement& operator+=(UIElement* child);
         UIElement& operator+=(UIElement& child) { return *this += &child; }
         void trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window);
         bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window);
         bool trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
         SkRect absoluteRect();
-        virtual bool hitTest(SkScalar x, SkScalar y, bool ignoreOffset = false);
+        virtual bool hitTest(SkScalar x, SkScalar y);
+        SkMatrix totalTransform;
         
         //event callbacks
         PResize resize = nullptr;
@@ -29,9 +30,9 @@ class UIElement
         PMouseUp mouseUp = nullptr;
 
     protected:
-        void drawBackground(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
-        void drawChildren(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
-        virtual void drawMe(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window) {}
+        void drawBackground(SDLSkiaWindow& window);
+        void drawChildren(SDLSkiaWindow& window);
+        virtual void drawMe(SDLSkiaWindow& window) {}
         virtual void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}
         virtual void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
     };

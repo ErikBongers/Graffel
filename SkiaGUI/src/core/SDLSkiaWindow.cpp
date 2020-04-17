@@ -35,7 +35,8 @@ void SDLSkiaWindow::loopOnce()
     if (invalid)
         {
         fps.beginFrame();
-
+        canvas->restoreToCount(0);
+        canvas->resetMatrix();
         canvas->clear(SK_ColorWHITE);
 
         client.draw(*this);
@@ -185,6 +186,7 @@ bool SDLSkiaWindow::handleEvents()
                     {
                     el->mouseMove(*el, event.motion, *this);
                     }
+                //std::cout << event.motion.x << ", " << event.motion.y << std::endl;
                 client.mouseMoved(event.motion, *this);
                 break;
             case SDL_MOUSEBUTTONDOWN:

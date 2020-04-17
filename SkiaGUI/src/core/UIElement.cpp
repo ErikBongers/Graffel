@@ -1,16 +1,20 @@
 #include "UIElement.h"
 
-void UIElement::drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window)
+void UIElement::drawAll(SDLSkiaWindow& window)
     {
-    drawBackground(xOffset, yOffset, window);
-    drawMe(xOffset + rect.fLeft, yOffset + rect.fTop, window);
-    drawChildren(xOffset, yOffset, window);
+    window.Canvas().save();
+    window.Canvas().translate(rect.fLeft, rect.fTop);
+    drawBackground(window);
+    totalTransform = window.Canvas().getTotalMatrix();
+    drawMe(window);
+    drawChildren(window);
+    window.Canvas().restore();
     }
 
-void UIElement::drawChildren(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window)
+void UIElement::drawChildren(SDLSkiaWindow& window)
     {
     for (auto el : children)
-        el->drawAll(rect.left() + xOffset, rect.top() + yOffset, window);
+        el->drawAll(window);
     }
 
 UIElement& UIElement::operator+=(UIElement* child)
@@ -60,12 +64,15 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     return true;
     }
 
-bool UIElement::hitTest(SkScalar x, SkScalar y, bool ignoreOffset)
+bool UIElement::hitTest(SkScalar x, SkScalar y)
     {
-    if(ignoreOffset)
-        return rect.contains((SkScalar)x, (SkScalar)y);
-    else
-        return absoluteRect().contains((SkScalar)x, (SkScalar)y);
+    SkPoint mouse = SkPoint::Make(x, y);
+    SkMatrix invertedMatrix;
+    invertedMatrix.reset();
+    totalTransform.invert(&invertedMatrix);
+    invertedMatrix.mapPoints(&mouse, 1);
+    SkRect bounds = SkRect::MakeWH(rect.width(), rect.height());
+    return bounds.contains(mouse.fX, mouse.fY);
     }
 
 SkRect UIElement::absoluteRect()
@@ -85,15 +92,13 @@ SkRect UIElement::absoluteRect()
     return rectAbs;
     }
 
-void UIElement::drawBackground(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window)
+void UIElement::drawBackground(SDLSkiaWindow& window)
     {
     if (backgroundColor != SK_ColorTRANSPARENT)
         {
         SkPaint paint;
         paint.setColor(backgroundColor);
         paint.setStyle(SkPaint::Style::kFill_Style);
-        SkRect absRect = rect;
-        absRect.offset(xOffset, yOffset);
-        window.Canvas().drawRect(absRect, paint);
+        window.Canvas().drawRect(SkRect::MakeWH(rect.width(), rect.height()), paint);
         }
     }

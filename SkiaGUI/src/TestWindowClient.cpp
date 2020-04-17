@@ -9,7 +9,7 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
         window.setInvalid();
         };
 
-    toolbar.rect = SkRect::MakeXYWH(10, 10, 500, 40);
+    toolbar.rect = SkRect::MakeXYWH(20, 10, 500, 40);
     toolbar.backgroundColor = SK_ColorLTGRAY;
     full += toolbar;
 
@@ -34,12 +34,49 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     infiniteCanvas.backgroundColor = SK_ColorDKGRAY;
     full += infiniteCanvas;
 
-    square1.rect = SkRect::MakeXYWH(200, 200, 20, 20);
+    square1.rect = SkRect::MakeXYWH(200, 200, 200, 200);
     square1.backgroundColor = SK_ColorBLUE;
     infiniteCanvas += square1;
 
     bullet.rect = SkRect::MakeXYWH(300, 300, 20, 20);
+    bullet.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+        Bullet& bullet = (Bullet&)e;
+        if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
+            {
+            bullet.color = SK_ColorYELLOW;
+            window.addMouseCapture(bullet); //todo: not efficient.
+            }
+        else
+            {
+            bullet.color = SK_ColorRED;
+            window.removeMouseCapture(bullet);
+            }
+        window.setInvalid();//todo: not efficient.
+        };
+
     infiniteCanvas += bullet;
+
+    blueChild.rect = SkRect::MakeXYWH(10, 10, 20, 20);
+    square1 += blueChild;
+
+    p1.rect = SkRect::MakeXYWH(80, 80, 10, 10);
+    infiniteCanvas += p1;
+
+    p2.rect = SkRect::MakeXYWH(100, 80, 10, 10);
+    infiniteCanvas += p2;
+
+    p3.rect = SkRect::MakeXYWH(80, 100, 10, 10);
+    infiniteCanvas += p3;
+
+    p4.rect = SkRect::MakeXYWH(100, 100, 10, 10);
+    infiniteCanvas += p4;
+
+    curve1.rect = SkRect::MakeXYWH(0,0,1,1);
+    curve1.p1 = &p1;
+    curve1.p2 = &p2;
+    curve1.p3 = &p3;
+    curve1.p4 = &p4;
+    infiniteCanvas += curve1;
     }
 
 void TestWindowClient::update(SDLSkiaWindow& window)
@@ -49,12 +86,7 @@ void TestWindowClient::update(SDLSkiaWindow& window)
 void TestWindowClient::draw(SDLSkiaWindow& window)
     {
     SkCanvas& c = window.Canvas();
-    SkPaint paint;
-    paint.setColor(SK_ColorLTGRAY);
-    paint.setStyle(SkPaint::Style::kFill_Style);
-    SkRect rect = SkRect::MakeXYWH(300, 100, 100, 100);
-    c.drawRect(rect, paint);
-    full.drawAll(0, 0, window);
+    full.drawAll(window);
     }
 
 void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)

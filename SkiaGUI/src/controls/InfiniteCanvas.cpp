@@ -1,15 +1,16 @@
 #include "pch.h"
 #include "InfiniteCanvas.h"
 
-void InfiniteCanvas::drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window)
+void InfiniteCanvas::drawAll(SDLSkiaWindow& window)
     {
-    drawBackground(xOffset, yOffset, window);
-    drawMe(xOffset, yOffset, window);
     window.Canvas().save();
-    window.Canvas().clipRect(absoluteRect());
+    window.Canvas().translate(rect.fLeft, rect.fTop);
+    drawBackground(window);
+    drawMe(window);
+    window.Canvas().clipRect(SkRect::MakeWH(rect.width(), rect.height()));
     window.Canvas().translate(xTranslate, yTranslate);
     window.Canvas().scale(scaleFactor, scaleFactor); //pre scaling!
-    drawChildren(xOffset, yOffset, window);
+    drawChildren(window);
     window.Canvas().restore();
     }
 
@@ -38,20 +39,16 @@ void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& wind
     SkPoint canvasLoc;
     mouseLoc.set((SkScalar)event.x, (SkScalar)event.y);
     mapPixelsToPoints(&canvasLoc, &mouseLoc, 1);
-    std::cout << canvasLoc.fX << ", " << canvasLoc.fY << std::endl;
     }
 
 void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     if (isDragging)
         return;
-    SkPoint mouse = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
-    SkPoint point;
-    mapPixelsToPoints(&point, &mouse, 1);
     for (std::vector<UIElement*>::reverse_iterator it = children.rbegin(); it != children.rend(); ++it)
         {
         UIElement* e = *it;
-        if (e->hitTest(point.fX, point.fY, true))
+        if (e->hitTest(event.x, event.y))
             {
             //start drag of object
             //TODO: ask first

@@ -1,7 +1,3 @@
-* create draggable object.
-  > canvas to client: 
-
-* Test curves
 * Hittest curves
   > getFillPath()
   > SkPath.contains(x, y) //for a closed contour!

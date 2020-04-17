@@ -5,7 +5,7 @@
 class InfiniteCanvas : public UIElement
     {
     private:
-        void drawAll(SkScalar xOffset, SkScalar yOffset, SDLSkiaWindow& window);
+        void drawAll(SDLSkiaWindow& window);
         SkPoint dragStartMousePos;
         SkPoint dragStartDrageePos;
         bool isDragging = false;
