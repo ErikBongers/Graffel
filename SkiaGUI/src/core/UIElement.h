@@ -28,6 +28,7 @@ class UIElement
         PResize resize = nullptr;
         PMouseMove mouseMove = nullptr;
         PMouseUp mouseUp = nullptr;
+        void mapPixelsToPoints(SkPoint* points, int count);
 
     protected:
         void drawBackground(SDLSkiaWindow& window);

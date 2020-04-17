@@ -57,6 +57,20 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     infiniteCanvas += bullet;
 
     blueChild.rect = SkRect::MakeXYWH(10, 10, 20, 20);
+    blueChild.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+        Bullet& bullet = (Bullet&)e;
+        if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
+            {
+            bullet.color = SK_ColorYELLOW;
+            window.addMouseCapture(bullet); //todo: not efficient.
+            }
+        else
+            {
+            bullet.color = SK_ColorRED;
+            window.removeMouseCapture(bullet);
+            }
+        window.setInvalid();//todo: not efficient.
+        };
     square1 += blueChild;
 
     p1.rect = SkRect::MakeXYWH(80, 80, 10, 10);
@@ -71,11 +85,25 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     p4.rect = SkRect::MakeXYWH(100, 100, 10, 10);
     infiniteCanvas += p4;
 
-    curve1.rect = SkRect::MakeXYWH(0,0,1,1);
+    curve1.rect = SkRect::MakeXYWH(0,0,1,1); //must be at (0, 0) to work, currently!!!
     curve1.p1 = &p1;
     curve1.p2 = &p2;
     curve1.p3 = &p3;
     curve1.p4 = &p4;
+    window.addMouseCapture(curve1);
+    curve1.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+        Curve& curve = (Curve&)e;
+        SkPoint mouse = SkPoint::Make(event.x, event.y);
+        curve.mapPixelsToPoints(&mouse, 1);
+        SkColor col = SK_ColorRED;
+        if (curve.bounds.contains(mouse.fX, mouse.fY))
+            {
+            if (curve.outline.contains(mouse.fX, mouse.fY))
+                col = SK_ColorYELLOW;
+            }
+        curve.color = col;
+        window.setInvalid();//todo: not efficient.
+        };
     infiniteCanvas += curve1;
     }
 

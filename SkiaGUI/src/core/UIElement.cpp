@@ -64,13 +64,18 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     return true;
     }
 
-bool UIElement::hitTest(SkScalar x, SkScalar y)
+void UIElement::mapPixelsToPoints(SkPoint* points, int count)
     {
-    SkPoint mouse = SkPoint::Make(x, y);
     SkMatrix invertedMatrix;
     invertedMatrix.reset();
     totalTransform.invert(&invertedMatrix);
-    invertedMatrix.mapPoints(&mouse, 1);
+    invertedMatrix.mapPoints(points, 1);
+    }
+
+bool UIElement::hitTest(SkScalar x, SkScalar y)
+    {
+    SkPoint mouse = SkPoint::Make(x, y);
+    mapPixelsToPoints(&mouse, 1);
     SkRect bounds = SkRect::MakeWH(rect.width(), rect.height());
     return bounds.contains(mouse.fX, mouse.fY);
     }
