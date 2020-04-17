@@ -184,7 +184,9 @@ bool SDLSkiaWindow::handleEvents()
             case SDL_MOUSEMOTION:
                 for (UIElement* el : mouseCaptures)
                     {
-                    el->mouseMove(*el, event.motion, *this);
+                    el->_mouseMove(event.motion, *this);
+                    if(el->mouseMove)
+                        el->mouseMove(*el, event.motion, *this);
                     }
                 //std::cout << event.motion.x << ", " << event.motion.y << std::endl;
                 client.mouseMoved(event.motion, *this);
@@ -193,6 +195,12 @@ bool SDLSkiaWindow::handleEvents()
                 client.mouseDown(event.button, *this);
                 break;
             case SDL_MOUSEBUTTONUP:
+                for (UIElement* el : mouseCaptures)
+                    {
+                    el->_mouseUp(event.button, *this);
+                    if (el->mouseUp)
+                        el->mouseUp(*el, event.button, *this);
+                    }
                 client.mouseUp(event.button, *this);
                 break;
             case SDL_MOUSEWHEEL:

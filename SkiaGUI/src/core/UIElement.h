@@ -9,8 +9,9 @@ typedef std::function<void(UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWin
 
 class UIElement
     {
+    friend class SDLSkiaWindow;
     public:
-        UIElement* parent;
+        UIElement* parent = nullptr;
         SkRect rect;
         SkColor backgroundColor = SK_ColorTRANSPARENT;
         std::vector<UIElement*> children;
@@ -29,6 +30,7 @@ class UIElement
         PMouseMove mouseMove = nullptr;
         PMouseUp mouseUp = nullptr;
         void mapPixelsToPoints(SkPoint* points, int count);
+        void mapPointsToPixels(SkPoint* dst, SkPoint* src, int count);
 
     protected:
         void drawBackground(SDLSkiaWindow& window);

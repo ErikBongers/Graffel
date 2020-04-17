@@ -72,12 +72,17 @@ void UIElement::mapPixelsToPoints(SkPoint* points, int count)
     invertedMatrix.mapPoints(points, 1);
     }
 
+void UIElement::mapPointsToPixels(SkPoint* dst, SkPoint* src, int count)
+    {
+    totalTransform.mapPoints(dst, src, 1);
+    }
+
 bool UIElement::hitTest(SkScalar x, SkScalar y)
     {
     SkPoint mouse = SkPoint::Make(x, y);
-    mapPixelsToPoints(&mouse, 1);
-    SkRect bounds = SkRect::MakeWH(rect.width(), rect.height());
-    return bounds.contains(mouse.fX, mouse.fY);
+    if(parent)
+        parent->mapPixelsToPoints(&mouse, 1);
+    return rect.contains(mouse.fX, mouse.fY);
     }
 
 SkRect UIElement::absoluteRect()

@@ -1,4 +1,13 @@
+* hittest test against hittest object, which is by default the rect that is used to place it in the parent element.
+  > but it can be overruled by a custom rect.
+  > or even a path? (seems expensive)
+
 * mapPixelsToPoints exits in UIElement and InfiniteCanvas.
+  ! canvas.hittest() fails when translating canvas!
+
+* mouseCapture crashes when no mouseMove handler.
+  > also, should _mouseMove be called as well??
+
 * Hittest curves
   > getFillPath()
   > SkPath.contains(x, y) //for a closed contour!

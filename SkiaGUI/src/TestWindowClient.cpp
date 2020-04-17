@@ -93,7 +93,7 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     window.addMouseCapture(curve1);
     curve1.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
         Curve& curve = (Curve&)e;
-        SkPoint mouse = SkPoint::Make(event.x, event.y);
+        SkPoint mouse = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
         curve.mapPixelsToPoints(&mouse, 1);
         SkColor col = SK_ColorRED;
         if (curve.bounds.contains(mouse.fX, mouse.fY))
@@ -105,6 +105,7 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
         window.setInvalid();//todo: not efficient.
         };
     infiniteCanvas += curve1;
+    window.addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 
 void TestWindowClient::update(SDLSkiaWindow& window)
