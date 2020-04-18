@@ -17,6 +17,7 @@ Token Tokenizer::next()
     {
     while (nextTokenChar())
         {
+        //TODO: parse keywords: see parser of json lib in SkiaIdea
         if (isalpha(curr_c) || curr_c == '_')
             return parseIdentifier();
         else if (isdigit(curr_c))
