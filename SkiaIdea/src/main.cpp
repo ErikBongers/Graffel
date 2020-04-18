@@ -1,12 +1,15 @@
 #include "pch.h"
-#include <iostream>
+#include <fstream>
 #include "core/SDLSkiaWindow.h"
 #include "core/Functions.h"
 #include "TestWindowClient.hpp"
-
+#include "json/json.h"
+#include "json/Tokenizer.h"
+#include "json/Parser.h"
 
 #undef main
-int main(int argc, char** argv) {
+
+int mainGUI(int argc, char** argv) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -55,3 +58,35 @@ int main(int argc, char** argv) {
     SDL_Quit();
     return 0;
 }
+
+using namespace json;
+
+void testJson()
+    {
+    Object root;
+    root.add("voornaam", "Ikke");
+    root.add("naam", "EnDenDikke");
+    Value punten;
+    punten.array.push_back(Value(1));
+    punten.array.push_back(Value(2));
+    root.add("punten", punten);
+    
+    std::cout << root;
+
+    std::ifstream ifs(R"(D:\Documents\Programming\CppProjects\Graffel\SkiaIdea\test.json)");
+    json::Tokenizer tok(ifs);
+    json::Parser parser(tok);
+
+    Object* object = parser.parse();
+
+    ifs.close();
+
+    std::cout << "-------------" << std::endl << *object;
+    }
+
+int main(int argc, char** argv) 
+    {
+    mainGUI(argc, argv);
+    //testJson();
+    }
+

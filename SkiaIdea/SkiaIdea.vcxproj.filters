@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\TestWindowClient.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\json\json.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\json\Tokenizer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\json\Parser.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\TestWindowClient.hpp" />
+    <ClInclude Include="src\Fps.h" />
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\json\Tokenizer.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\json\Parser.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="json">
+      <UniqueIdentifier>{a0087038-cb91-45df-86d2-74d2e44e8bf5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.json" />
+  </ItemGroup>
+</Project>
