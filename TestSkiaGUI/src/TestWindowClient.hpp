@@ -3,6 +3,26 @@
 #include "controls/Button.h"
 #include "controls/InfiniteCanvas.h"
 
+class ImageButton : public Button
+    {
+    public:
+        ImageButton() { highlightColor = SkColorSetARGB(10, 255, 255, 255); }
+        SkScalar xOffset = 0, yOffset = 0;
+        sk_sp<SkImage> img = nullptr;
+        void drawMe(SDLSkiaWindow& window) override
+            {
+            SkPaint paint;
+            if (!img)
+                {
+                sk_sp<SkData> encoded = SkData::MakeFromFileName(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\SquareSquare.png)");
+                img = SkImage::MakeFromEncoded(encoded);
+                }
+            paint.setAntiAlias(true);
+            paint.setAlpha(mouseOver ? 255 : 180);
+            window.Canvas().drawImage(img, xOffset, yOffset, &paint);
+            }
+    };
+
 class Bullet : public UIElement
     {
     public:
@@ -75,6 +95,8 @@ class TestWindowClient : public WindowClient
         Bullet p2;
         Bullet p3;
         Bullet p4;
+
+        ImageButton imgButton;
 
     public:
         void initialize(SDLSkiaWindow& window) override;

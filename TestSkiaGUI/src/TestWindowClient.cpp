@@ -105,6 +105,10 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
         window.setInvalid();//todo: not efficient.
         };
     infiniteCanvas += curve1;
+
+    imgButton.rect = SkRect::MakeXYWH(400, 300, 26, 26);
+    imgButton.xOffset = imgButton.yOffset = 3;
+    infiniteCanvas += imgButton;
     window.addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 

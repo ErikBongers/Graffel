@@ -33,6 +33,9 @@
     </ClCompile>
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\images\SquareSquare.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{8de94687-4c7e-4931-a56a-4edffd1df1f0}</ProjectGuid>
