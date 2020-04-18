@@ -3,10 +3,11 @@
 
 class Button : public UIElement
     {
-    private:
+    protected:
         SkColor originalBkcColor = SK_ColorTRANSPARENT;
+        bool mouseOver = false;
+        void highlight(bool high, SDLSkiaWindow& window);
     public:
         SkColor highlightColor = SK_ColorTRANSPARENT;
         Button();
-        void highlight(bool high, SDLSkiaWindow& window);
     };

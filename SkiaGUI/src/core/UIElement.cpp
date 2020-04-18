@@ -53,9 +53,12 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     {
     if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
-    _mouseUp(event, window);
-    if (mouseUp)
-        mouseUp(*this, event, window);
+    if(!window.isMouseCaptured(*this))
+        {
+        _mouseUp(event, window);
+        if (mouseUp)
+            mouseUp(*this, event, window);
+        }
     for (auto el : children)
         {
         if (el->trickleMouseUpEvent(event, window))

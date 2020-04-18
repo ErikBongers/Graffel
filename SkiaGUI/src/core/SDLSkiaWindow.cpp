@@ -124,19 +124,12 @@ void SDLSkiaWindow::destroyWindow()
 
 void SDLSkiaWindow::addMouseCapture(UIElement& e)
     {
-    if ((std::find(mouseCaptures.begin(), mouseCaptures.end(), &e) == mouseCaptures.end()))
-        {
-        mouseCaptures.push_back(&e);
-        }
+    mouseCaptures.insert(&e);
     }
 
 void SDLSkiaWindow::removeMouseCapture(UIElement& e)
     {
-    auto found = std::find(mouseCaptures.begin(), mouseCaptures.end(), &e);
-    if (found != mouseCaptures.end())
-        {
-        mouseCaptures.erase(found);
-        }
+    mouseCaptures.extract(&e);
     }
 
 
@@ -182,11 +175,11 @@ bool SDLSkiaWindow::handleEvents()
         eventsHappened = true;
         switch (event.type) {
             case SDL_MOUSEMOTION:
-                for (UIElement* el : mouseCaptures)
+                for (auto el = mouseCaptures.rbegin(); el != mouseCaptures.rend(); ++el)
                     {
-                    el->_mouseMove(event.motion, *this);
-                    if(el->mouseMove)
-                        el->mouseMove(*el, event.motion, *this);
+                    (*el)->_mouseMove(event.motion, *this);
+                    if((*el)->mouseMove)
+                        (*el)->mouseMove(**el, event.motion, *this);
                     }
                 //std::cout << event.motion.x << ", " << event.motion.y << std::endl;
                 client.mouseMoved(event.motion, *this);

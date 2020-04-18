@@ -1,12 +1,7 @@
-* is SkiaGUI done?
-  > all elements in place to be used as a library?
-  > in any case, projects:
-    - SkiaGuiLib
-    - SkiaGuiTest (containing testwindowclient and main)
-    - SkiaIdea
-
 Needed for iDea
 ----------------
+* Image on buttons.
+  > 
 * text editor. : skia/modules/skplaintexteditor
 * animations for transitions.
 
