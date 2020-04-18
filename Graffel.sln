@@ -9,6 +9,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkiaGUI", "SkiaGUI\SkiaGUI.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraffelGUI", "GraffelGUI\GraffelGUI.vcxproj", "{DF4503D7-CC11-4C61-A11A-4DB510DBD931}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestSkiaGui", "TestSkiaGUI\TesetSkiaGUI.vcxproj", "{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Skiaidea", "SkiaIdea\SkiaIdea.vcxproj", "{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +45,18 @@ Global
 		{DF4503D7-CC11-4C61-A11A-4DB510DBD931}.Release|x64.Build.0 = Release|x64
 		{DF4503D7-CC11-4C61-A11A-4DB510DBD931}.Release|x86.ActiveCfg = Release|Win32
 		{DF4503D7-CC11-4C61-A11A-4DB510DBD931}.Release|x86.Build.0 = Release|Win32
+		{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}.Debug|x64.ActiveCfg = Debug|x64
+		{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}.Debug|x64.Build.0 = Debug|x64
+		{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}.Debug|x86.ActiveCfg = Debug|x64
+		{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}.Release|x64.ActiveCfg = Release|x64
+		{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}.Release|x64.Build.0 = Release|x64
+		{8DE94687-4C7E-4931-A56A-4EDFFD1DF1F0}.Release|x86.ActiveCfg = Release|x64
+		{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}.Debug|x64.ActiveCfg = Debug|x64
+		{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}.Debug|x64.Build.0 = Debug|x64
+		{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}.Debug|x86.ActiveCfg = Debug|x64
+		{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}.Release|x64.ActiveCfg = Release|x64
+		{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}.Release|x64.Build.0 = Release|x64
+		{CE1451A7-5506-4DF2-ADD1-2C9BFFE40188}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

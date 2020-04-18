@@ -1,26 +1,9 @@
-* hittest test against hittest object, which is by default the rect that is used to place it in the parent element.
-  > but it can be overruled by a custom rect.
-  > or even a path? (seems expensive)
-
-* mapPixelsToPoints exits in UIElement and InfiniteCanvas.
-  ! canvas.hittest() fails when translating canvas!
-
-* mouseCapture crashes when no mouseMove handler.
-  > also, should _mouseMove be called as well??
-
-* Hittest curves
-  > getFillPath()
-  > SkPath.contains(x, y) //for a closed contour!
-  >       .dump() text dump of path
-          .interpolate() > morph path1 to path2
-  > SkTrimPathEffect: shortens path, pixel by pixel
-    > Can be used to traverse a path?
-  > get segments (points) of path?
-
-  > if intersection has 2 contours, 
-  > https://fiddle.skia.org/c/@pathops
-  > feature request: "intersection point for two SkPaths https://groups.google.com/forum/#!msg/skia-discuss/7kp0d5dcQq4/oGKRxz_xAgAJ
- 
+* is SkiaGUI done?
+  > all elements in place to be used as a library?
+  > in any case, projects:
+    - SkiaGuiLib
+    - SkiaGuiTest (containing testwindowclient and main)
+    - SkiaIdea
 
 Needed for iDea
 ----------------
@@ -37,6 +20,7 @@ iDea v2
 - no OneNote !!!!! Too loose.
 - more like Whiteboard, but with more functionality.
 - also a bit like Word.
+- is brainstorm tool: reopen in the same 'chaos' as it was closed.
 -Nodes
   - all nodes have 3 levels: thumb, post-it and full
   > text
