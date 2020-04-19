@@ -1,12 +1,29 @@
 #include "pch.h"
-#include <iostream>
 #include "core/SDLSkiaWindow.h"
 #include "core/Functions.h"
 #include "TestWindowClient.hpp"
-
+#include "resources/Zip.h"
 
 #undef main
 int main(int argc, char** argv) {
+    Zip zip(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)");
+    //FileBuffer b = zip.getFile("ColoredSquare.png");
+    FileBuffer b = zip.getFile(1);
+    zip.close();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 

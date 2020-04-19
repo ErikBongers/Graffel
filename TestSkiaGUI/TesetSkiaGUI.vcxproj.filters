@@ -4,19 +4,43 @@
     <ClCompile Include="src\TestWindowClient.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\resources\miniz.c">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\Resources.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\Zip.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
     <ClInclude Include="src\Fps.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\resources\miniz.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\Resources.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\Zip.h">
+      <Filter>resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">
       <UniqueIdentifier>{a2b15b89-fc5b-4ed9-95d9-1eda5f509447}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{5e916ed3-0629-4394-b247-63cee269ed8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\images\SquareSquare.png">
+      <Filter>images</Filter>
+    </Image>
+    <Image Include="src\images\ColoredSquare.png">
       <Filter>images</Filter>
     </Image>
   </ItemGroup>

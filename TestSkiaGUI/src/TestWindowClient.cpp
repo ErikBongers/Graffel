@@ -1,41 +1,63 @@
 #include "pch.h"
 #include "TestWindowClient.hpp"
+#include "resources/Resources.h"
 
 void TestWindowClient::initialize(SDLSkiaWindow& window)
     {
-    full.backgroundColor = SK_ColorWHITE;
+    full.backgroundColor = SkColorSetRGB(50,50,50);
     full.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
         e.rect = SkRect::MakeWH((SkScalar)window.getWidth(), (SkScalar)window.getHeight());
         window.setInvalid();
         };
 
-    toolbar.rect = SkRect::MakeXYWH(20, 10, 500, 40);
-    toolbar.backgroundColor = SK_ColorLTGRAY;
-    full += toolbar;
-
-    button1.rect = SkRect::MakeXYWH(5, 5, 20, 20);
-    button1.backgroundColor = SK_ColorDKGRAY;
-    button1.highlightColor = SK_ColorYELLOW;
-    button1.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
-        std::cout << "Clicked!" << std::endl;
-        this->button2.backgroundColor = SK_ColorRED;
+    toolbar.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
+        e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)window.getWidth(), 40);
         window.setInvalid();
         };
-    toolbar += button1;
+    full += toolbar;
+    Resources res(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images)");
 
-    button2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
-    button2.backgroundColor = SK_ColorDKGRAY;
-    toolbar += button2; 
+    imgButton.rect = SkRect::MakeXYWH(5,5,20,23);
+    //const char* fileName = "ColoredSquare.png";
+    //FileBuffer pngBuffer = getZipFile(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", fileName);
+    //sk_sp<SkData> encoded = SkData::MakeFromMalloc(pngBuffer.p, pngBuffer.length);
+    //sk_sp<SkData> encoded = SkData::MakeFromFileName(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\SquareSquare.png)");
+    //imgButton.img = SkImage::MakeFromEncoded(encoded);
+    imgButton.img = res.get("SquareSquare.png");
+    imgButton.xOffset = imgButton.yOffset = 1;
+    imgButton.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
+        std::cout << "Clicked!" << std::endl;
+        window.setInvalid();
+        };
+    toolbar += imgButton;
+
+    imgButton2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 23);
+    imgButton2.img = res.get("ColoredSquare.png");
+    imgButton2.xOffset = imgButton2.yOffset = 1;
+    imgButton2.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
+        std::cout << "Clicked 2!" << std::endl;
+        window.setInvalid();
+        };
+    toolbar += imgButton2;
+
+    imgButton3.rect = SkRect::MakeXYWH(5 + 20 + 5 + 20 + 5, 5, 20, 23);
+    imgButton3.img = res.get("RedSquare.png");
+    imgButton3.xOffset = imgButton3.yOffset = 1;
+    imgButton3.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
+        std::cout << "Clicked 3!" << std::endl;
+        window.setInvalid();
+        };
+    toolbar += imgButton3;
 
     infiniteCanvas.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
-        e.rect = SkRect::MakeLTRB(20, 50, (SkScalar)window.getWidth() - 30, (SkScalar)window.getHeight() - 30);
+        e.rect = SkRect::MakeLTRB(10, 30, (SkScalar)window.getWidth() - 10, (SkScalar)window.getHeight() - 10);
         window.setInvalid();
         };
-    infiniteCanvas.backgroundColor = SK_ColorDKGRAY;
+    infiniteCanvas.backgroundColor = SkColorSetRGB(35,35,35);
     full += infiniteCanvas;
 
     square1.rect = SkRect::MakeXYWH(200, 200, 200, 200);
-    square1.backgroundColor = SK_ColorBLUE;
+    square1.backgroundColor = SkColorSetARGB(40, 0,0,255);
     infiniteCanvas += square1;
 
     bullet.rect = SkRect::MakeXYWH(300, 300, 20, 20);
@@ -106,9 +128,6 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
         };
     infiniteCanvas += curve1;
 
-    imgButton.rect = SkRect::MakeXYWH(400, 300, 26, 26);
-    imgButton.xOffset = imgButton.yOffset = 3;
-    infiniteCanvas += imgButton;
     window.addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 

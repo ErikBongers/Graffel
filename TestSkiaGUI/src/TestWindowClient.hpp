@@ -6,20 +6,16 @@
 class ImageButton : public Button
     {
     public:
-        ImageButton() { highlightColor = SkColorSetARGB(10, 255, 255, 255); }
+        ImageButton() { highlightColor = SkColorSetARGB(20, 255, 255, 255); }
         SkScalar xOffset = 0, yOffset = 0;
         sk_sp<SkImage> img = nullptr;
         void drawMe(SDLSkiaWindow& window) override
             {
             SkPaint paint;
-            if (!img)
-                {
-                sk_sp<SkData> encoded = SkData::MakeFromFileName(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\SquareSquare.png)");
-                img = SkImage::MakeFromEncoded(encoded);
-                }
             paint.setAntiAlias(true);
             paint.setAlpha(mouseOver ? 255 : 180);
-            window.Canvas().drawImage(img, xOffset, yOffset, &paint);
+            if(img)
+                window.Canvas().drawImage(img, xOffset, yOffset, &paint);
             }
     };
 
@@ -97,6 +93,8 @@ class TestWindowClient : public WindowClient
         Bullet p4;
 
         ImageButton imgButton;
+        ImageButton imgButton2;
+        ImageButton imgButton3;
 
     public:
         void initialize(SDLSkiaWindow& window) override;

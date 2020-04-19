@@ -44,7 +44,7 @@ void SDLSkiaWindow::loopOnce()
         std::string strFps = std::to_string(fps.getFps());
         std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "ms";
         std::string strLoopCnt = std::to_string(loopCounter) + "loop iterations";
-        paint.setColor(SK_ColorBLACK); // move to init function?
+        paint.setColor(SK_ColorWHITE); // move to init function?
         canvas->drawString(strFps.c_str(), 100.0f, 160.0f, font, paint);
         canvas->drawString(strMs.c_str(), 100.0f, 180.0f, font, paint);
         canvas->drawString(strLoopCnt.c_str(), 100.0f, 200.0f, font, paint);

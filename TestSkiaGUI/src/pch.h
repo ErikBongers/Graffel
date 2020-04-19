@@ -33,4 +33,9 @@
 #include <string>
 #include <chrono>
 #include <list>
+#include <fstream> 
+#include <map>
+#include <set>
+#include <vector>
 
+#include "resources/miniz.h"

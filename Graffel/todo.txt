@@ -1,10 +1,9 @@
+* try to compile all this stuff on linux...
+
 Needed for iDea
 ----------------
-* Image on buttons.
-  > 
 * text editor. : skia/modules/skplaintexteditor
 * animations for transitions.
-
 
 * Adorners?
 * Styles for nodes? (set of preferences, like fixed size, set of colors,...)
