@@ -13,6 +13,18 @@
     <ClCompile Include="src\resources\Zip.cpp">
       <Filter>resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\texteditor\editor.cpp">
+      <Filter>texteditor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texteditor\shape.cpp">
+      <Filter>texteditor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texteditor\stringslice.cpp">
+      <Filter>texteditor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texteditor\word_boundaries.cpp">
+      <Filter>texteditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
@@ -27,6 +39,21 @@
     <ClInclude Include="src\resources\Zip.h">
       <Filter>resources</Filter>
     </ClInclude>
+    <ClInclude Include="src\texteditor\editor.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texteditor\shape.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texteditor\stringslice.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texteditor\stringview.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texteditor\word_boundaries.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">
@@ -34,6 +61,9 @@
     </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{5e916ed3-0629-4394-b247-63cee269ed8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="texteditor">
+      <UniqueIdentifier>{eb2ca98b-3b5b-40df-b6c1-11951c6c68c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

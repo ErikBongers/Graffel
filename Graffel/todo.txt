@@ -1,3 +1,15 @@
+* zoom: still a glitch when, I think, pressing the right mouse button.
+* add timer for cursor. (chrono::)
+  > call update() on idle for every UIElement?
+
+Text Editor
+----------------
+struct TextLine : a paragraph, delimited by \n.
+Shape, ShapeResult: get heigth of text paragraph, based on font and width
+SkShaper: algorithm to create font rendering.
+> How do paragraph styles? Or for now, no styles within a text block.
+
+
 * try to compile all this stuff on linux...
 
 Needed for iDea

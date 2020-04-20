@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TestWindowClient.hpp"
 #include "resources/Resources.h"
+#include "texteditor/editor.h"
 
 void TestWindowClient::initialize(SDLSkiaWindow& window)
     {
@@ -18,11 +19,6 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     Resources res(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images)");
 
     imgButton.rect = SkRect::MakeXYWH(5,5,20,23);
-    //const char* fileName = "ColoredSquare.png";
-    //FileBuffer pngBuffer = getZipFile(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", fileName);
-    //sk_sp<SkData> encoded = SkData::MakeFromMalloc(pngBuffer.p, pngBuffer.length);
-    //sk_sp<SkData> encoded = SkData::MakeFromFileName(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\SquareSquare.png)");
-    //imgButton.img = SkImage::MakeFromEncoded(encoded);
     imgButton.img = res.get("SquareSquare.png");
     imgButton.xOffset = imgButton.yOffset = 1;
     imgButton.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
@@ -56,11 +52,11 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     infiniteCanvas.backgroundColor = SkColorSetRGB(35,35,35);
     full += infiniteCanvas;
 
-    square1.rect = SkRect::MakeXYWH(200, 200, 200, 200);
-    square1.backgroundColor = SkColorSetARGB(40, 0,0,255);
+    square1.rect = SkRect::MakeXYWH(200, 200, 100, 100);
+    square1.backgroundColor = SkColorSetARGB(40, 50,50,255);
     infiniteCanvas += square1;
 
-    bullet.rect = SkRect::MakeXYWH(300, 300, 20, 20);
+    bullet.rect = SkRect::MakeXYWH(400, 300, 20, 40);
     bullet.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
         Bullet& bullet = (Bullet&)e;
         if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
@@ -127,6 +123,14 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
         window.setInvalid();//todo: not efficient.
         };
     infiniteCanvas += curve1;
+
+    editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
+            SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
+    const char* txt = "Hellow, Earl D!";
+    editor1.insert(SkPlainTextEditor::Editor::TextPosition{ 0, 0 }, txt, strlen(txt));
+    editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
+    infiniteCanvas += editor1;
+
 
     window.addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }

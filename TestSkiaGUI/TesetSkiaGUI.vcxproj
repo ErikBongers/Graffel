@@ -21,6 +21,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\texteditor\editor.cpp" />
+    <ClCompile Include="src\texteditor\shape.cpp" />
+    <ClCompile Include="src\texteditor\stringslice.cpp" />
+    <ClCompile Include="src\texteditor\word_boundaries.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resources\miniz.h" />
@@ -38,6 +42,11 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\texteditor\editor.h" />
+    <ClInclude Include="src\texteditor\shape.h" />
+    <ClInclude Include="src\texteditor\stringslice.h" />
+    <ClInclude Include="src\texteditor\stringview.h" />
+    <ClInclude Include="src\texteditor\word_boundaries.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\images\ColoredSquare.png" />
@@ -78,12 +87,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;D:\Documents\Programming\CppProjects\Graffel\SkiaGUI\src;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\skia\skia\third_party\externals\harfbuzz\src;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;D:\Documents\Programming\CppProjects\Graffel\SkiaGUI\src;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;D:\Documents\Programming\CppProjects\Graffel\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;D:\Documents\Programming\CppProjects\Graffel\SkiaGUI\src;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\skia\skia\third_party\externals\harfbuzz\src;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;D:\Documents\Programming\CppProjects\Graffel\SkiaGUI\src;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;D:\Documents\Programming\CppProjects\Graffel\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -100,7 +109,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;skshaper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,7 +130,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;skshaper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

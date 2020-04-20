@@ -2,6 +2,7 @@
 #include "core/SDLSkiaWindow.h"
 #include "controls/Button.h"
 #include "controls/InfiniteCanvas.h"
+#include "texteditor/editor.h"
 
 class ImageButton : public Button
     {
@@ -95,6 +96,8 @@ class TestWindowClient : public WindowClient
         ImageButton imgButton;
         ImageButton imgButton2;
         ImageButton imgButton3;
+            
+        SkPlainTextEditor::Editor editor1;
 
     public:
         void initialize(SDLSkiaWindow& window) override;
