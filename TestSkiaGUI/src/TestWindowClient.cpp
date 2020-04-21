@@ -135,8 +135,9 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     window.addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 
-void TestWindowClient::update(SDLSkiaWindow& window)
+void TestWindowClient::onIdle(SDLSkiaWindow& window)
     {
+    full.trickleIdle(window);
     }
 
 void TestWindowClient::draw(SDLSkiaWindow& window)

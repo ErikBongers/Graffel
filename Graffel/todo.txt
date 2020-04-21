@@ -1,6 +1,4 @@
 * zoom: still a glitch when, I think, pressing the right mouse button.
-* add timer for cursor. (chrono::)
-  > call update() on idle for every UIElement?
 
 Text Editor
 ----------------

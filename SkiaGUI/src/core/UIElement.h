@@ -21,6 +21,7 @@ class UIElement
         void trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window);
         bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window);
         bool trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
+        void trickleIdle(SDLSkiaWindow& window) { onIdle(window);  for (auto c : children) c->trickleIdle(window); }
         SkRect absoluteRect();
         virtual bool hitTest(SkScalar x, SkScalar y);
         SkMatrix totalTransform;
@@ -38,4 +39,5 @@ class UIElement
         virtual void drawMe(SDLSkiaWindow& window) {}
         virtual void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}
         virtual void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
+        virtual void onIdle(SDLSkiaWindow& window) {}
     };

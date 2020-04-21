@@ -46,7 +46,7 @@ void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& windo
     for (std::vector<UIElement*>::reverse_iterator it = children.rbegin(); it != children.rend(); ++it)
         {
         UIElement* e = *it;
-        if (e->hitTest(event.x, event.y))
+        if (e->hitTest((SkScalar)event.x, (SkScalar)event.y))
             {
             //start drag of object
             //TODO: ask first

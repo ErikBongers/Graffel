@@ -27,8 +27,8 @@ void SDLSkiaWindow::loopOnce()
     {
     loopCounter++;
 
-    if (handleEvents())
-        client.update(*this);
+    if (!handleEvents())
+        client.onIdle(*this);
     if (canvas == NULL)
         canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
 

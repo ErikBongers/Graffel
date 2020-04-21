@@ -101,7 +101,7 @@ class TestWindowClient : public WindowClient
 
     public:
         void initialize(SDLSkiaWindow& window) override;
-        void update(SDLSkiaWindow& window) override;
+        void onIdle(SDLSkiaWindow& window) override;
         void draw(SDLSkiaWindow& window) override;
         void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) override;
         void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;

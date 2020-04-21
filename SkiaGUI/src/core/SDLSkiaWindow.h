@@ -8,7 +8,7 @@ class UIElement;
 class WindowClient
     {
     public:
-        virtual void update(SDLSkiaWindow& window) {}
+        virtual void onIdle(SDLSkiaWindow& window) {}
         virtual void draw(SDLSkiaWindow& window) {}
         virtual void initialize(SDLSkiaWindow& window) {}
         virtual void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}

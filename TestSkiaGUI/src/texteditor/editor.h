@@ -1,4 +1,5 @@
 #pragma once
+#include "..\pch.h"
 #include "modules/skplaintexteditor/include/stringslice.h"
 #include "modules/skplaintexteditor/include/stringview.h"
 
@@ -24,8 +25,10 @@ class Editor : public UIElement
     struct TextParagraph;
 
     void drawMe(SDLSkiaWindow& window) override;
+    void onIdle(SDLSkiaWindow& window) override;
     void setSize(int width, int height, SDLSkiaWindow& window);
-
+    std::chrono::time_point<std::chrono::steady_clock> startCursorTime;
+    bool showCursor;
 
 public:
     int getHeight() const { return fHeight; }
