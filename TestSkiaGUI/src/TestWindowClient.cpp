@@ -171,3 +171,12 @@ void TestWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
     {
     full.trickleResizeEvent(event, window);
     }
+
+void TestWindowClient::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
+    {
+    SDL_Keycode key = event.keysym.sym;
+    if (key == SDLK_ESCAPE)
+        window.close();
+    else
+        full.trickleKeyDown(event, window);
+    }

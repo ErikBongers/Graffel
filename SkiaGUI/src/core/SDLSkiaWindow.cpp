@@ -201,9 +201,7 @@ bool SDLSkiaWindow::handleEvents()
                 break;
             case SDL_KEYDOWN:
                 {
-                SDL_Keycode key = event.key.keysym.sym;
-                if (key == SDLK_ESCAPE) 
-                    quit = true;
+                client.keyDown(event.key, *this);
                 break;
                 }
             case SDL_WINDOWEVENT:

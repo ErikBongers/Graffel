@@ -286,12 +286,6 @@ Editor::TextPosition SkPlainTextEditor::Editor::move(Editor::Movement move, Edit
         pos.fTextByteIndex = align_column(fParas[pos.fParagraphIndex].fText, pos.fTextByteIndex);
         }
 
-    SkASSERT(pos.fParagraphIndex < fParas.size());
-    SkASSERT(pos.fTextByteIndex <= fParas[pos.fParagraphIndex].fText.size());
-
-    SkASSERT(pos.fTextByteIndex == fParas[pos.fParagraphIndex].fText.size() ||
-             !is_utf8_continuation(fParas[pos.fParagraphIndex].fText.begin()[pos.fTextByteIndex]));
-
     switch (move) {
         case Editor::Movement::kNowhere:
             break;
@@ -435,6 +429,10 @@ void SkPlainTextEditor::Editor::setSize(int width, int height, SDLSkiaWindow& wi
     window.setInvalid();
     }
 
+
+void SkPlainTextEditor::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
+    {
+    }
 
 void SkPlainTextEditor::Editor::drawMe(SDLSkiaWindow& window)
     {

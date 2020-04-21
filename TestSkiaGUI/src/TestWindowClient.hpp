@@ -108,4 +108,6 @@ class TestWindowClient : public WindowClient
         void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
         void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window) override;
         void resize(SDL_WindowEvent& event, SDLSkiaWindow& window) override;
+        void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) override;
+
     };

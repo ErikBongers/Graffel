@@ -15,6 +15,7 @@ class WindowClient
         virtual void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
         virtual void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
         virtual void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window) {}
+        virtual void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) {}
         virtual void resize(SDL_WindowEvent& event, SDLSkiaWindow& window) {}
     };
 
@@ -62,5 +63,6 @@ class SDLSkiaWindow
         void addMouseCapture(UIElement& e);
         void removeMouseCapture(UIElement& e);
         bool isMouseCaptured(UIElement& e) { return mouseCaptures.find(&e) != mouseCaptures.end(); }
+        void close() { quit = true; }
     };
 

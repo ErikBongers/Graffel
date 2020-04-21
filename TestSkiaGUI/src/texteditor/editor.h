@@ -24,6 +24,7 @@ class Editor : public UIElement
     {
     struct TextParagraph;
 
+    void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) override;
     void drawMe(SDLSkiaWindow& window) override;
     void onIdle(SDLSkiaWindow& window) override;
     void setSize(int width, int height, SDLSkiaWindow& window);
