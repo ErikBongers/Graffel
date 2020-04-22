@@ -1,6 +1,6 @@
-* editor: map keystrokes.
-
-
+* editor: 
+  > bounds/margins, scroll, auto-resize.
+  > undo/redo
 
 * zoom: still a glitch when, I think, pressing the right mouse button.
 

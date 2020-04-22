@@ -60,6 +60,7 @@ int main(int argc, char** argv) {
         handle_error();
         return 1;
     }
+    SDL_StartTextInput();
 
     TestWindowClient* client = new TestWindowClient();
     SDLSkiaWindow* wnd = new SDLSkiaWindow(*client);

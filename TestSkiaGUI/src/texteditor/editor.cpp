@@ -53,8 +53,8 @@ void SkPlainTextEditor::Editor::setFont(SkFont font) {
 }
 
 void SkPlainTextEditor::Editor::setWidth(int w) {
-    if (fWidth != w) {
-        fWidth = w;
+    if (rect.width() != w) {
+        rect.setXYWH(rect.fLeft, rect.fTop, w, rect.height());
         fNeedsReshape = true;
         for (auto& l : fParas) { this->markDirty(&l); }
         }
@@ -68,7 +68,7 @@ Editor::TextPosition Editor::getPosition(SkIPoint xy) {
         const TextParagraph& line = fParas[j];
         SkIRect lineRect = { 0,
                             line.fOrigin.y(),
-                            fWidth,
+                            rect.width(),
                             j + 1 < fParas.size() ? fParas[j + 1].fOrigin.y() : INT_MAX };
         if (const SkTextBlob* b = line.fBlob.get()) {
             SkIRect r = b->bounds().roundOut();
@@ -425,18 +425,105 @@ Editor::TextPosition SkPlainTextEditor::Editor::move(Editor::Movement move, Edit
 
 void SkPlainTextEditor::Editor::setSize(int width, int height, SDLSkiaWindow& window)
     {
-    setWidth(fWidth);
+    setWidth(rect.width());
     window.setInvalid();
     }
 
+void SkPlainTextEditor::Editor::textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window)
+    {
+    insert(fTextPos, event.text, strlen(event.text));
+    moveCursor(Editor::Movement::kRight, false, window);
+    }
 
 void SkPlainTextEditor::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
     {
+    if (event.type == SDL_KEYDOWN)
+        {
+        bool shift = event.keysym.mod & KMOD_SHIFT;
+        switch (event.keysym.sym)
+            {
+            case SDLK_UP: moveCursor(Editor::Movement::kUp, shift, window); break;
+            case SDLK_DOWN: moveCursor(Editor::Movement::kDown, shift, window); break;
+            case SDLK_LEFT: moveCursor(Editor::Movement::kLeft, shift, window); break;
+            case SDLK_RIGHT: moveCursor(Editor::Movement::kRight, shift, window); break;
+            case SDLK_HOME: moveCursor(Editor::Movement::kHome, shift, window); break;
+            case SDLK_END: moveCursor(Editor::Movement::kEnd, shift, window); break;
+            case SDLK_PAGEDOWN:
+            case SDLK_PAGEUP:
+            case SDLK_DELETE:
+                if (fMarkPos != Editor::TextPosition()) {
+                    moveTo(remove(fMarkPos, fTextPos), false, window);
+                    }
+                else {
+                    auto pos = move(Editor::Movement::kRight, fTextPos);
+                    moveTo(remove(fTextPos, pos), false, window);
+                    }
+                window.setInvalid();
+                break;
+            case SDLK_BACKSPACE:
+                if (fMarkPos != Editor::TextPosition()) {
+                    moveTo(remove(fMarkPos, fTextPos), false, window);
+                    }
+                else {
+                    auto pos = move(Editor::Movement::kLeft, fTextPos);
+                    moveTo(remove(fTextPos, pos), false, window);
+                    }
+                window.setInvalid();
+                break;
+            case SDLK_RETURN:
+                {
+                char c = '\n';
+                insert(fTextPos, &c, 1);
+                moveCursor(Editor::Movement::kRight, false, window);
+                break;
+                }
+            default:
+                break;
+            }
+        }
+    }
+
+bool SkPlainTextEditor::Editor::moveCursor(SkPlainTextEditor::Editor::Movement m, bool shift, SDLSkiaWindow& window) 
+    {
+    return moveTo(move(m, fTextPos), shift, window);
+    }
+
+bool SkPlainTextEditor::Editor::moveTo(SkPlainTextEditor::Editor::TextPosition pos, bool shift, SDLSkiaWindow& window)
+    {
+    if (pos == fTextPos || pos == Editor::TextPosition()) {
+        if (!shift) {
+            fMarkPos = Editor::TextPosition();
+            }
+        return false;
+        }
+    if (shift != fShiftDown) {
+        fMarkPos = shift ? fTextPos : Editor::TextPosition();
+        fShiftDown = shift;
+        }
+    fTextPos = pos;
+
+    // scroll if needed.
+    SkIRect cursor = getLocation(fTextPos).roundOut();
+    if (fPos < cursor.bottom() - rect.height() + 2 * fMargin) {
+        fPos = cursor.bottom() - rect.height() + 2 * fMargin;
+        }
+    else if (cursor.top() < fPos) {
+        fPos = cursor.top();
+        }
+    window.setInvalid();
+    resetCursorBlink(window);
+    return true;
+    }
+
+void SkPlainTextEditor::Editor::resetCursorBlink(SDLSkiaWindow& window)
+    {
+    startCursorTime = std::chrono::steady_clock::now();
+    showCursor = true;
     }
 
 void SkPlainTextEditor::Editor::drawMe(SDLSkiaWindow& window)
     {
-    paint(&window.Canvas(), Editor::PaintOpts());
+    paint(&window.Canvas());
     }
 
 void SkPlainTextEditor::Editor::onIdle(SDLSkiaWindow& window)
@@ -450,7 +537,26 @@ void SkPlainTextEditor::Editor::onIdle(SDLSkiaWindow& window)
         }
     }
 
-void SkPlainTextEditor::Editor::paint(SkCanvas* c, PaintOpts options) {
+void SkPlainTextEditor::Editor::paint(SkCanvas* c) {
+//from editorApp:
+    c->clipRect({ 0, 0, (float)rect.width(), (float)rect.height()}); //TDDO: also set width
+    c->translate(fMargin, (float)(fMargin - fPos));
+    Editor::PaintOpts options;
+    options.fCursor = fTextPos;
+    if (fMarkPos != Editor::TextPosition()) {
+        options.fSelectionBegin = fMarkPos;
+        options.fSelectionEnd = fTextPos;
+        }
+#ifdef SK_EDITOR_DEBUG_OUT
+    {
+    Timer timer("shaping");
+    fEditor.paint(nullptr, options);
+    }
+    Timer timer("painting");
+#endif  // SK_EDITOR_DEBUG_OUT
+
+//end from editorApp
+
     this->reshapeAll();
     if (!c) {
         return;
@@ -484,29 +590,7 @@ void SkPlainTextEditor::Editor::reshapeAll() {
         if (fParas.empty()) {
             fParas.push_back(TextParagraph());
         }
-        float shape_width = (float)(fWidth);
-#ifdef SK_EDITOR_GO_FAST
-        SkSemaphore semaphore;
-        std::unique_ptr<SkExecutor> executor = SkExecutor::MakeFIFOThreadPool(100);
-        int jobCount = 0;
-        for (TextLine& line : fLines) {
-            if (!line.fShaped) {
-                executor->add([&]() {
-                    ShapeResult result = Shape(line.fText.begin(), line.fText.size(),
-                                               fFont, fLocale, shape_width);
-                    line.fBlob           = std::move(result.blob);
-                    line.fLineEndOffsets = std::move(result.lineBreakOffsets);
-                    line.fCursorPos      = std::move(result.glyphBounds);
-                    line.fWordBoundaries = std::move(result.wordBreaks);
-                    line.fHeight         = result.verticalAdvance;
-                    line.fShaped = true;
-                    semaphore.signal();
-                }
-                ++jobCount;
-            });
-        }
-        while (jobCount-- > 0) { semaphore.wait(); }
-#else
+        float shape_width = (float)(rect.width()-fMargin);
         int i = 0;
         for (TextParagraph& line : fParas) {
             if (!line.fShaped) {
@@ -521,13 +605,12 @@ void SkPlainTextEditor::Editor::reshapeAll() {
             }
             ++i;
         }
-#endif
         int y = 0;
         for (TextParagraph& line : fParas) {
             line.fOrigin = {0, y};
             y += line.fHeight;
         }
-        fHeight = y;
+        fullTextHeight = y;
         fNeedsReshape = false;
     }
 }

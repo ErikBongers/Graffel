@@ -37,5 +37,6 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <cctype>
 
 #include "resources/miniz.h"

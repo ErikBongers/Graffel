@@ -22,17 +22,43 @@ namespace SkPlainTextEditor {
 
 class Editor : public UIElement
     {
+    public:
+    struct TextPosition {
+        size_t fTextByteIndex = SIZE_MAX;   // index into UTF-8 representation of line.
+        size_t fParagraphIndex = SIZE_MAX;  // logical line, based on hard newline characters.
+        };
+    protected:
+    enum class Movement {
+        kNowhere,
+        kLeft,
+        kUp,
+        kRight,
+        kDown,
+        kHome,
+        kEnd,
+        kWordLeft,
+        kWordRight,
+        };
     struct TextParagraph;
 
+    void resetCursorBlink(SDLSkiaWindow& window);
     void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) override;
+    void textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window) override;
     void drawMe(SDLSkiaWindow& window) override;
     void onIdle(SDLSkiaWindow& window) override;
     void setSize(int width, int height, SDLSkiaWindow& window);
+    bool moveCursor(Editor::Movement m, bool shift, SDLSkiaWindow& window);
+    bool moveTo(Editor::TextPosition pos, bool shift, SDLSkiaWindow& window);
     std::chrono::time_point<std::chrono::steady_clock> startCursorTime;
     bool showCursor;
+    int fPos = 0;  // window pixel position in file
+    int fMargin = 10;
+    public:
+    TextPosition fTextPos{ 0, 0 };
+    TextPosition fMarkPos;
+    bool fShiftDown = false;
 
-public:
-    int getHeight() const { return fHeight; }
+    int getHeight() const { return rect.height(); }
     void setWidth(int w); // may force re-shape
 
     const SkFont& font() const { return fFont; }
@@ -59,21 +85,6 @@ public:
     //     }
     Text text() const { return Text{fParas}; }
 
-    struct TextPosition {
-        size_t fTextByteIndex = SIZE_MAX;   // index into UTF-8 representation of line.
-        size_t fParagraphIndex = SIZE_MAX;  // logical line, based on hard newline characters.
-    };
-    enum class Movement {
-        kNowhere,
-        kLeft,
-        kUp,
-        kRight,
-        kDown,
-        kHome,
-        kEnd,
-        kWordLeft,
-        kWordRight,
-    };
     TextPosition move(Editor::Movement move, Editor::TextPosition pos) const;
     TextPosition getPosition(SkIPoint);
     SkRect getLocation(TextPosition);
@@ -96,7 +107,7 @@ public:
         TextPosition fSelectionEnd;
         TextPosition fCursor;
     };
-    void paint(SkCanvas* canvas, PaintOpts);
+    void paint(SkCanvas* canvas);
 
 private:
     struct TextParagraph {
@@ -113,14 +124,15 @@ private:
         TextParagraph() {}
     };
     std::vector<TextParagraph> fParas;
-    int fWidth = 0;
-    int fHeight = 0;
+    int fullTextHeight = 0;
     SkFont fFont;
     bool fNeedsReshape = false;
     const char* fLocale = "en";
 
     void markDirty(TextParagraph*);
     void reshapeAll();
+
+
 };
 }  // namespace SkPlainTextEditor
 

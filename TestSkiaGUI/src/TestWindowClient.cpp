@@ -126,9 +126,10 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
 
     editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
             SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
-    const char* txt = "Hellow, Earl D!";
+    const char* txt = "Hellow, Earl D! This is the second time that I came across an issue with framing everything. I'm sure you know what I'm talking about. It probably has to do with margins, but I think we need to double check. I'll follow up on the second page with some more info.";
     editor1.insert(SkPlainTextEditor::Editor::TextPosition{ 0, 0 }, txt, strlen(txt));
     editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
+    editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
     infiniteCanvas += editor1;
 
 
@@ -170,6 +171,11 @@ void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& win
 void TestWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
     {
     full.trickleResizeEvent(event, window);
+    }
+
+void TestWindowClient::textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window)
+    {
+    full.trickleTextEvent(event, window);
     }
 
 void TestWindowClient::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)

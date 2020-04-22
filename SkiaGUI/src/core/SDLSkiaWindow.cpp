@@ -7,6 +7,7 @@
 #endif
 #include "UIElement.h"
 
+
 int SDLCALL SDLSkiaWindow::onEventsReceived(void* userdata, SDL_Event* event)
     {
     ((SDLSkiaWindow*)userdata)->loopOnce();
@@ -200,10 +201,10 @@ bool SDLSkiaWindow::handleEvents()
                 client.mouseWheel(event.wheel, *this);
                 break;
             case SDL_KEYDOWN:
-                {
                 client.keyDown(event.key, *this);
                 break;
-                }
+            case SDL_TEXTINPUT:
+                client.textInput(event.text, *this);
             case SDL_WINDOWEVENT:
                 switch (event.window.event)
                     {
