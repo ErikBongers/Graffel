@@ -53,7 +53,7 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     {
     if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
-    if(!window.isMouseCaptured(*this))
+    if (!window.isMouseCaptured(*this))
         {
         _mouseUp(event, window);
         if (mouseUp)
@@ -62,6 +62,21 @@ bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& 
     for (auto el : children)
         {
         if (el->trickleMouseUpEvent(event, window))
+            break; //assuming no overlapping UIElements.
+        }
+    return true;
+    }
+
+bool UIElement::trickleMouseDownEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+    {
+    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+        return false;
+    _mouseDown(event, window);
+    if (mouseDown)
+        mouseDown(*this, event, window);
+    for (auto el : children)
+        {
+        if (el->trickleMouseDownEvent(event, window))
             break; //assuming no overlapping UIElements.
         }
     return true;

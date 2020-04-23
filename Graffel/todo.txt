@@ -1,6 +1,19 @@
+* editor: disable drag of editor while in edit mode
+  > create 2 modeds: display and edit
+    > dblclick: SDL? event button.clicks = 2;
 * editor: 
-  > bounds/margins, scroll, auto-resize.
+  > page up/down: move cursor.
+    > get pixelpos of cursor before page down.
+    > find the char with the closest pixelpos
+      > is also needed for mouse click! -> works in orig. editor!
+  > clipboard.
+  > auto-resize.
   > undo/redo
+
+* UIElement, add window as field.
+  > get rid of window as member params.
+  > window.setRoot() ?
+  > add child after setRoot(), will copy down the window?
 
 * zoom: still a glitch when, I think, pressing the right mouse button.
 

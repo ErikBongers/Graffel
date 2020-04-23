@@ -44,6 +44,8 @@ class Editor : public UIElement
     void resetCursorBlink(SDLSkiaWindow& window);
     void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) override;
     void textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window) override;
+    void _mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
+    void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
     void drawMe(SDLSkiaWindow& window) override;
     void onIdle(SDLSkiaWindow& window) override;
     void setSize(int width, int height, SDLSkiaWindow& window);
@@ -57,7 +59,6 @@ class Editor : public UIElement
     TextPosition fTextPos{ 0, 0 };
     TextPosition fMarkPos;
     bool fShiftDown = false;
-
     int getHeight() const { return rect.height(); }
     void setWidth(int w); // may force re-shape
 
@@ -131,6 +132,7 @@ private:
 
     void markDirty(TextParagraph*);
     void reshapeAll();
+    bool scroll(int delta, SDLSkiaWindow& window);
 
 
 };

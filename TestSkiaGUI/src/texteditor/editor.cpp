@@ -435,6 +435,33 @@ void SkPlainTextEditor::Editor::textInput(SDL_TextInputEvent& event, SDLSkiaWind
     moveCursor(Editor::Movement::kRight, false, window);
     }
 
+
+void SkPlainTextEditor::Editor::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+    {
+    SkPoint point = SkPoint::Make(event.x, event.y);
+    mapPixelsToPoints(&point, 1);
+    moveTo(getPosition({ ((int)point.fX) - fMargin, ((int)point.fY) + fPos - fMargin }), true, window);
+    }
+
+void SkPlainTextEditor::Editor::_mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+    {
+    SkPoint point = SkPoint::Make(event.x, event.y);
+    mapPixelsToPoints(&point, 1);
+    moveTo(getPosition({ ((int)point.fX) - fMargin, ((int)point.fY) + fPos - fMargin }), false, window);
+    }
+
+bool SkPlainTextEditor::Editor::scroll(int delta, SDLSkiaWindow& window)
+    {
+    int maxPos = std::max<int>(0, fullTextHeight + 2 * fMargin - rect.height() / 2);
+    int newpos = std::max<int>(0, std::min(fPos + delta, maxPos));
+    if (newpos != fPos) {
+        //moveCursor(Movement::)
+        fPos = newpos;
+        window.setInvalid();
+        }
+    return true;
+    }
+
 void SkPlainTextEditor::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
     {
     if (event.type == SDL_KEYDOWN)
@@ -449,7 +476,11 @@ void SkPlainTextEditor::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow&
             case SDLK_HOME: moveCursor(Editor::Movement::kHome, shift, window); break;
             case SDLK_END: moveCursor(Editor::Movement::kEnd, shift, window); break;
             case SDLK_PAGEDOWN:
+                scroll(rect.height() * 4 / 5, window);
+                break;
             case SDLK_PAGEUP:
+                scroll(-rect.height() * 4 / 5, window);
+                break;
             case SDLK_DELETE:
                 if (fMarkPos != Editor::TextPosition()) {
                     moveTo(remove(fMarkPos, fTextPos), false, window);
