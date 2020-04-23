@@ -52,7 +52,8 @@ class Editor : public UIElement
     bool moveCursor(Editor::Movement m, bool shift, SDLSkiaWindow& window);
     bool moveTo(Editor::TextPosition pos, bool shift, SDLSkiaWindow& window);
     std::chrono::time_point<std::chrono::steady_clock> startCursorTime;
-    bool showCursor;
+    bool cursorBlinkOn = false;
+    bool editMode = false;
     int fPos = 0;  // window pixel position in file
     int fMargin = 10;
     public:

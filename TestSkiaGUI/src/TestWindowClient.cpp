@@ -154,8 +154,9 @@ void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& wi
 
 void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
-    window.setInvalid();
-    infiniteCanvas.mouseDown(event, window);
+    //window.setInvalid();
+    //infiniteCanvas.mouseDown(event, window);
+    full.trickleMouseDownEvent(event, window);
     }
 
 void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
@@ -180,9 +181,5 @@ void TestWindowClient::textInput(SDL_TextInputEvent& event, SDLSkiaWindow& windo
 
 void TestWindowClient::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
     {
-    SDL_Keycode key = event.keysym.sym;
-    if (key == SDLK_ESCAPE)
-        window.close();
-    else
-        full.trickleKeyDown(event, window);
+    full.trickleKeyDown(event, window);
     }

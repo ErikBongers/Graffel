@@ -431,6 +431,8 @@ void SkPlainTextEditor::Editor::setSize(int width, int height, SDLSkiaWindow& wi
 
 void SkPlainTextEditor::Editor::textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window)
     {
+    if (!editMode)
+        return;
     insert(fTextPos, event.text, strlen(event.text));
     moveCursor(Editor::Movement::kRight, false, window);
     }
@@ -438,6 +440,13 @@ void SkPlainTextEditor::Editor::textInput(SDL_TextInputEvent& event, SDLSkiaWind
 
 void SkPlainTextEditor::Editor::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
+    if (event.clicks == 2)
+        {
+        editMode = true;
+        return;
+        }
+    if (!editMode)
+        return;
     SkPoint point = SkPoint::Make(event.x, event.y);
     mapPixelsToPoints(&point, 1);
     moveTo(getPosition({ ((int)point.fX) - fMargin, ((int)point.fY) + fPos - fMargin }), true, window);
@@ -445,6 +454,8 @@ void SkPlainTextEditor::Editor::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaW
 
 void SkPlainTextEditor::Editor::_mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
+    if (!editMode)
+        return;
     SkPoint point = SkPoint::Make(event.x, event.y);
     mapPixelsToPoints(&point, 1);
     moveTo(getPosition({ ((int)point.fX) - fMargin, ((int)point.fY) + fPos - fMargin }), false, window);
@@ -464,6 +475,9 @@ bool SkPlainTextEditor::Editor::scroll(int delta, SDLSkiaWindow& window)
 
 void SkPlainTextEditor::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
     {
+    if (!editMode)
+        return;
+
     if (event.type == SDL_KEYDOWN)
         {
         bool shift = event.keysym.mod & KMOD_SHIFT;
@@ -508,6 +522,9 @@ void SkPlainTextEditor::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow&
                 moveCursor(Editor::Movement::kRight, false, window);
                 break;
                 }
+            case SDLK_ESCAPE:
+                editMode = false;
+                break;
             default:
                 break;
             }
@@ -549,7 +566,7 @@ bool SkPlainTextEditor::Editor::moveTo(SkPlainTextEditor::Editor::TextPosition p
 void SkPlainTextEditor::Editor::resetCursorBlink(SDLSkiaWindow& window)
     {
     startCursorTime = std::chrono::steady_clock::now();
-    showCursor = true;
+    cursorBlinkOn = true;
     }
 
 void SkPlainTextEditor::Editor::drawMe(SDLSkiaWindow& window)
@@ -562,7 +579,7 @@ void SkPlainTextEditor::Editor::onIdle(SDLSkiaWindow& window)
     auto ellapsedTime = std::chrono::steady_clock::now() - startCursorTime;
     if (ellapsedTime > std::chrono::milliseconds(500))
         {
-        showCursor = !showCursor;
+        cursorBlinkOn = !cursorBlinkOn;
         startCursorTime = std::chrono::steady_clock::now();
         window.setInvalid();
         }
@@ -604,8 +621,10 @@ void SkPlainTextEditor::Editor::paint(SkCanvas* c) {
         c->drawRect(offset(l.fCursorPos[pos.fTextByteIndex], l.fOrigin), selection);
         }
 
-    if (fParas.size() > 0) {
-        c->drawRect(Editor::getLocation(options.fCursor), SkPaint(showCursor ? options.fCursorColor : SkColor4f::FromBytes_RGBA(SK_ColorTRANSPARENT)));
+    if (fParas.size() > 0) 
+        {
+        if((cursorBlinkOn && editMode))
+            c->drawRect(Editor::getLocation(options.fCursor), SkPaint( options.fCursorColor));
         }
 
     SkPaint foreground = SkPaint(options.fForegroundColor);

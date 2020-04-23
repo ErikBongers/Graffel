@@ -19,7 +19,7 @@ class InfiniteCanvas : public UIElement
     
     public:
         void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) override;
-        void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window);
+        void _mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
         void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
         void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window);
     };

@@ -39,7 +39,7 @@ void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& wind
         }
     }
 
-void InfiniteCanvas::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     if (isDragging)
         return;
