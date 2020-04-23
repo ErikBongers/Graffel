@@ -52,7 +52,7 @@ void SkPlainTextEditor::Editor::setFont(SkFont font) {
     }
 }
 
-void SkPlainTextEditor::Editor::setWidth(int w) {
+void SkPlainTextEditor::Editor::setWidth(SkScalar w) {
     if (rect.width() != w) {
         rect.setXYWH(rect.fLeft, rect.fTop, w, rect.height());
         fNeedsReshape = true;
@@ -61,24 +61,24 @@ void SkPlainTextEditor::Editor::setWidth(int w) {
     }
 static SkPoint to_point(SkIPoint p) { return { (float)p.x(), (float)p.y() }; }
 
-Editor::TextPosition Editor::getPosition(SkIPoint xy) {
+Editor::TextPosition Editor::getPosition(SkPoint xy) {
     Editor::TextPosition approximatePosition;
     this->reshapeAll();
     for (size_t j = 0; j < fParas.size(); ++j) {
         const TextParagraph& line = fParas[j];
         SkIRect lineRect = { 0,
                             line.fOrigin.y(),
-                            rect.width(),
+                            (int)rect.width(),
                             j + 1 < fParas.size() ? fParas[j + 1].fOrigin.y() : INT_MAX };
         if (const SkTextBlob* b = line.fBlob.get()) {
             SkIRect r = b->bounds().roundOut();
             r.offset(line.fOrigin);
             lineRect.join(r);
             }
-        if (!lineRect.contains(xy.x(), xy.y())) {
+        if (!lineRect.contains((int)xy.x(), (int)xy.y())) {
             continue;
             }
-        SkPoint pt = to_point(xy - line.fOrigin);
+        SkPoint pt = xy - to_point(line.fOrigin);
         const std::vector<SkRect>& pos = line.fCursorPos;
         for (size_t i = 0; i < pos.size(); ++i) {
             if (pos[i] != kUnsetRect && pos[i].contains(pt.x(), pt.y())) {
@@ -115,7 +115,7 @@ static const char* prev_utf8(const char* p, const char* begin) {
     return p > begin ? align_utf8(p - 1, begin) : begin;
     }
 
-SkRect SkPlainTextEditor::Editor::getLocation(Editor::TextPosition cursor) {
+SkRect SkPlainTextEditor::Editor::getCursorTextLocation(Editor::TextPosition cursor) {
     this->reshapeAll();
     cursor = this->move(Editor::Movement::kNowhere, cursor);
     if (fParas.size() > 0) {
@@ -124,7 +124,7 @@ SkRect SkPlainTextEditor::Editor::getLocation(Editor::TextPosition cursor) {
         if (cursor.fTextByteIndex < cLine.fCursorPos.size()) {
             pos = cLine.fCursorPos[cursor.fTextByteIndex];
             }
-        pos.fRight = pos.fLeft + 1;
+        pos.fRight = pos.fLeft + 0.5f;
         pos.fLeft -= 1;
         return offset(pos, cLine.fOrigin);
         }
@@ -447,27 +447,30 @@ void SkPlainTextEditor::Editor::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaW
         }
     if (!editMode)
         return;
-    SkPoint point = SkPoint::Make(event.x, event.y);
+    SkPoint point = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
     mapPixelsToPoints(&point, 1);
-    moveTo(getPosition({ ((int)point.fX) - fMargin, ((int)point.fY) + fPos - fMargin }), true, window);
+    moveTo(getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), true, window);
     }
 
 void SkPlainTextEditor::Editor::_mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
     {
     if (!editMode)
         return;
-    SkPoint point = SkPoint::Make(event.x, event.y);
+    SkPoint point = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
     mapPixelsToPoints(&point, 1);
-    moveTo(getPosition({ ((int)point.fX) - fMargin, ((int)point.fY) + fPos - fMargin }), false, window);
+    moveTo(getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), false, window);
     }
 
-bool SkPlainTextEditor::Editor::scroll(int delta, SDLSkiaWindow& window)
+bool SkPlainTextEditor::Editor::scroll(SkScalar delta, SDLSkiaWindow& window)
     {
-    int maxPos = std::max<int>(0, fullTextHeight + 2 * fMargin - rect.height() / 2);
-    int newpos = std::max<int>(0, std::min(fPos + delta, maxPos));
-    if (newpos != fPos) {
-        //moveCursor(Movement::)
-        fPos = newpos;
+    SkRect cursorRect = Editor::getCursorTextLocation(fTextPos);
+
+    SkScalar maxPos = std::max<SkScalar>(0, fullTextHeight + 2 * fMargin - rect.height() / 2);
+    SkScalar newpos = std::max<SkScalar>(0, std::min<SkScalar>(scrollPos + delta, maxPos));
+    if (newpos != scrollPos) {
+        SkScalar actualDelta = newpos - scrollPos;
+        scrollPos = newpos;
+        moveTo(getPosition({ cursorRect.centerX(), cursorRect.centerY() + actualDelta}), false, window);
         window.setInvalid();
         }
     return true;
@@ -551,12 +554,12 @@ bool SkPlainTextEditor::Editor::moveTo(SkPlainTextEditor::Editor::TextPosition p
     fTextPos = pos;
 
     // scroll if needed.
-    SkIRect cursor = getLocation(fTextPos).roundOut();
-    if (fPos < cursor.bottom() - rect.height() + 2 * fMargin) {
-        fPos = cursor.bottom() - rect.height() + 2 * fMargin;
+    SkRect cursor = getCursorTextLocation(fTextPos);
+    if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
+        scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
         }
-    else if (cursor.top() < fPos) {
-        fPos = cursor.top();
+    else if (cursor.top() < scrollPos) {
+        scrollPos = cursor.top();
         }
     window.setInvalid();
     resetCursorBlink(window);
@@ -587,8 +590,8 @@ void SkPlainTextEditor::Editor::onIdle(SDLSkiaWindow& window)
 
 void SkPlainTextEditor::Editor::paint(SkCanvas* c) {
 //from editorApp:
-    c->clipRect({ 0, 0, (float)rect.width(), (float)rect.height()}); //TDDO: also set width
-    c->translate(fMargin, (float)(fMargin - fPos));
+    c->clipRect({ 0, 0, (float)rect.width(), (float)rect.height()});
+    c->translate((SkScalar)fMargin, (float)(fMargin - scrollPos));
     Editor::PaintOpts options;
     options.fCursor = fTextPos;
     if (fMarkPos != Editor::TextPosition()) {
@@ -623,8 +626,12 @@ void SkPlainTextEditor::Editor::paint(SkCanvas* c) {
 
     if (fParas.size() > 0) 
         {
-        if((cursorBlinkOn && editMode))
-            c->drawRect(Editor::getLocation(options.fCursor), SkPaint( options.fCursorColor));
+        if ((cursorBlinkOn && editMode))
+            {
+            SkPaint cursorPaint(options.fCursorColor);
+            cursorPaint.setAntiAlias(false);
+            c->drawRect(Editor::getCursorTextLocation(options.fCursor), cursorPaint);
+            }
         }
 
     SkPaint foreground = SkPaint(options.fForegroundColor);

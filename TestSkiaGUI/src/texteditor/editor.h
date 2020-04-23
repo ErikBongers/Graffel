@@ -54,14 +54,14 @@ class Editor : public UIElement
     std::chrono::time_point<std::chrono::steady_clock> startCursorTime;
     bool cursorBlinkOn = false;
     bool editMode = false;
-    int fPos = 0;  // window pixel position in file
-    int fMargin = 10;
+    SkScalar scrollPos = 0;  // window pixel position in file
+    SkScalar fMargin = 10;
     public:
     TextPosition fTextPos{ 0, 0 };
     TextPosition fMarkPos;
     bool fShiftDown = false;
-    int getHeight() const { return rect.height(); }
-    void setWidth(int w); // may force re-shape
+    SkScalar getHeight() const { return rect.height(); }
+    void setWidth(SkScalar w); // may force re-shape
 
     const SkFont& font() const { return fFont; }
     void setFont(SkFont font);
@@ -88,8 +88,8 @@ class Editor : public UIElement
     Text text() const { return Text{fParas}; }
 
     TextPosition move(Editor::Movement move, Editor::TextPosition pos) const;
-    TextPosition getPosition(SkIPoint);
-    SkRect getLocation(TextPosition);
+    TextPosition getPosition(SkPoint);
+    SkRect getCursorTextLocation(TextPosition);
     TextPosition insert(TextPosition, const char* utf8Text, size_t byteLen);
     TextPosition remove(TextPosition, TextPosition);
 
@@ -111,7 +111,7 @@ class Editor : public UIElement
     };
     void paint(SkCanvas* canvas);
 
-private:
+protected:
     struct TextParagraph {
         StringSlice fText;
         sk_sp<const SkTextBlob> fBlob;
@@ -133,7 +133,7 @@ private:
 
     void markDirty(TextParagraph*);
     void reshapeAll();
-    bool scroll(int delta, SDLSkiaWindow& window);
+    bool scroll(SkScalar delta, SDLSkiaWindow& window);
 
 
 };
