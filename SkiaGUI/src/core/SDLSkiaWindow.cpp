@@ -29,7 +29,7 @@ void SDLSkiaWindow::loopOnce()
     loopCounter++;
 
     if (!handleEvents())
-        client.onIdle(*this);
+        client.onIdle();
     if (canvas == NULL)
         canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
 
@@ -40,7 +40,7 @@ void SDLSkiaWindow::loopOnce()
         canvas->resetMatrix();
         canvas->clear(SK_ColorWHITE);
 
-        client.draw(*this);
+        client.draw();
 
         std::string strFps = std::to_string(fps.getFps());
         std::string strMs = std::to_string((int)fps.getMsPerFrame()) + "ms";
@@ -107,10 +107,12 @@ bool  SDLSkiaWindow::createWindow(int width, int height, int stencilBits, int ms
     canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
     //canvas->scale((float)dw/dm.w, (float)dh/dm.h); //scales to about 1:1
 
-    client.initialize(*this);
+    client.initialize();
+    if (client.getRootElement())
+        client.getRootElement()->window = this;
     SDL_WindowEvent event;
     event.type = SDL_EventType::SDL_WINDOWEVENT;
-    client.resize(event, *this);
+    client.resize(event);
     return true;
     }
 
@@ -178,33 +180,33 @@ bool SDLSkiaWindow::handleEvents()
             case SDL_MOUSEMOTION:
                 for (auto el = mouseCaptures.rbegin(); el != mouseCaptures.rend(); ++el)
                     {
-                    (*el)->_mouseMove(event.motion, *this);
+                    (*el)->_mouseMove(event.motion);
                     if((*el)->mouseMove)
-                        (*el)->mouseMove(**el, event.motion, *this);
+                        (*el)->mouseMove(**el, event.motion);
                     }
                 //std::cout << event.motion.x << ", " << event.motion.y << std::endl;
-                client.mouseMoved(event.motion, *this);
+                client.mouseMoved(event.motion);
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                client.mouseDown(event.button, *this);
+                client.mouseDown(event.button);
                 break;
             case SDL_MOUSEBUTTONUP:
                 for (UIElement* el : mouseCaptures)
                     {
-                    el->_mouseUp(event.button, *this);
+                    el->_mouseUp(event.button);
                     if (el->mouseUp)
-                        el->mouseUp(*el, event.button, *this);
+                        el->mouseUp(*el, event.button);
                     }
-                client.mouseUp(event.button, *this);
+                client.mouseUp(event.button);
                 break;
             case SDL_MOUSEWHEEL:
-                client.mouseWheel(event.wheel, *this);
+                client.mouseWheel(event.wheel);
                 break;
             case SDL_KEYDOWN:
-                client.keyDown(event.key, *this);
+                client.keyDown(event.key);
                 break;
             case SDL_TEXTINPUT:
-                client.textInput(event.text, *this);
+                client.textInput(event.text);
             case SDL_WINDOWEVENT:
                 switch (event.window.event)
                     {
@@ -212,7 +214,7 @@ bool SDLSkiaWindow::handleEvents()
                         break;
                     case SDL_WINDOWEVENT_SIZE_CHANGED: //always called
                         resizeViewportToWindow(window);
-                        client.resize(event.window, *this);
+                        client.resize(event.window);
                         canvas = NULL;
                         break;
                     }

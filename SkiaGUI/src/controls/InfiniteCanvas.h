@@ -5,7 +5,7 @@
 class InfiniteCanvas : public UIElement
     {
     private:
-        void drawAll(SDLSkiaWindow& window);
+        void drawAll();
         SkPoint dragStartMousePos;
         SkPoint dragStartDrageePos;
         bool isDragging = false;
@@ -18,8 +18,8 @@ class InfiniteCanvas : public UIElement
         SkMatrix baseTransform;
     
     public:
-        void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) override;
-        void _mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
-        void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
-        void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window);
+        void _mouseMove(SDL_MouseMotionEvent& event) override;
+        void _mouseDown(SDL_MouseButtonEvent& event) override;
+        void _mouseUp(SDL_MouseButtonEvent& event) override;
+        void mouseWheel(SDL_MouseWheelEvent& event);
     };

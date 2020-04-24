@@ -4,7 +4,7 @@
 
 
 #include "core/UIElement.h"
-#include "EditorText.h"
+#include "EditorView.h"
 
 class SkCanvas;
 class SkShaper;
@@ -14,23 +14,24 @@ namespace SkEd {
 class Editor : public UIElement
     {
     protected:
-        EditorText txt;
-        void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) override;
-        void textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window) override;
-        void _mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
-        void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
-        void _resize(SDL_WindowEvent& event, SDLSkiaWindow& window) override;
-        void drawMe(SDLSkiaWindow& window) override;
-        void onIdle(SDLSkiaWindow& window) override;
-        bool moveCursor(Movement m, bool shift, SDLSkiaWindow& window);
-        bool moveTo(TextPosition pos, bool shift, SDLSkiaWindow& window);
+        EditorView txt;
+        void keyDown(SDL_KeyboardEvent& event) override;
+        void textInput(SDL_TextInputEvent& event) override;
+        void _mouseDown(SDL_MouseButtonEvent& event) override;
+        void _mouseUp(SDL_MouseButtonEvent& event) override;
+        void _resize(SDL_WindowEvent& event) override;
+        void drawMe() override;
+        void onIdle() override;
+        bool moveCursor(Movement m, bool shift);
+        bool setCursor(TextPosition pos, bool shift);
         bool editMode = false;
         SkScalar scrollPos = 0;  // window pixel position in file
         SkScalar fMargin = 10;
     public:
+        Editor();
         SkScalar getHeight() const { return rect.height(); }
         void setFont(SkFont font) { txt.setFont(font); }
-        void insert(const char* text) { txt.insert(TextPosition{ 0, 0 }, text, strlen(text)); }
+        void insert(const char* text) { txt.doc.insert(text, strlen(text)); }
 
         //const SkFont& font() const { return fFont; }
 
@@ -63,7 +64,7 @@ class Editor : public UIElement
 
 protected:
 
-    bool scroll(SkScalar delta, SDLSkiaWindow& window);
+    bool scroll(SkScalar delta);
 
 
 };

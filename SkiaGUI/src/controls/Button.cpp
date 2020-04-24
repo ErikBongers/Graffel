@@ -2,24 +2,24 @@
 
 Button::Button()
     {
-    mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+    mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
         Button& button = (Button&)e;
-        button.highlight(button.hitTest((SkScalar)event.x, (SkScalar)event.y), window);
+        button.highlight(button.hitTest((SkScalar)event.x, (SkScalar)event.y));
         };
     }
 
-void Button::highlight(bool high, SDLSkiaWindow& window)
+void Button::highlight(bool high)
     {
     if (high)
         {
         if (!mouseOver)
             {
             mouseOver = true;
-            window.addMouseCapture(*this);
+            getWindow()->addMouseCapture(*this);
             originalBkcColor = backgroundColor;
             if (highlightColor != SK_ColorTRANSPARENT)
                 backgroundColor = highlightColor;
-            window.setInvalid();
+            getWindow()->setInvalid();
             }
         }
     else
@@ -28,8 +28,8 @@ void Button::highlight(bool high, SDLSkiaWindow& window)
             {
             mouseOver = false;
             backgroundColor = originalBkcColor;
-            window.setInvalid();
+            getWindow()->setInvalid();
             }
-        window.removeMouseCapture(*this);
+        getWindow()->removeMouseCapture(*this);
         }
     }

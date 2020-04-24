@@ -1,20 +1,30 @@
 #include "UIElement.h"
 
-void UIElement::drawAll(SDLSkiaWindow& window)
+SDLSkiaWindow* UIElement::getWindow()
     {
-    window.Canvas().save();
-    window.Canvas().translate(rect.fLeft, rect.fTop);
-    drawBackground(window);
-    totalTransform = window.Canvas().getTotalMatrix();
-    drawMe(window);
-    drawChildren(window);
-    window.Canvas().restore();
+    if (!window)
+        {
+        if(parent)
+            window = parent->getWindow();
+        }
+    return window;
     }
 
-void UIElement::drawChildren(SDLSkiaWindow& window)
+void UIElement::drawAll()
+    {
+    getWindow()->Canvas().save();
+    getWindow()->Canvas().translate(rect.fLeft, rect.fTop);
+    drawBackground();
+    totalTransform = getWindow()->Canvas().getTotalMatrix();
+    drawMe();
+    drawChildren();
+    getWindow()->Canvas().restore();
+    }
+
+void UIElement::drawChildren()
     {
     for (auto el : children)
-        el->drawAll(window);
+        el->drawAll();
     }
 
 UIElement& UIElement::operator+=(UIElement* child)
@@ -24,60 +34,60 @@ UIElement& UIElement::operator+=(UIElement* child)
     return *this;
     }
 
-void UIElement::trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window)
+void UIElement::trickleResizeEvent(SDL_WindowEvent& event)
     {
     if(resize)
-        resize(*this, event, window);
-    _resize(event, window);
+        resize(*this, event);
+    _resize(event);
     for (auto el : children)
         {
-            el->trickleResizeEvent(event, window);
+            el->trickleResizeEvent(event);
         }
     }
 
-bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     {
     if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
-    _mouseMove(event, window);
+    _mouseMove(event);
     if (mouseMove)
-        mouseMove(*this, event, window);
+        mouseMove(*this, event);
     for (auto el : children)
         {
-        if (el->trickleMouseMoveEvent(event, window))
+        if (el->trickleMouseMoveEvent(event))
             break; //assuming no overlapping UIElements.
         }
     return true;
     }
 
-bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     {
     if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
-    if (!window.isMouseCaptured(*this))
+    if (!getWindow()->isMouseCaptured(*this))
         {
-        _mouseUp(event, window);
+        _mouseUp(event);
         if (mouseUp)
-            mouseUp(*this, event, window);
+            mouseUp(*this, event);
         }
     for (auto el : children)
         {
-        if (el->trickleMouseUpEvent(event, window))
+        if (el->trickleMouseUpEvent(event))
             break; //assuming no overlapping UIElements.
         }
     return true;
     }
 
-bool UIElement::trickleMouseDownEvent(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+bool UIElement::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
     {
     if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
         return false;
-    _mouseDown(event, window);
+    _mouseDown(event);
     if (mouseDown)
-        mouseDown(*this, event, window);
+        mouseDown(*this, event);
     for (auto el : children)
         {
-        if (el->trickleMouseDownEvent(event, window))
+        if (el->trickleMouseDownEvent(event))
             break; //assuming no overlapping UIElements.
         }
     return true;
@@ -121,13 +131,13 @@ SkRect UIElement::absoluteRect()
     return rectAbs;
     }
 
-void UIElement::drawBackground(SDLSkiaWindow& window)
+void UIElement::drawBackground()
     {
     if (backgroundColor != SK_ColorTRANSPARENT)
         {
         SkPaint paint;
         paint.setColor(backgroundColor);
         paint.setStyle(SkPaint::Style::kFill_Style);
-        window.Canvas().drawRect(SkRect::MakeWH(rect.width(), rect.height()), paint);
+        getWindow()->Canvas().drawRect(SkRect::MakeWH(rect.width(), rect.height()), paint);
         }
     }

@@ -1,22 +1,22 @@
 #include "pch.h"
 #include "InfiniteCanvas.h"
 
-void InfiniteCanvas::drawAll(SDLSkiaWindow& window)
+void InfiniteCanvas::drawAll()
     {
-    window.Canvas().save();
-    window.Canvas().translate(rect.fLeft, rect.fTop);
-    baseTransform = window.Canvas().getTotalMatrix();
-    drawBackground(window);
-    drawMe(window);
-    window.Canvas().clipRect(SkRect::MakeWH(rect.width(), rect.height()));
-    window.Canvas().translate(xTranslate, yTranslate);
-    window.Canvas().scale(scaleFactor, scaleFactor); //pre scaling!
-    totalTransform = window.Canvas().getTotalMatrix();
-    drawChildren(window);
-    window.Canvas().restore();
+    getWindow()->Canvas().save();
+    getWindow()->Canvas().translate(rect.fLeft, rect.fTop);
+    baseTransform = getWindow()->Canvas().getTotalMatrix();
+    drawBackground();
+    drawMe();
+    getWindow()->Canvas().clipRect(SkRect::MakeWH(rect.width(), rect.height()));
+    getWindow()->Canvas().translate(xTranslate, yTranslate);
+    getWindow()->Canvas().scale(scaleFactor, scaleFactor); //pre scaling!
+    totalTransform = getWindow()->Canvas().getTotalMatrix();
+    drawChildren();
+    getWindow()->Canvas().restore();
     }
 
-void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event)
     {
     if (isDragging)
         {
@@ -35,11 +35,11 @@ void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& wind
             mapPixelsToPoints(&newDrageePoint, 1);
             dragee->rect = SkRect::MakeXYWH(newDrageePoint.fX, newDrageePoint.fY, dragee->rect.width(), dragee->rect.height());
             }
-        window.setInvalid();
+        getWindow()->setInvalid();
         }
     }
 
-void InfiniteCanvas::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::_mouseDown(SDL_MouseButtonEvent& event)
     {
     if (isDragging)
         return;
@@ -68,12 +68,12 @@ void InfiniteCanvas::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& wind
         }
     }
 
-void InfiniteCanvas::_mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::_mouseUp(SDL_MouseButtonEvent& event)
     {
     isDragging = false;
     }
 
-void InfiniteCanvas::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window)
+void InfiniteCanvas::mouseWheel(SDL_MouseWheelEvent& event)
     {
     auto state = SDL_GetMouseState(nullptr, nullptr);
     if (SDL_BUTTON(SDL_BUTTON_MIDDLE) & state)
@@ -100,6 +100,6 @@ void InfiniteCanvas::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& windo
     xTranslate += mouseLoc.fX - newMouseLoc.fX;
     yTranslate += mouseLoc.fY - newMouseLoc.fY;
 
-    window.setInvalid();
+    getWindow()->setInvalid();
     }
 

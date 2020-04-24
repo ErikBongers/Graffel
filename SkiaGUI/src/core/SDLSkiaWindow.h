@@ -7,17 +7,23 @@ class SDLSkiaWindow;
 class UIElement;
 class WindowClient
     {
+    protected:
+        SDLSkiaWindow* window;
+        void setWindow(SDLSkiaWindow* window) { this->window = window; }
     public:
-        virtual void onIdle(SDLSkiaWindow& window) {}
-        virtual void draw(SDLSkiaWindow& window) {}
-        virtual void initialize(SDLSkiaWindow& window) {}
-        virtual void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}
-        virtual void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
-        virtual void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
-        virtual void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window) {}
-        virtual void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) {}
-        virtual void textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window) {}
-        virtual void resize(SDL_WindowEvent& event, SDLSkiaWindow& window) {}
+        SDLSkiaWindow* getWindow() { return window; }
+        virtual void onIdle() {}
+        virtual void draw() {}
+        virtual void initialize() {}
+        virtual void mouseMoved(SDL_MouseMotionEvent& event) {}
+        virtual void mouseDown(SDL_MouseButtonEvent& event) {}
+        virtual void mouseUp(SDL_MouseButtonEvent& event) {}
+        virtual void mouseWheel(SDL_MouseWheelEvent& event) {}
+        virtual void keyDown(SDL_KeyboardEvent& event) {}
+        virtual void textInput(SDL_TextInputEvent& event) {}
+        virtual void resize(SDL_WindowEvent& event) {}
+        virtual UIElement* getRootElement() = 0;
+        friend class SDLSkiaWindow;
     };
 
 class SDLSkiaWindow
@@ -52,8 +58,9 @@ class SDLSkiaWindow
         void loopOnce();
         static int onEventsReceived(void* userdata, SDL_Event* event);
         std::set<UIElement*> mouseCaptures;
+        UIElement* root = nullptr;
     public:
-        SDLSkiaWindow(WindowClient& client) : client(client) {}
+        SDLSkiaWindow(WindowClient& client) : client(client) { client.setWindow(this); root = client.getRootElement(); }
         void startEventLoop();
         bool createWindow(int width, int height, int stencilBits, int msaaSampleCount);
         void destroyWindow();

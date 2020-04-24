@@ -10,13 +10,13 @@ class ImageButton : public Button
         ImageButton() { highlightColor = SkColorSetARGB(20, 255, 255, 255); }
         SkScalar xOffset = 0, yOffset = 0;
         sk_sp<SkImage> img = nullptr;
-        void drawMe(SDLSkiaWindow& window) override
+        void drawMe() override
             {
             SkPaint paint;
             paint.setAntiAlias(true);
             paint.setAlpha(mouseOver ? 255 : 180);
             if(img)
-                window.Canvas().drawImage(img, xOffset, yOffset, &paint);
+                getWindow()->Canvas().drawImage(img, xOffset, yOffset, &paint);
             }
     };
 
@@ -24,12 +24,12 @@ class Bullet : public UIElement
     {
     public:
         SkColor color = SK_ColorRED;
-    void drawMe(SDLSkiaWindow& window) override
+    void drawMe() override
         {
         SkPaint paint;
         paint.setColor(color);
         SkScalar radius = rect.width() / 2;
-        window.Canvas().drawCircle(SkPoint::Make(radius, radius), radius, paint);
+        getWindow()->Canvas().drawCircle(SkPoint::Make(radius, radius), radius, paint);
         }
     };
 
@@ -45,7 +45,7 @@ class Curve : public UIElement
     SkPath outline;
 
     protected:
-    void drawMe(SDLSkiaWindow& window) override
+    void drawMe() override
         {
         SkPaint paint;
         paint.setAntiAlias(true);
@@ -56,8 +56,8 @@ class Curve : public UIElement
         SkPoint pp2 = SkPoint::Make(p2->rect.fLeft, p2->rect.fTop);
         SkPoint pp3 = SkPoint::Make(p3->rect.fLeft, p3->rect.fTop);
         SkPoint pp4 = SkPoint::Make(p4->rect.fLeft, p4->rect.fTop);
-        window.Canvas().drawLine(pp1, pp2, paint);
-        window.Canvas().drawLine(pp3, pp4, paint);
+        getWindow()->Canvas().drawLine(pp1, pp2, paint);
+        getWindow()->Canvas().drawLine(pp3, pp4, paint);
         SkPath path;
         path.moveTo(pp1)
             .cubicTo(pp2, pp3, pp4);
@@ -66,10 +66,10 @@ class Curve : public UIElement
         paint.getFillPath(path, &outline);
         paint.setStrokeWidth(0);
         paint.setColor(color);
-        window.Canvas().drawPath(outline, paint);
+        getWindow()->Canvas().drawPath(outline, paint);
         paint.setColor(SkColorSetARGB(200, 255, 255, 255));
         bounds = path.getBounds();
-        window.Canvas().drawRect(bounds, paint);
+        getWindow()->Canvas().drawRect(bounds, paint);
         };
 
     };
@@ -100,15 +100,16 @@ class TestWindowClient : public WindowClient
         SkEd::Editor editor1;
 
     public:
-        void initialize(SDLSkiaWindow& window) override;
-        void onIdle(SDLSkiaWindow& window) override;
-        void draw(SDLSkiaWindow& window) override;
-        void mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) override;
-        void mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
-        void mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) override;
-        void mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window) override;
-        void resize(SDL_WindowEvent& event, SDLSkiaWindow& window) override;
-        void keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window) override;
-        void textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window) override;
+        void initialize() override;
+        void onIdle() override;
+        void draw() override;
+        void mouseMoved(SDL_MouseMotionEvent& event) override;
+        void mouseDown(SDL_MouseButtonEvent& event) override;
+        void mouseUp(SDL_MouseButtonEvent& event) override;
+        void mouseWheel(SDL_MouseWheelEvent& event) override;
+        void resize(SDL_WindowEvent& event) override;
+        void keyDown(SDL_KeyboardEvent& event) override;
+        void textInput(SDL_TextInputEvent& event) override;
+        UIElement* getRootElement() override { return &full; }
 
     };

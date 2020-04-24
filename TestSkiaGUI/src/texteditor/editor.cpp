@@ -2,10 +2,17 @@
 
 using namespace SkEd;
 
-void SkEd::Editor::_resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
+Editor::Editor()
+    {
+    txt.docChanged = [this]() {
+        this->getWindow()->setInvalid();
+        };
+    }
+
+void Editor::_resize(SDL_WindowEvent& event)
     {
     txt.setWidth(rect.width()-fMargin);
-    window.setInvalid();
+    getWindow()->setInvalid();
     }
 
 //static void append(char** dst, size_t* count, const char* src, size_t n) {
@@ -52,16 +59,15 @@ void SkEd::Editor::_resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
 
 // returns smallest i such that list[i] > value.  value > list[i-1]
 // Use a binary search since list is monotonic
-void SkEd::Editor::textInput(SDL_TextInputEvent& event, SDLSkiaWindow& window)
+void SkEd::Editor::textInput(SDL_TextInputEvent& event)
     {
     if (!editMode)
         return;
-    txt.insert(txt.fTextPos, event.text, strlen(event.text));
-    moveCursor(SkEd::Movement::kRight, false, window);
+    txt.doc.insert(event.text, strlen(event.text));
     }
 
 
-void SkEd::Editor::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void SkEd::Editor::_mouseDown(SDL_MouseButtonEvent& event)
     {
     if (event.clicks == 2)
         {
@@ -73,34 +79,36 @@ void SkEd::Editor::_mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window
         return;
     SkPoint point = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
     mapPixelsToPoints(&point, 1);
-    moveTo(txt.getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), true, window);
+    auto shift = SDL_GetModState() & KMOD_SHIFT;
+    setCursor(txt.getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), shift);
     }
 
-void SkEd::Editor::_mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void SkEd::Editor::_mouseUp(SDL_MouseButtonEvent& event)
     {
     if (!editMode)
         return;
     SkPoint point = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
     mapPixelsToPoints(&point, 1);
-    moveTo(txt.getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), false, window);
+    auto shift = SDL_GetModState() & KMOD_SHIFT;
+    setCursor(txt.getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), shift);
     }
 
-bool SkEd::Editor::scroll(SkScalar delta, SDLSkiaWindow& window)
+bool SkEd::Editor::scroll(SkScalar delta)
     {
-    SkRect cursorRect = txt.getCursorTextLocation(txt.fTextPos);
+    SkRect cursorRect = txt.getTextLocation(txt.doc.fCursorPos);
 
     SkScalar maxPos = std::max<SkScalar>(0, txt.getFullTextHeight() + 2 * fMargin - rect.height() / 2);
     SkScalar newpos = std::max<SkScalar>(0, std::min<SkScalar>(scrollPos + delta, maxPos));
     if (newpos != scrollPos) {
         SkScalar actualDelta = newpos - scrollPos;
         scrollPos = newpos;
-        moveTo(txt.getPosition({ cursorRect.centerX(), cursorRect.centerY() + actualDelta}), false, window);
-        window.setInvalid();
+        setCursor(txt.getPosition({ cursorRect.centerX(), cursorRect.centerY() + actualDelta}), false);
+        getWindow()->setInvalid();
         }
     return true;
     }
 
-void SkEd::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
+void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
     {
     if (!editMode)
         return;
@@ -110,43 +118,41 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
         bool shift = event.keysym.mod & KMOD_SHIFT;
         switch (event.keysym.sym)
             {
-            case SDLK_UP: moveCursor(Movement::kUp, shift, window); break;
-            case SDLK_DOWN: moveCursor(Movement::kDown, shift, window); break;
-            case SDLK_LEFT: moveCursor(Movement::kLeft, shift, window); break;
-            case SDLK_RIGHT: moveCursor(Movement::kRight, shift, window); break;
-            case SDLK_HOME: moveCursor(Movement::kHome, shift, window); break;
-            case SDLK_END: moveCursor(Movement::kEnd, shift, window); break;
+            case SDLK_UP: moveCursor(Movement::kUp, shift); break;
+            case SDLK_DOWN: moveCursor(Movement::kDown, shift); break;
+            case SDLK_LEFT: moveCursor(Movement::kLeft, shift); break;
+            case SDLK_RIGHT: moveCursor(Movement::kRight, shift); break;
+            case SDLK_HOME: moveCursor(Movement::kHome, shift); break;
+            case SDLK_END: moveCursor(Movement::kEnd, shift); break;
             case SDLK_PAGEDOWN:
-                scroll(rect.height() * 4 / 5, window);
+                scroll(rect.height() * 4 / 5);
                 break;
             case SDLK_PAGEUP:
-                scroll(-rect.height() * 4 / 5, window);
+                scroll(-rect.height() * 4 / 5);
                 break;
             case SDLK_DELETE:
-                if (txt.fMarkPos != TextPosition()) {
-                    moveTo(txt.remove(txt.fMarkPos, txt.fTextPos), false, window);
+                if (txt.doc.fMarkPos != TextPosition()) {
+                    setCursor(txt.doc.remove(txt.doc.fMarkPos, txt.doc.fCursorPos), false);
                     }
                 else {
-                    auto pos = txt.move(Movement::kRight, txt.fTextPos);
-                    moveTo(txt.remove(txt.fTextPos, pos), false, window);
+                    auto pos = txt.getPositionMoved(Movement::kRight, txt.doc.fCursorPos);
+                    setCursor(txt.doc.remove(txt.doc.fCursorPos, pos), false);
                     }
-                window.setInvalid();
                 break;
             case SDLK_BACKSPACE:
-                if (txt.fMarkPos != TextPosition()) {
-                    moveTo(txt.remove(txt.fMarkPos, txt.fTextPos), false, window);
+                if (txt.doc.fMarkPos != TextPosition()) {
+                    setCursor(txt.doc.remove(txt.doc.fMarkPos, txt.doc.fCursorPos), false);
                     }
                 else {
-                    auto pos = txt.move(Movement::kLeft, txt.fTextPos);
-                    moveTo(txt.remove(txt.fTextPos, pos), false, window);
+                    auto pos = txt.getPositionMoved(Movement::kLeft, txt.doc.fCursorPos);
+                    setCursor(txt.doc.remove(txt.doc.fCursorPos, pos), false);
                     }
-                window.setInvalid();
                 break;
             case SDLK_RETURN:
                 {
                 char c = '\n';
-                txt.insert(txt.fTextPos, &c, 1);
-                moveCursor(Movement::kRight, false, window);
+                txt.doc.insert(&c, 1);
+                moveCursor(Movement::kRight, false);
                 break;
                 }
             case SDLK_ESCAPE:
@@ -159,36 +165,36 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event, SDLSkiaWindow& window)
         }
     }
 
-bool SkEd::Editor::moveCursor(Movement m, bool shift, SDLSkiaWindow& window) 
+bool SkEd::Editor::moveCursor(Movement m, bool shift) 
     {
-    return moveTo(txt.move(m, txt.fTextPos), shift, window);
+    return setCursor(txt.getPositionMoved(m, txt.doc.fCursorPos), shift);
     }
 
-bool SkEd::Editor::moveTo(TextPosition pos, bool shift, SDLSkiaWindow& window)
+bool SkEd::Editor::setCursor(TextPosition pos, bool shift)
     {
-    txt.moveTo(pos, shift);
+    txt.doc.setCursor(pos, shift);
     // scroll if needed.
-    SkRect cursor = txt.getCursorTextLocation(txt.fTextPos);
+    SkRect cursor = txt.getTextLocation(txt.doc.fCursorPos);
     if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
         scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
         }
     else if (cursor.top() < scrollPos) {
         scrollPos = cursor.top();
         }
-    window.setInvalid();
+    getWindow()->setInvalid();
     return true;
     }
 
-void SkEd::Editor::drawMe(SDLSkiaWindow& window)
+void SkEd::Editor::drawMe()
     {
-    paint(&window.Canvas());
+    paint(&getWindow()->Canvas());
     }
 
-void SkEd::Editor::onIdle(SDLSkiaWindow& window)
+void SkEd::Editor::onIdle()
     {
     if (txt.onIdle())
         {
-        window.setInvalid();
+        getWindow()->setInvalid();
         }
     }
 

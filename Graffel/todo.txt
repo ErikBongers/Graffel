@@ -1,3 +1,5 @@
+* Cursor: does Doc have a cursor? What if multiple views?
+* delete/backspace: set txt.setSelectionRange() followed by txt.remove(void!);
 * editor: 
   > replace all graphical positions with SkScalar
   > separate text from interface.
