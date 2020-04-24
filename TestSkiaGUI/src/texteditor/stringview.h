@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-namespace SkPlainTextEditor {
+namespace SkEd {
 
 template <typename T>
 struct Span {

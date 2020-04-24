@@ -21,7 +21,7 @@
 #include <string.h>
 
 
-using namespace SkPlainTextEditor;
+using namespace SkEd;
 
 namespace {
 class RunHandler final : public SkShaper::RunHandler {
@@ -257,7 +257,7 @@ static void set_character_bounds(void* context,
     }
 }
 
-ShapeResult SkPlainTextEditor::Shape(const char* utf8Text,
+ShapeResult SkEd::Shape(const char* utf8Text,
                           size_t textByteLen,
                           const SkFont& font,
                           const char* locale,

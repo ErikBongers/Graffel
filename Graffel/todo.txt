@@ -1,11 +1,22 @@
 * editor: 
-  > page up/down: move cursor.
-    > get pixelpos of cursor before page down.
-    > find the char with the closest pixelpos
-      > is also needed for mouse click! -> works in orig. editor!
+  > replace all graphical positions with SkScalar
+  > separate text from interface.
+    > split EditorText 
+      - pure paragraph stuff (TextDocument ?)
+        > including cursor
+          > will eventually be replaced by Selection, which can be a pos or a range.
+      - Font stuff: TextView?
+        > splits in lines
+        > fullHeight
+    > rename StringSlice to TextBuffer and StringView to TextSpan
+    > create EditorText class
+      > add insert() and remove() functions, and all the classes and fields they need.
   > clipboard.
   > auto-resize.
   > undo/redo
+    >textgroups?
+      >words (whitespace delimited)
+      >inserts
 
 * UIElement, add window as field.
   > get rid of window as member params.
@@ -25,7 +36,6 @@ SkShaper: algorithm to create font rendering.
 
 Needed for iDea
 ----------------
-* text editor. : skia/modules/skplaintexteditor
 * animations for transitions.
 
 * Adorners?

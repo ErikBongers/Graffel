@@ -28,6 +28,7 @@ void UIElement::trickleResizeEvent(SDL_WindowEvent& event, SDLSkiaWindow& window
     {
     if(resize)
         resize(*this, event, window);
+    _resize(event, window);
     for (auto el : children)
         {
             el->trickleResizeEvent(event, window);

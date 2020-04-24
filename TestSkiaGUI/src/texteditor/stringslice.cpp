@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace SkPlainTextEditor;
+using namespace SkEd;
 
 void StringSlice::FreeWrapper::operator()(void* t) { std::free(t); }
 

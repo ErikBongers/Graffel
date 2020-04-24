@@ -97,7 +97,7 @@ class TestWindowClient : public WindowClient
         ImageButton imgButton2;
         ImageButton imgButton3;
             
-        SkPlainTextEditor::Editor editor1;
+        SkEd::Editor editor1;
 
     public:
         void initialize(SDLSkiaWindow& window) override;

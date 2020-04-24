@@ -25,6 +25,7 @@
     <ClCompile Include="src\texteditor\word_boundaries.cpp">
       <Filter>texteditor</Filter>
     </ClCompile>
+    <ClCompile Include="src\texteditor\EditorText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="src\texteditor\word_boundaries.h">
       <Filter>texteditor</Filter>
     </ClInclude>
+    <ClInclude Include="src\texteditor\EditorText.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">

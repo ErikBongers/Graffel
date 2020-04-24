@@ -22,6 +22,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\texteditor\editor.cpp" />
+    <ClCompile Include="src\texteditor\EditorText.cpp" />
     <ClCompile Include="src\texteditor\shape.cpp" />
     <ClCompile Include="src\texteditor\stringslice.cpp" />
     <ClCompile Include="src\texteditor\word_boundaries.cpp" />
@@ -43,6 +44,7 @@
     </ClCompile>
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\texteditor\editor.h" />
+    <ClInclude Include="src\texteditor\EditorText.h" />
     <ClInclude Include="src\texteditor\shape.h" />
     <ClInclude Include="src\texteditor\stringslice.h" />
     <ClInclude Include="src\texteditor\stringview.h" />

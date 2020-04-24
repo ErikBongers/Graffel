@@ -41,6 +41,7 @@ class UIElement
         void drawBackground(SDLSkiaWindow& window);
         void drawChildren(SDLSkiaWindow& window);
         virtual void drawMe(SDLSkiaWindow& window) {}
+        virtual void _resize(SDL_WindowEvent& event, SDLSkiaWindow& window) {}
         virtual void _mouseMove(SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {}
         virtual void _mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}
         virtual void _mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {}

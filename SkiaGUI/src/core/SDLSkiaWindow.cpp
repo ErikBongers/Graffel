@@ -211,7 +211,6 @@ bool SDLSkiaWindow::handleEvents()
                     case SDL_WINDOWEVENT_RESIZED: //called after SIZE_CHANGED user or system changes window size.
                         break;
                     case SDL_WINDOWEVENT_SIZE_CHANGED: //always called
-                        std::cout << "SDL: window size changed\n";
                         resizeViewportToWindow(window);
                         client.resize(event.window, *this);
                         canvas = NULL;
