@@ -5,7 +5,9 @@ using namespace SkEd;
 
 EditorView::EditorView()
     {
-    doc.cursorMoved = []() {
+    doc.cursorMoved = [this]() {
+        if(this->cursorMoved)
+            this->cursorMoved();
         };
     doc.paragraphChanged = [this](EditorDoc::Paragraph& para) {
         this->onParagraphChanged(para);
@@ -15,8 +17,9 @@ EditorView::EditorView()
 void EditorView::onParagraphChanged(EditorDoc::Paragraph& para)
     {
     if (!para.data)
-        para.data = new ParagraphFormat();
-    ParagraphFormat* pf = (ParagraphFormat*)para.data;
+        para.data = std::make_shared<ParagraphFormat>();
+    auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
+    //ParagraphFormat* pf = nullptr;
     pf->fBlob = nullptr;
     pf->fShaped = false;
     pf->fWordBoundaries = std::vector<bool>();
@@ -41,11 +44,11 @@ TextPosition EditorView::getPosition(SkPoint xy) {
     this->reshapeAll();
     for (size_t j = 0; j < doc.fParas.size(); ++j) {
         EditorDoc::Paragraph& para = doc.fParas[j];
-        ParagraphFormat* pf = (ParagraphFormat*)para.data;
+        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
         SkIRect lineRect = { 0,
                             pf->fOrigin.y(),
                             (int)width,
-                            j + 1 < doc.fParas.size() ? ((ParagraphFormat*)doc.fParas[j + 1].data)->fOrigin.y() : INT_MAX };
+                            j + 1 < doc.fParas.size() ? std::static_pointer_cast<ParagraphFormat>(doc.fParas[j + 1].data)->fOrigin.y() : INT_MAX };
         if (const SkTextBlob* b = pf->fBlob.get()) {
             SkIRect r = b->bounds().roundOut();
             r.offset(pf->fOrigin);
@@ -75,8 +78,8 @@ void EditorView::reshapeAll() {
         int i = 0;
         for (EditorDoc::Paragraph& para : doc.fParas) {
             if (!para.data)
-                para.data = new ParagraphFormat();
-            ParagraphFormat* pf = (ParagraphFormat*) para.data;
+                para.data = std::make_shared<ParagraphFormat>();
+            auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
             if (!pf->fShaped) {
                 ShapeResult result = Shape(para.fText.begin(), para.fText.size(),
                                             fFont, fLocale, shape_width);
@@ -91,7 +94,7 @@ void EditorView::reshapeAll() {
             }
         int y = 0;
         for (EditorDoc::Paragraph& para : doc.fParas) {
-            ParagraphFormat* pf = (ParagraphFormat*)para.data;
+            auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
             pf->fOrigin = { 0, y };
             y += pf->fHeight;
             }
@@ -106,8 +109,8 @@ SkRect EditorView::getTextLocation(TextPosition cursor) {
     reshapeAll();
     cursor = this->getPositionMoved(Movement::kNowhere, cursor);
     if (doc.fParas.size() > 0) {
-        const EditorDoc::Paragraph& cLine = doc.fParas[cursor.fParagraphIndex];
-        ParagraphFormat* pf = (ParagraphFormat*)cLine.data;
+        const EditorDoc::Paragraph& para = doc.fParas[cursor.fParagraphIndex];
+        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
         SkRect pos = { 0, 0, 0, 0 };
         if (cursor.fTextByteIndex < pf->fCursorPos.size()) {
             pos = pf->fCursorPos[cursor.fTextByteIndex];
@@ -137,8 +140,8 @@ void EditorView::paint(SkCanvas& canvas)
             pos < end;
             pos = getPositionMoved(Movement::kRight, pos))
         {
-        const EditorDoc::Paragraph& l = doc.fParas[pos.fParagraphIndex];
-        ParagraphFormat* pf = (ParagraphFormat*)l.data;
+        const EditorDoc::Paragraph& para = doc.fParas[pos.fParagraphIndex];
+        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
 
         canvas.drawRect(offset(pf->fCursorPos[pos.fTextByteIndex], pf->fOrigin), selection);
         }
@@ -156,8 +159,8 @@ void EditorView::paint(SkCanvas& canvas)
         
     //paint text
     SkPaint foreground = SkPaint(fForegroundColor);
-    for (const EditorDoc::Paragraph& line : doc.fParas) {
-        ParagraphFormat* pf = (ParagraphFormat*)line.data;
+    for (const EditorDoc::Paragraph& para : doc.fParas) {
+        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
         if (pf->fBlob) {
             canvas.drawTextBlob(pf->fBlob.get(), (SkScalar)pf->fOrigin.x(), (SkScalar)pf->fOrigin.y(), foreground);
             }
@@ -289,14 +292,14 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
             break;
         case Movement::kHome:
             {
-            const std::vector<size_t>& list = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
+            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
             size_t f = find_first_larger(list, pos.fTextByteIndex);
             pos.fTextByteIndex = f > 0 ? list[f - 1] : 0;
             }
             break;
         case Movement::kEnd:
             {
-            const std::vector<size_t>& list = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
+            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
             size_t f = find_first_larger(list, pos.fTextByteIndex);
             if (f < list.size()) {
                 pos.fTextByteIndex = list[f] > 0 ? list[f] - 1 : 0;
@@ -308,21 +311,21 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
             break;
         case Movement::kUp:
             {
-            SkASSERT(pos.fTextByteIndex < ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fCursorPos.size());
-            float x = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fCursorPos[pos.fTextByteIndex].left();
-            const std::vector<size_t>& list = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
+            SkASSERT(pos.fTextByteIndex < std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fCursorPos.size());
+            float x = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fCursorPos[pos.fTextByteIndex].left();
+            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
             size_t f = find_first_larger(list, pos.fTextByteIndex);
             // list[f] > value.  value > list[f-1]
             if (f > 0) {
                 // not the first line in paragraph.
-                pos.fTextByteIndex = find_closest_x(((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fCursorPos, x,
+                pos.fTextByteIndex = find_closest_x(std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fCursorPos, x,
                                                     (f == 1) ? 0 : list[f - 2],
                                                     list[f - 1]);
                 }
             else if (pos.fParagraphIndex > 0) {
                 --pos.fParagraphIndex;
                 const auto& newPara = doc.fParas[pos.fParagraphIndex];
-                ParagraphFormat* pf = (ParagraphFormat*)newPara.data;
+                auto pf = std::static_pointer_cast<ParagraphFormat>(newPara.data);
                 size_t r = pf->fLineEndOffsets.size();
                 if (r > 0) {
                     pos.fTextByteIndex = find_closest_x(pf->fCursorPos, x,
@@ -340,20 +343,20 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
             break;
         case Movement::kDown:
             {
-            const std::vector<size_t>& list = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
-            float x = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fCursorPos[pos.fTextByteIndex].left();
+            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
+            float x = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fCursorPos[pos.fTextByteIndex].left();
 
             size_t f = find_first_larger(list, pos.fTextByteIndex);
             if (f < list.size()) {
-                const auto& bounds = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fCursorPos;
+                const auto& bounds = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fCursorPos;
                 pos.fTextByteIndex = find_closest_x(bounds, x, list[f],
                                                     f + 1 < list.size() ? list[f + 1]
                                                     : bounds.size());
                 }
             else if (pos.fParagraphIndex + 1 < doc.fParas.size()) {
                 ++pos.fParagraphIndex;
-                const auto& bounds = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fCursorPos;
-                const std::vector<size_t>& l2 = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
+                const auto& bounds = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fCursorPos;
+                const std::vector<size_t>& l2 = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fLineEndOffsets;
                 pos.fTextByteIndex = find_closest_x(bounds, x, 0,
                                                     l2.size() > 0 ? l2[0] : bounds.size());
                 }
@@ -370,7 +373,7 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
                 pos = getPositionMoved(Movement::kLeft, pos);
                 break;
                 }
-            const std::vector<bool>& words = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fWordBoundaries;
+            const std::vector<bool>& words = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fWordBoundaries;
             SkASSERT(words.size() == doc.fParas[pos.fParagraphIndex].fText.size());
             do {
                 --pos.fTextByteIndex;
@@ -384,7 +387,7 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
                 pos = getPositionMoved(Movement::kRight, pos);
                 break;
                 }
-            const std::vector<bool>& words = ((ParagraphFormat*)doc.fParas[pos.fParagraphIndex].data)->fWordBoundaries;
+            const std::vector<bool>& words = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.fParagraphIndex].data)->fWordBoundaries;
             SkASSERT(words.size() == text.size());
             do {
                 ++pos.fTextByteIndex;

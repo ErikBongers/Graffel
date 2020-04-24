@@ -14,7 +14,6 @@ namespace SkEd {
 class Editor : public UIElement
     {
     protected:
-        EditorView txt;
         void keyDown(SDL_KeyboardEvent& event) override;
         void textInput(SDL_TextInputEvent& event) override;
         void _mouseDown(SDL_MouseButtonEvent& event) override;
@@ -29,10 +28,11 @@ class Editor : public UIElement
         SkScalar fMargin = 10;
     public:
         Editor();
+        EditorView txt;
         SkScalar getHeight() const { return rect.height(); }
         void setFont(SkFont font) { txt.setFont(font); }
         void insert(const char* text) { txt.doc.insert(text, strlen(text)); }
-
+        void scrollCursorInView();
         //const SkFont& font() const { return fFont; }
 
     //struct Text {

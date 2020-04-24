@@ -40,8 +40,7 @@ class EditorDoc
             TextBuffer fText;
             Paragraph(TextBuffer t) : fText(std::move(t)) {}
             Paragraph() {}
-            void* data = nullptr;
-            ~Paragraph() { if (data) delete data; } //EditorDoc takes ownership of data.
+            std::shared_ptr<void> data = nullptr;
             };
 
         typedef std::function<void(EditorDoc::Paragraph& para)> PParagraphChanged;
@@ -60,6 +59,7 @@ class EditorDoc
             }
         PParagraphChanged paragraphChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;
+        std::string toString();
     private:
         void fireParagraphChanged(Paragraph* para) { if (paragraphChanged) paragraphChanged(*para); }
         void fireCursorMoved() { if (cursorMoved) cursorMoved(); }

@@ -42,7 +42,7 @@ class EditorView
         EditorView();
         
         void onParagraphChanged(EditorDoc::Paragraph& para);
-        int lineHeight(size_t index) const { return ((ParagraphFormat*)doc.fParas[index].data)->fHeight; }
+        int lineHeight(size_t index) const { return std::static_pointer_cast<ParagraphFormat>(doc.fParas[index].data)->fHeight; }
         void setFont(SkFont font);
         void setWidth(SkScalar w) {
             if (width != w) {
@@ -60,6 +60,7 @@ class EditorView
         TextPosition getPositionMoved(Movement m, TextPosition pos);
         bool moveCursor(Movement m, bool expandSelection);
         PDocChanged docChanged = nullptr;
+        PCursorMoved cursorMoved = nullptr;
 
     };
 }

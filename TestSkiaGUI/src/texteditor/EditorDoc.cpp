@@ -61,6 +61,8 @@ TextPosition EditorDoc::insert(const char* utf8Text, size_t byteLen) {
         fParas.erase(fParas.begin() + start.fParagraphIndex + 1,
                      fParas.begin() + end.fParagraphIndex + 1);
         }
+    fCursorPos = fMarkPos = start;
+    fireCursorMoved();
     return start;
     }
 
@@ -82,3 +84,20 @@ bool EditorDoc::setCursor(TextPosition pos, bool expandSelection)
     }
 
 
+std::string EditorDoc::toString()
+    {
+    size_t totalSize = 0;
+    for (auto& para : fParas)
+        {
+        totalSize += para.fText.size() + 1;// +1 for '\n'
+        }
+    std::string str;
+    str.reserve(totalSize);
+    for (Paragraph& para : fParas)
+        {
+        TextSpan span = para.fText.view();
+        str.append(span.data, span.size);
+        str += '\n';
+        }
+    return str;
+    }
