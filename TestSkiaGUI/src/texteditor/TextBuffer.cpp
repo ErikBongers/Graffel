@@ -1,7 +1,7 @@
 // Copyright 2019 Google LLC.
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
-#include "stringslice.h"
+#include "TextBuffer.h"
 
 #include <algorithm>
 #include <cassert>
@@ -10,9 +10,9 @@
 
 using namespace SkEd;
 
-void StringSlice::FreeWrapper::operator()(void* t) { std::free(t); }
+void TextBuffer::FreeWrapper::operator()(void* t) { std::free(t); }
 
-StringSlice::StringSlice(StringSlice&& that) noexcept
+TextBuffer::TextBuffer(TextBuffer&& that) noexcept
     : fPtr(std::move(that.fPtr))
     , fLength(that.fLength)
     , fCapacity(that.fCapacity)
@@ -21,16 +21,16 @@ StringSlice::StringSlice(StringSlice&& that) noexcept
     that.fCapacity = 0;
 }
 
-StringSlice& StringSlice::operator=(StringSlice&& that) noexcept
+TextBuffer& TextBuffer::operator=(TextBuffer&& that) noexcept
 {
     if (this != &that) {
-        this->~StringSlice();
-        new (this)StringSlice(std::move(that));
+        this->~TextBuffer();
+        new (this)TextBuffer(std::move(that));
     }
     return *this;
 }
 
-StringSlice& StringSlice::operator=(const StringSlice& that) {
+TextBuffer& TextBuffer::operator=(const TextBuffer& that) {
     if (this != &that) {
         fLength = 0;
         if (that.size() > 0) {
@@ -40,7 +40,7 @@ StringSlice& StringSlice::operator=(const StringSlice& that) {
     return *this;
 }
 
-void StringSlice::insert(std::size_t offset, const char* text, std::size_t length) {
+void TextBuffer::insert(std::size_t offset, const char* text, std::size_t length) {
     if (length) {
         offset = std::min(fLength, offset);
         this->reserve(fLength + length);
@@ -58,7 +58,7 @@ void StringSlice::insert(std::size_t offset, const char* text, std::size_t lengt
     }
 }
 
-void StringSlice::remove(std::size_t offset, std::size_t length) {
+void TextBuffer::remove(std::size_t offset, std::size_t length) {
     if (length && offset < fLength) {
         length = std::min(length, fLength - offset);
         assert(length > 0);
@@ -72,7 +72,7 @@ void StringSlice::remove(std::size_t offset, std::size_t length) {
     }
 }
 
-void StringSlice::realloc(std::size_t size) {
+void TextBuffer::realloc(std::size_t size) {
     // round up to multiple of (1 << kBits) bytes
     static constexpr unsigned kBits = 4;
     fCapacity = size ? (((size - 1) >> kBits) + 1) << kBits : 0;

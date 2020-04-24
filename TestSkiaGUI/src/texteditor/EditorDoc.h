@@ -1,6 +1,7 @@
 #pragma once
 #include "../pch.h"
-#include "stringslice.h"
+#include "TextBuffer.h"
+#include "TextSpan.h"
 
 namespace SkEd
 {
@@ -36,8 +37,8 @@ class EditorDoc
     public:
 
         struct Paragraph {
-            StringSlice fText;
-            Paragraph(StringSlice t) : fText(std::move(t)) {}
+            TextBuffer fText;
+            Paragraph(TextBuffer t) : fText(std::move(t)) {}
             Paragraph() {}
             void* data = nullptr;
             ~Paragraph() { if (data) delete data; } //EditorDoc takes ownership of data.
@@ -54,8 +55,8 @@ class EditorDoc
         bool setCursor(TextPosition pos, bool shift);
 
         size_t lineCount() const { return fParas.size(); }
-        StringView line(size_t i) const {
-            return i < fParas.size() ? fParas[i].fText.view() : StringView{ nullptr, 0 };
+        TextSpan line(size_t i) const {
+            return i < fParas.size() ? fParas[i].fText.view() : TextSpan{ nullptr, 0 };
             }
         PParagraphChanged paragraphChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;

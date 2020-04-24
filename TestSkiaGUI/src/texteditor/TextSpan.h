@@ -13,7 +13,7 @@ struct Span {
     std::size_t size;
 };
 
-using StringView = Span<const char>;
+using TextSpan = Span<const char>;
 
 }
 #endif  // stringview_DEFINED

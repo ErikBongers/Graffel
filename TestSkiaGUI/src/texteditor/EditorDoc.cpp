@@ -2,11 +2,11 @@
 
 using namespace SkEd;
 
-static const StringSlice remove_newline(const char* str, size_t len) {
+static const TextBuffer remove_newline(const char* str, size_t len) {
     return SkASSERT((str != nullptr) || (len == 0)),
-        StringSlice(str, (len > 0 && str[len - 1] == '\n') ? len - 1 : len);
+        TextBuffer(str, (len > 0 && str[len - 1] == '\n') ? len - 1 : len);
     }
-static size_t count_char(const StringSlice& string, char value) {
+static size_t count_char(const TextBuffer& string, char value) {
     size_t count = 0;
     for (char c : string) { if (c == value) { ++count; } }
     return count;
@@ -21,12 +21,12 @@ TextPosition EditorDoc::insert(const char* utf8Text, size_t byteLen) {
         fireParagraphChanged(&fParas[fCursorPos.fParagraphIndex]);
         }
     else {
-        fParas.push_back(EditorDoc::Paragraph(StringSlice(utf8Text, byteLen)));
+        fParas.push_back(EditorDoc::Paragraph(TextBuffer(utf8Text, byteLen)));
         }
     fCursorPos = TextPosition{ fCursorPos.fTextByteIndex + byteLen, fCursorPos.fParagraphIndex };
     size_t newlinecount = count_char(fParas[fCursorPos.fParagraphIndex].fText, '\n');
     if (newlinecount > 0) {
-        StringSlice src = std::move(fParas[fCursorPos.fParagraphIndex].fText);
+        TextBuffer src = std::move(fParas[fCursorPos.fParagraphIndex].fText);
         std::vector<Paragraph>::const_iterator next = fParas.begin() + fCursorPos.fParagraphIndex + 1;
         fParas.insert(next, newlinecount, Paragraph());
         Paragraph* para = &fParas[fCursorPos.fParagraphIndex];

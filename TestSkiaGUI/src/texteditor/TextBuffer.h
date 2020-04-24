@@ -3,29 +3,29 @@
 #ifndef stringslice_DEFINED
 #define stringslice_DEFINED
 
-#include "stringview.h"
+#include "TextSpan.h"
 
 #include <memory>
 #include <cstddef>
 
 namespace SkEd {
 // A lightweight modifiable string class.
-class StringSlice {
+class TextBuffer {
 public:
-    StringSlice() = default;
-    StringSlice(const char* s, std::size_t l) { this->insert(0, s, l); }
-    StringSlice(StringSlice&&) noexcept;
-    StringSlice(const StringSlice& that) : StringSlice(that.begin(), that.size()) {}
-    ~StringSlice() = default;
-    StringSlice& operator=(StringSlice&&) noexcept;
-    StringSlice& operator=(const StringSlice&);
+    TextBuffer() = default;
+    TextBuffer(const char* s, std::size_t l) { this->insert(0, s, l); }
+    TextBuffer(TextBuffer&&) noexcept;
+    TextBuffer(const TextBuffer& that) : TextBuffer(that.begin(), that.size()) {}
+    ~TextBuffer() = default;
+    TextBuffer& operator=(TextBuffer&&) noexcept;
+    TextBuffer& operator=(const TextBuffer&);
 
     // access:
     // Does not have a c_str method; is *not* NUL-terminated.
     const char* begin() const { return fPtr.get(); }
     const char* end() const { return fPtr ? fPtr.get() + fLength : nullptr; }
     std::size_t size() const { return fLength; }
-    SkEd::StringView view() const { return {fPtr.get(), fLength}; }
+    SkEd::TextSpan view() const { return {fPtr.get(), fLength}; }
 
     // mutation:
     void insert(std::size_t offset, const char* text, std::size_t length);

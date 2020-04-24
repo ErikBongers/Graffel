@@ -206,8 +206,8 @@ static const char* next_utf8(const char* p, const char* end) {
         }
     return p;
     }
-static inline const char* begin(const StringSlice& s) { return s.begin(); }
-static inline const char* end(const StringSlice& s) { return s.end(); }
+static inline const char* begin(const TextBuffer& s) { return s.begin(); }
+static inline const char* end(const TextBuffer& s) { return s.end(); }
 
 static const char* align_utf8(const char* p, const char* begin) {
     while (p > begin && is_utf8_continuation(*p)) {
@@ -216,7 +216,7 @@ static const char* align_utf8(const char* p, const char* begin) {
     return p;
     }
 
-static size_t align_column(const StringSlice& str, size_t p) {
+static size_t align_column(const TextBuffer& str, size_t p) {
     if (p >= str.size()) {
         return str.size();
         }
@@ -379,7 +379,7 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
             break;
         case Movement::kWordRight:
             {
-            const StringSlice& text = doc.fParas[pos.fParagraphIndex].fText;
+            const TextBuffer& text = doc.fParas[pos.fParagraphIndex].fText;
             if (pos.fTextByteIndex == text.size()) {
                 pos = getPositionMoved(Movement::kRight, pos);
                 break;

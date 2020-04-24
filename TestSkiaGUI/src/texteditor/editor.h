@@ -1,6 +1,6 @@
 #pragma once
 #include "..\pch.h"
-#include "stringview.h"
+#include "TextSpan.h"
 
 
 #include "core/UIElement.h"

@@ -25,7 +25,7 @@
     <ClCompile Include="src\texteditor\EditorView.cpp" />
     <ClCompile Include="src\texteditor\EditorDoc.cpp" />
     <ClCompile Include="src\texteditor\shape.cpp" />
-    <ClCompile Include="src\texteditor\stringslice.cpp" />
+    <ClCompile Include="src\texteditor\TextBuffer.cpp" />
     <ClCompile Include="src\texteditor\word_boundaries.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -48,8 +48,8 @@
     <ClInclude Include="src\texteditor\EditorView.h" />
     <ClInclude Include="src\texteditor\EditorDoc.h" />
     <ClInclude Include="src\texteditor\shape.h" />
-    <ClInclude Include="src\texteditor\stringslice.h" />
-    <ClInclude Include="src\texteditor\stringview.h" />
+    <ClInclude Include="src\texteditor\TextBuffer.h" />
+    <ClInclude Include="src\texteditor\TextSpan.h" />
     <ClInclude Include="src\texteditor\word_boundaries.h" />
   </ItemGroup>
   <ItemGroup>

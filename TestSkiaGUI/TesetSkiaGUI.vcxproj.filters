@@ -19,14 +19,14 @@
     <ClCompile Include="src\texteditor\shape.cpp">
       <Filter>texteditor</Filter>
     </ClCompile>
-    <ClCompile Include="src\texteditor\stringslice.cpp">
-      <Filter>texteditor</Filter>
-    </ClCompile>
     <ClCompile Include="src\texteditor\word_boundaries.cpp">
       <Filter>texteditor</Filter>
     </ClCompile>
     <ClCompile Include="src\texteditor\EditorDoc.cpp" />
     <ClCompile Include="src\texteditor\EditorView.cpp" />
+    <ClCompile Include="src\texteditor\TextBuffer.cpp">
+      <Filter>texteditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
@@ -47,17 +47,17 @@
     <ClInclude Include="src\texteditor\shape.h">
       <Filter>texteditor</Filter>
     </ClInclude>
-    <ClInclude Include="src\texteditor\stringslice.h">
-      <Filter>texteditor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\texteditor\stringview.h">
-      <Filter>texteditor</Filter>
-    </ClInclude>
     <ClInclude Include="src\texteditor\word_boundaries.h">
       <Filter>texteditor</Filter>
     </ClInclude>
     <ClInclude Include="src\texteditor\EditorDoc.h" />
     <ClInclude Include="src\texteditor\EditorView.h" />
+    <ClInclude Include="src\texteditor\TextBuffer.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texteditor\TextSpan.h">
+      <Filter>texteditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">
