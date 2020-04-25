@@ -126,12 +126,31 @@ void TestWindowClient::initialize()
 
     editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
             SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
+    
+    //TESTS
+    
     const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
     editor1.insert(txt);
     auto str = editor1.txt.doc.toString();
     std::ofstream ofs(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\data\dump.txt)");
     ofs << str;
     ofs.close();
+
+    SkEd::TextPosition pos1{ 1, 22 };
+    SkEd::TextPosition pos2{ 2, 11 };
+    SkEd::TextPosition pos3{ 2, 12 };
+
+    bool oneIsSmaller = pos1 < pos2;
+    oneIsSmaller = pos2 < pos1;
+    auto theMin = std::min(pos1, pos2);
+    theMin = std::min(pos2, pos1);
+    auto theMax = std::max(pos1, pos2);
+    theMax = std::max(pos2, pos1);
+    
+    auto theMaxer = std::max(pos3, pos2);
+    theMaxer = std::max(pos2, pos3);
+
+    // END TESTS
     editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
     editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
     infiniteCanvas += editor1;

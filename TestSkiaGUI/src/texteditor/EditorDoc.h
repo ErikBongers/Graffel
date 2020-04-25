@@ -24,10 +24,14 @@ static bool valid_utf8(const char* ptr, size_t size) { return SkUTF::CountUTF8(p
 
 
 struct TextPosition {
-    size_t fTextByteIndex = SIZE_MAX;   // index into UTF-8 representation of line.
-    size_t fParagraphIndex = SIZE_MAX;  // logical line, based on hard newline characters.
-    operator bool() const { return fTextByteIndex != SIZE_MAX && fParagraphIndex != SIZE_MAX; }
-    bool operator==(const SkEd::TextPosition& v) { return fParagraphIndex == v.fParagraphIndex && fTextByteIndex == v.fTextByteIndex; }
+    size_t Para = SIZE_MAX;  // logical line, based on hard newline characters.
+    size_t Byte = SIZE_MAX;   // index into UTF-8 representation of line.
+    operator bool() const { return Byte != SIZE_MAX && Para != SIZE_MAX; }
+    bool operator==(const SkEd::TextPosition& v) const { return Para == v.Para && Byte == v.Byte; }
+    bool operator<(const SkEd::TextPosition& v) const { 
+        bool test1 = Para < v.Para;
+        return test1 || (Para == v.Para && Byte < v.Byte); 
+        }
     };
 
 enum class Movement { kNowhere, kLeft, kUp, kRight, kDown, kHome, kEnd, kWordLeft, kWordRight, };
@@ -72,8 +76,3 @@ static inline bool operator!=(const SkEd::TextPosition& u,
     return !(u == v);
     }
 
-static inline bool operator<(const SkEd::TextPosition& u,
-    const SkEd::TextPosition& v) {
-    return u.fParagraphIndex < v.fParagraphIndex ||
-        (u.fParagraphIndex == v.fParagraphIndex && u.fTextByteIndex < v.fTextByteIndex);
-    }
