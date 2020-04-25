@@ -27,9 +27,10 @@ struct TextPosition {
     size_t Para = SIZE_MAX;  // logical line, based on hard newline characters.
     size_t Byte = SIZE_MAX;   // index into UTF-8 representation of line.
     operator bool() const { return Byte != SIZE_MAX && Para != SIZE_MAX; }
-    bool operator==(const SkEd::TextPosition& v) const { return Para == v.Para && Byte == v.Byte; }
-    bool operator<(const SkEd::TextPosition& v) const { 
-        bool test1 = Para < v.Para;
+    bool operator==(const TextPosition& v) const { return Para == v.Para && Byte == v.Byte; }
+    bool operator!=(const TextPosition& v) const { return !this->operator==(v); }
+    bool operator<(const SkEd::TextPosition& v) const {
+        bool test1 = Para < v.Para; //todo: get rid of this
         return test1 || (Para == v.Para && Byte < v.Byte); 
         }
     };
@@ -51,28 +52,30 @@ class EditorDoc
 
         std::vector<Paragraph> fParas;
 
-        TextPosition fCursorPos{ 0, 0 };
-        TextPosition fMarkPos;
         TextPosition insert(const char* utf8Text, size_t byteLen);
-        TextPosition remove(TextPosition, TextPosition);
+        void remove(bool backSpace = false);
         bool setCursor(TextPosition pos, bool shift);
 
         size_t lineCount() const { return fParas.size(); }
-        TextSpan line(size_t i) const {
-            return i < fParas.size() ? fParas[i].fText.view() : TextSpan{ nullptr, 0 };
-            }
+        TextSpan line(size_t i) const { return i < fParas.size() ? fParas[i].fText.view() : TextSpan{ nullptr, 0 }; }
         PParagraphChanged paragraphChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;
         std::string toString();
+        bool hasSelection() { return fCursorPos != selectionPos; }
+        void refitSelection();
+        TextPosition refitPosition(TextPosition pos);
+        void moveCursor(bool right, bool expandSelection = false);
+        TextPosition getPositionRelative(TextPosition pos, bool right);
+        TextPosition getCursorPos() { return fCursorPos; }
+        TextPosition getSelectionPos() { return selectionPos; }
     private:
+        TextPosition fCursorPos{ 0, 0 };
+        TextPosition selectionPos{ 0, 0 };
+
         void fireParagraphChanged(Paragraph* para) { if (paragraphChanged) paragraphChanged(*para); }
         void fireCursorMoved() { if (cursorMoved) cursorMoved(); }
+        void remove(TextPosition, TextPosition);
     };
 
 }
-
-static inline bool operator!=(const SkEd::TextPosition& u,
-                              const SkEd::TextPosition& v) {
-    return !(u == v);
-    }
 

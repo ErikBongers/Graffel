@@ -1,5 +1,6 @@
 #include "EditorView.h"
 #include "shape.h"
+#include "utf8_helpers.h"
 
 using namespace SkEd;
 
@@ -8,6 +9,7 @@ EditorView::EditorView()
     doc.cursorMoved = [this]() {
         if(this->cursorMoved)
             this->cursorMoved();
+        this->resetCursorBlink();
         };
     doc.paragraphChanged = [this](EditorDoc::Paragraph& para) {
         this->onParagraphChanged(para);
@@ -107,7 +109,7 @@ static inline SkRect offset(SkRect r, SkIPoint p) { return r.makeOffset((float)p
 
 SkRect EditorView::getTextLocation(TextPosition cursor) {
     reshapeAll();
-    cursor = this->getPositionMoved(Movement::kNowhere, cursor);
+    cursor = doc.refitPosition(cursor);
     if (doc.fParas.size() > 0) {
         const EditorDoc::Paragraph& para = doc.fParas[cursor.Para];
         auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
@@ -127,22 +129,23 @@ void EditorView::paint(SkCanvas& canvas)
     reshapeAll();
 
     //paint selection
-    TextPosition fSelectionBegin;
-    TextPosition fSelectionEnd;
-    if (doc.fMarkPos) {
-        fSelectionBegin = doc.fMarkPos;
-        fSelectionEnd = doc.fCursorPos;
-        }
-    SkPaint selection = SkPaint(fSelectionColor);
-    for (TextPosition pos = std::min(fSelectionBegin, fSelectionEnd),
-            end = std::max(fSelectionBegin, fSelectionEnd);
-            pos < end;
-            pos = getPositionMoved(Movement::kRight, pos))
+    if (doc.hasSelection()) 
         {
-        const EditorDoc::Paragraph& para = doc.fParas[pos.Para];
-        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
+        TextPosition fSelectionBegin;
+        TextPosition fSelectionEnd;
+        fSelectionBegin = doc.getSelectionPos();
+        fSelectionEnd = doc.getCursorPos();
+        SkPaint selection = SkPaint(fSelectionColor);
+        for (TextPosition pos = std::min(fSelectionBegin, fSelectionEnd),
+                end = std::max(fSelectionBegin, fSelectionEnd);
+                pos < end;
+                pos = getPositionMoved(Movement::kRight, pos))
+            {
+            const EditorDoc::Paragraph& para = doc.fParas[pos.Para];
+            auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
 
-        canvas.drawRect(offset(pf->fCursorPos[pos.Byte], pf->fOrigin), selection);
+            canvas.drawRect(offset(pf->fCursorPos[pos.Byte], pf->fOrigin), selection);
+            }
         }
         
     //paint cursor
@@ -152,7 +155,7 @@ void EditorView::paint(SkCanvas& canvas)
             {
             SkPaint cursorPaint(fCursorColor);
             cursorPaint.setAntiAlias(false);
-            canvas.drawRect(getTextLocation(doc.fCursorPos), cursorPaint);
+            canvas.drawRect(getTextLocation(doc.getCursorPos()), cursorPaint);
             }
         }
         
@@ -185,44 +188,9 @@ bool EditorView::onIdle()
     return false;
     }
 
-bool EditorView::moveCursor(Movement m, bool expandSelection)
-    {
-    return doc.setCursor(getPositionMoved(m, doc.fCursorPos), expandSelection);
-    }
-
 template <typename T>
 static size_t find_first_larger(const std::vector<T>& list, T value) {
     return (size_t)(std::upper_bound(list.begin(), list.end(), value) - list.begin());
-    }
-
-static inline bool is_utf8_continuation(char v) {
-    return ((unsigned char)v & 0b11000000) ==
-        0b10000000;
-    }
-
-static const char* next_utf8(const char* p, const char* end) {
-    if (p < end) {
-        do {
-            ++p;
-            } while (p < end && is_utf8_continuation(*p));
-        }
-    return p;
-    }
-static inline const char* begin(const TextBuffer& s) { return s.begin(); }
-static inline const char* end(const TextBuffer& s) { return s.end(); }
-
-static const char* align_utf8(const char* p, const char* begin) {
-    while (p > begin && is_utf8_continuation(*p)) {
-        --p;
-        }
-    return p;
-    }
-
-static size_t align_column(const TextBuffer& str, size_t p) {
-    if (p >= str.size()) {
-        return str.size();
-        }
-    return align_utf8(begin(str) + p, begin(str)) - begin(str);
     }
 
 static size_t find_closest_x(const std::vector<SkRect>& bounds, float x, size_t b, size_t e) {
@@ -242,52 +210,20 @@ static size_t find_closest_x(const std::vector<SkRect>& bounds, float x, size_t 
     return best_index;
     }
 
-static const char* prev_utf8(const char* p, const char* begin) {
-    return p > begin ? align_utf8(p - 1, begin) : begin;
-    }
-
 TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
     {
     if (doc.fParas.empty()) {
         return { 0, 0 };
         }
-    // First thing: fix possible bad input values.
-    if (pos.Para >= doc.fParas.size()) {
-        pos.Para = doc.fParas.size() - 1;
-        pos.Byte = doc.fParas[pos.Para].fText.size();
-        }
-    else {
-        pos.Byte = align_column(doc.fParas[pos.Para].fText, pos.Byte);
-        }
-
+    pos = doc.refitPosition(pos);
     switch (m) {
         case Movement::kNowhere:
             break;
         case Movement::kLeft:
-            if (0 == pos.Byte) {
-                if (pos.Para > 0) {
-                    --pos.Para;
-                    pos.Byte = doc.fParas[pos.Para].fText.size();
-                    }
-                }
-            else {
-                const auto& str = doc.fParas[pos.Para].fText;
-                pos.Byte =
-                    prev_utf8(begin(str) + pos.Byte, begin(str)) - begin(str);
-                }
+            pos = doc.getPositionRelative(pos, false);
             break;
         case Movement::kRight:
-            if (doc.fParas[pos.Para].fText.size() == pos.Byte) {
-                if (pos.Para + 1 < doc.fParas.size()) {
-                    ++pos.Para;
-                    pos.Byte = 0;
-                    }
-                }
-            else {
-                const auto& str = doc.fParas[pos.Para].fText;
-                pos.Byte =
-                    next_utf8(begin(str) + pos.Byte, end(str)) - begin(str);
-                }
+            pos = doc.getPositionRelative(pos, true);
             break;
         case Movement::kHome:
             {

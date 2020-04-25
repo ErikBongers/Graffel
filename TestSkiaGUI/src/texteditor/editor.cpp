@@ -99,7 +99,7 @@ void SkEd::Editor::_mouseUp(SDL_MouseButtonEvent& event)
 
 bool SkEd::Editor::scroll(SkScalar delta)
     {
-    SkRect cursorRect = txt.getTextLocation(txt.doc.fCursorPos);
+    SkRect cursorRect = txt.getTextLocation(txt.doc.getCursorPos());
 
     SkScalar maxPos = std::max<SkScalar>(0, txt.getFullTextHeight() + 2 * fMargin - rect.height() / 2);
     SkScalar newpos = std::max<SkScalar>(0, std::min<SkScalar>(scrollPos + delta, maxPos));
@@ -135,28 +135,15 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
                 scroll(-rect.height() * 4 / 5);
                 break;
             case SDLK_DELETE:
-                if (txt.doc.fMarkPos != TextPosition()) {
-                    txt.doc.remove(txt.doc.fMarkPos, txt.doc.fCursorPos);
-                    }
-                else {
-                    auto pos = txt.getPositionMoved(Movement::kRight, txt.doc.fCursorPos);
-                    txt.doc.remove(txt.doc.fCursorPos, pos);
-                    }
+                txt.doc.remove();
                 break;
             case SDLK_BACKSPACE:
-                if (txt.doc.fMarkPos != TextPosition()) {
-                    txt.doc.remove(txt.doc.fMarkPos, txt.doc.fCursorPos);
-                    }
-                else {
-                    auto pos = txt.getPositionMoved(Movement::kLeft, txt.doc.fCursorPos);
-                    txt.doc.remove(txt.doc.fCursorPos, pos);
-                    }
+                txt.doc.remove(true);
                 break;
             case SDLK_RETURN:
                 {
                 char c = '\n';
                 txt.doc.insert(&c, 1);
-                moveCursor(Movement::kRight, false);
                 break;
                 }
             case SDLK_ESCAPE:
@@ -171,12 +158,12 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
 
 bool SkEd::Editor::moveCursor(Movement m, bool shift) 
     {
-    return setCursor(txt.getPositionMoved(m, txt.doc.fCursorPos), shift);
+    return setCursor(txt.getPositionMoved(m, txt.doc.getCursorPos()), shift);
     }
 
 void SkEd::Editor::scrollCursorInView()
     {
-    SkRect cursor = txt.getTextLocation(txt.doc.fCursorPos);
+    SkRect cursor = txt.getTextLocation(txt.doc.getCursorPos());
     if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
         scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
         }

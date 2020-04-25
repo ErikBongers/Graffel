@@ -27,6 +27,7 @@
     <ClCompile Include="src\texteditor\TextBuffer.cpp">
       <Filter>texteditor</Filter>
     </ClCompile>
+    <ClCompile Include="src\texteditor\utf8_helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="src\texteditor\TextSpan.h">
       <Filter>texteditor</Filter>
     </ClInclude>
+    <ClInclude Include="src\texteditor\utf8_helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">

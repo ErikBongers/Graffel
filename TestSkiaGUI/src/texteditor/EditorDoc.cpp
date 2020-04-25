@@ -1,4 +1,5 @@
 #include "EditorDoc.h"
+#include "utf8_helpers.h"
 
 using namespace SkEd;
 
@@ -35,21 +36,32 @@ TextPosition EditorDoc::insert(const char* utf8Text, size_t byteLen) {
             (para++)->fText = remove_newline(str, l);
                     });
         }
+    selectionPos = fCursorPos;
     return fCursorPos;
     }
 
-::TextPosition EditorDoc::remove(TextPosition pos1, TextPosition pos2) {
+void SkEd::EditorDoc::remove(bool backSpace)
+    {
+    if (!hasSelection())
+        moveCursor(!backSpace, true);
+    remove(fCursorPos, selectionPos);
+    }
+
+void EditorDoc::remove(TextPosition pos1, TextPosition pos2) {
     TextPosition start = std::min(pos1, pos2);
     TextPosition end = std::max(pos1, pos2);
-    if (start == end || start.Para == fParas.size()) {
-        return start;
-        }
-    if (start.Para == end.Para) {
+    
+    if (start == end || start.Para == fParas.size()) 
+        return;
+    
+    if (start.Para == end.Para) 
+        {
         fParas[start.Para].fText.remove(
             start.Byte, end.Byte - start.Byte);
         fireParagraphChanged(&fParas[start.Para]);
         }
-    else {
+    else 
+        {
         auto& line = fParas[start.Para];
         line.fText.remove(start.Byte,
                           line.fText.size() - start.Byte);
@@ -60,9 +72,8 @@ TextPosition EditorDoc::insert(const char* utf8Text, size_t byteLen) {
         fParas.erase(fParas.begin() + start.Para + 1,
                      fParas.begin() + end.Para + 1);
         }
-    fCursorPos = fMarkPos = start;
+    fCursorPos = selectionPos = start;
     fireCursorMoved();
-    return start;
     }
 
 bool EditorDoc::setCursor(TextPosition pos, bool expandSelection)
@@ -71,13 +82,9 @@ bool EditorDoc::setCursor(TextPosition pos, bool expandSelection)
         return false;
 
     if (expandSelection)
-        {
-        if (!fMarkPos)
-            fMarkPos = fCursorPos;
-        }
+        fCursorPos = pos;
     else
-        fMarkPos = TextPosition();
-    fCursorPos = pos;
+        selectionPos = fCursorPos = pos;
     fireCursorMoved();
     return true;
     }
@@ -99,4 +106,63 @@ std::string EditorDoc::toString()
         str += '\n';
         }
     return str;
+    }
+
+void SkEd::EditorDoc::refitSelection()
+    {
+    fCursorPos = refitPosition(fCursorPos);
+    selectionPos = refitPosition(selectionPos);
+    }
+
+TextPosition SkEd::EditorDoc::refitPosition(TextPosition pos)
+    {
+    if (pos.Para >= fParas.size()) {
+        pos.Para = fParas.size() - 1;
+        pos.Byte = fParas[pos.Para].fText.size();
+        }
+    else {
+        pos.Byte = align_column(fParas[pos.Para].fText, pos.Byte);
+        }
+    return pos;
+    }
+
+void SkEd::EditorDoc::moveCursor(bool right, bool expandSelection)
+    {
+    if (expandSelection)
+        if (fCursorPos == selectionPos)
+            selectionPos = fCursorPos;
+    fCursorPos = getPositionRelative(fCursorPos, right);
+    }
+
+TextPosition SkEd::EditorDoc::getPositionRelative(TextPosition pos, bool right)
+    {
+    if (right)
+        {
+        if (fParas[pos.Para].fText.size() == pos.Byte) {
+            if (pos.Para + 1 < fParas.size()) {
+                ++pos.Para;
+                pos.Byte = 0;
+                }
+            }
+        else {
+            const auto& str = fParas[pos.Para].fText;
+            pos.Byte =
+                next_utf8(begin(str) + pos.Byte, end(str)) - begin(str);
+            }
+        }
+    else
+        {
+        if (0 == pos.Byte) {
+            if (pos.Para > 0) {
+                --pos.Para;
+                pos.Byte = fParas[pos.Para].fText.size();
+                }
+            }
+        else {
+            const auto& str = fParas[pos.Para].fText;
+            pos.Byte =
+                prev_utf8(begin(str) + pos.Byte, begin(str)) - begin(str);
+            }
+        }
+    return pos;
     }

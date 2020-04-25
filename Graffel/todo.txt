@@ -1,4 +1,5 @@
 * delete/backspace: set txt.setSelectionRange() followed by txt.remove(void!);
+* Doc: word offsets are part of doc and not of View.
 * editor: 
   > replace all graphical positions with SkScalar
           > will eventually be replaced by Selection, which can be a pos or a range.

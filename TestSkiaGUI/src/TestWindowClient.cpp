@@ -136,19 +136,6 @@ void TestWindowClient::initialize()
     ofs << str;
     ofs.close();
 
-    SkEd::TextPosition pos1{ 1, 22 };
-    SkEd::TextPosition pos2{ 2, 11 };
-    SkEd::TextPosition pos3{ 2, 12 };
-
-    bool oneIsSmaller = pos1 < pos2;
-    oneIsSmaller = pos2 < pos1;
-    auto theMin = std::min(pos1, pos2);
-    theMin = std::min(pos2, pos1);
-    auto theMax = std::max(pos1, pos2);
-    theMax = std::max(pos2, pos1);
-    
-    auto theMaxer = std::max(pos3, pos2);
-    theMaxer = std::max(pos2, pos3);
 
     // END TESTS
     editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
