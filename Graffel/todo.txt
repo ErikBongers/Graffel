@@ -1,5 +1,3 @@
-* delete/backspace: set txt.setSelectionRange() followed by txt.remove(void!);
-* Doc: word offsets are part of doc and not of View.
 * editor: 
   > replace all graphical positions with SkScalar
           > will eventually be replaced by Selection, which can be a pos or a range.
@@ -12,6 +10,7 @@
     >textgroups?
       >words (whitespace delimited)
       >inserts
+* Doc: word offsets are part of doc and not of View.
 
 * zoom: still a glitch when, I think, pressing the right mouse button.
 

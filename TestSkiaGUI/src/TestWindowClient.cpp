@@ -131,7 +131,7 @@ void TestWindowClient::initialize()
     
     const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
     editor1.insert(txt);
-    auto str = editor1.txt.doc.toString();
+    auto str = editor1.txt.doc.selectionToString();
     std::ofstream ofs(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\data\dump.txt)");
     ofs << str;
     ofs.close();

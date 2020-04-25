@@ -60,7 +60,7 @@ class EditorDoc
         TextSpan line(size_t i) const { return i < fParas.size() ? fParas[i].fText.view() : TextSpan{ nullptr, 0 }; }
         PParagraphChanged paragraphChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;
-        std::string toString();
+        std::string selectionToString();
         bool hasSelection() { return fCursorPos != selectionPos; }
         void refitSelection();
         TextPosition refitPosition(TextPosition pos);

@@ -120,6 +120,7 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
     if (event.type == SDL_KEYDOWN)
         {
         bool shift = event.keysym.mod & KMOD_SHIFT;
+        bool ctrl = event.keysym.mod & KMOD_CTRL;
         switch (event.keysym.sym)
             {
             case SDLK_UP: moveCursor(Movement::kUp, shift); break;
@@ -149,6 +150,26 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
             case SDLK_ESCAPE:
                 editMode = false;
                 txt.showCursor = false;
+                break;
+            case SDLK_v:
+                if (!ctrl)
+                    break;
+                if (SDL_HasClipboardText())
+                    {
+                    char* clipTxt = SDL_GetClipboardText();
+                    txt.doc.insert(clipTxt, strlen(clipTxt));
+                    }
+                break;
+            case SDLK_x:
+            case SDLK_c:
+                {
+                if (!ctrl)
+                    break;
+                auto strClip = txt.doc.selectionToString();
+                SDL_SetClipboardText(strClip.c_str());
+                if (event.keysym.sym == SDLK_x)
+                    txt.doc.remove();
+                }
                 break;
             default:
                 break;

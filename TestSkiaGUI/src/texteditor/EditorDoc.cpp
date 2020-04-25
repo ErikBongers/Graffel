@@ -90,21 +90,31 @@ bool EditorDoc::setCursor(TextPosition pos, bool expandSelection)
     }
 
 
-std::string EditorDoc::toString()
+std::string EditorDoc::selectionToString()
     {
-    size_t totalSize = 0;
-    for (auto& para : fParas)
-        {
-        totalSize += para.fText.size() + 1;// +1 for '\n'
-        }
     std::string str;
-    str.reserve(totalSize);
-    for (Paragraph& para : fParas)
+    TextPosition start = std::min(fCursorPos, selectionPos);
+    TextPosition end = std::max(fCursorPos, selectionPos);
+    if (start == end)
+        return "";
+    if (start.Para == end.Para) 
         {
-        TextSpan span = para.fText.view();
-        str.append(span.data, span.size);
-        str += '\n';
+        auto& fText = fParas[start.Para].fText;
+        str.append(fText.begin() + start.Byte, end.Byte - start.Byte);
+        return str;
         }
+    const std::vector<Paragraph>::const_iterator firstP = fParas.begin() + start.Para;
+    const std::vector<Paragraph>::const_iterator lastP = fParas.begin() + end.Para;
+    const auto& first = firstP->fText;
+    const auto& last = lastP->fText;
+    
+    str.append(first.begin() + start.Byte, first.size() - start.Byte);
+    for (auto line = firstP + 1; line < lastP; ++line) {
+        str += "\n";
+        str.append(line->fText.begin(), line->fText.size());
+        }
+    str += '\n';
+    str.append(last.begin(), end.Byte);
     return str;
     }
 
