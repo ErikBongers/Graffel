@@ -3,16 +3,6 @@
 
 using namespace SkEd;
 
-static const TextBuffer remove_newline(const char* str, size_t len) {
-    return SkASSERT((str != nullptr) || (len == 0)),
-        TextBuffer(str, (len > 0 && str[len - 1] == '\n') ? len - 1 : len);
-    }
-static size_t count_char(const TextBuffer& string, char value) {
-    size_t count = 0;
-    for (char c : string) { if (c == value) { ++count; } }
-    return count;
-    }
-
 void EditorDoc::insert(const char* utf8Text, size_t byteLen)
     {
     CmdInsert* cmdInsert = new CmdInsert(*this);
@@ -48,28 +38,26 @@ void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
     if (!valid_utf8(utf8Text, byteLen) || 0 == byteLen)
         return;
 
-    if (fCursorPos.Para < fParas.size()) //TODO: can cursor.para every beond the last paragraph???
-        {
-        fParas[fCursorPos.Para].fText.insert(fCursorPos.Byte, utf8Text, byteLen);
-        fireParagraphChanged(&fParas[fCursorPos.Para]);
-        }
-    else 
-        {
-        fParas.push_back(EditorDoc::Paragraph(TextBuffer(utf8Text, byteLen)));
-        }
-    fCursorPos = TextPosition{ fCursorPos.Para, fCursorPos.Byte + byteLen };
-    size_t newlinecount = count_char(fParas[fCursorPos.Para].fText, '\n');
-    if (newlinecount > 0) 
-        {
-        TextBuffer src = std::move(fParas[fCursorPos.Para].fText);
-        std::vector<Paragraph>::const_iterator next = fParas.begin() + fCursorPos.Para + 1;
-        fParas.insert(next, newlinecount, Paragraph());
-        Paragraph* para = &fParas[fCursorPos.Para];
-        forEachLine(src.begin(), src.size(), [&para, this](const char* str, size_t lineLen) {
-            this->fireParagraphChanged(para);
-            (para++)->fText = remove_newline(str, lineLen);
-            });
-        }
+    TextBuffer txt(utf8Text, byteLen);
+    size_t newlinecount = txt.count_char('\n');
+    Paragraph* para = &fParas[fCursorPos.Para];
+    forEachLine(txt.begin(), txt.size(), [&para, this](const char* str, size_t lineLen, bool isNewLine) {
+        if (isNewLine)
+            {
+            Paragraph newPara;
+            //split current line at current cursorLoc.
+            const char* strAfterSplitPart = fParas[fCursorPos.Para].fText.begin() + fCursorPos.Byte;
+            newPara.fText.insert(0, strAfterSplitPart, fParas[fCursorPos.Para].fText.end() - strAfterSplitPart);
+            fParas.insert(this->fParas.begin() + fCursorPos.Para + 1, newPara);
+            fParas[fCursorPos.Para].fText.trim(fCursorPos.Byte);
+            fireParagraphChanged(&fParas[fCursorPos.Para]);
+            fCursorPos.Para++;
+            fCursorPos.Byte = 0;
+            }
+        fParas[fCursorPos.Para].fText.insert(fCursorPos.Byte, str, lineLen);
+        fireParagraphChanged(&this->fParas[fCursorPos.Para]);
+        fCursorPos.Byte += lineLen;
+        });
     selectionPos = fCursorPos;
     return;
     }
@@ -148,9 +136,9 @@ std::string EditorDoc::selectionToString()
     const auto& last = lastP->fText;
     
     str.append(first.begin() + start.Byte, first.size() - start.Byte);
-    for (auto line = firstP + 1; line < lastP; ++line) {
+    for (auto para = firstP + 1; para < lastP; ++para) {
         str += "\n";
-        str.append(line->fText.begin(), line->fText.size());
+        str.append(para->fText.begin(), para->fText.size());
         }
     str += '\n';
     str.append(last.begin(), end.Byte);

@@ -1,3 +1,4 @@
+* implement CmdRemove
 * editor: 
   > replace all graphical positions with SkScalar
           > will eventually be replaced by Selection, which can be a pos or a range.
@@ -5,11 +6,6 @@
         > splits in lines
         > fullHeight
   > auto-resize.
-  > undo/redo
-    > cmd stores
-      - text inserted/removed
-      - cursorPosition/selection (before and after?)
-      - undo/redo buffers: see...bigScanner.
     >textgroups?
       >words (whitespace delimited)
       >inserts

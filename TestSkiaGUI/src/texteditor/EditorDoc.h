@@ -10,16 +10,25 @@ typedef std::function<void()> PCursorMoved;
 
 template <typename F>
 static void forEachLine(const void* data, size_t size, F f) {
-    const char* start = (const char*)data;
-    const char* end = start + size;
-    const char* ptr = start;
-    while (ptr < end) {
-        while (*ptr++ != '\n' && ptr < end) {}
-        size_t len = ptr - start;
-        SkASSERT(len > 0);
-        f(start, len);
-        start = ptr;
+    const char* startOfLine = (const char*)data;
+    const char* end =  startOfLine + size;
+    const char* ptr = startOfLine;
+    bool newLine = false;
+    //a line segment can be empty
+    //a <newline> is ALWAYS followed by a line segment, possibly of length 0.
+    while (ptr < end) 
+        {
+        if (*ptr == '\n')
+            {
+            size_t len = ptr - startOfLine;
+            f(startOfLine, len, newLine);
+            startOfLine = ++ptr;
+            newLine = true;
+            }
+        ptr++;
         }
+    size_t len = std::min(ptr, end) - startOfLine;
+    f(startOfLine, len, newLine);
     }
 static bool valid_utf8(const char* ptr, size_t size) { return SkUTF::CountUTF8(ptr, size) >= 0; }
 
@@ -88,6 +97,7 @@ class EditorDoc
         TextPosition getSelectionPos() { return selectionPos; }
         void undo() { undoRedo.undo(); }
         void redo() { undoRedo.redo(); }
+        EditorDoc() { fParas.push_back(EditorDoc::Paragraph()); }
     private:
         TextPosition fCursorPos{ 0, 0 };
         TextPosition selectionPos{ 0, 0 };
