@@ -28,8 +28,34 @@ void SkEd::CmdInsert::undo()
     doc.setCursor(std::min(selectPosBefore, cursorPosBefore));
     doc.setCursor(cursorPosAfter, true);
     doc._remove();
-    if(!strBefore.empty())
+    if (!strBefore.empty())
         doc._insert(strBefore.c_str(), strBefore.length());
+    doc.setCursor(selectPosBefore);
+    doc.setCursor(cursorPosBefore, true);
+    }
+
+void SkEd::EditorDoc::remove(bool backSpace)
+    {
+    CmdRemove* cmdRemove = new CmdRemove(*this);
+    cmdRemove->backspace = backSpace;
+    cmdRemove->strBefore = selectionToString();
+    undoRedo.execute(cmdRemove);
+    }
+
+void SkEd::CmdRemove::execute()
+    {
+    cursorPosBefore = doc.getCursorPos();
+    selectPosBefore = doc.getSelectionPos();
+    if (!doc.hasSelection())
+        doc.moveCursor(!backspace, true);
+    doc._remove();
+    cursorPosAfter = doc.getCursorPos();
+    }
+
+void SkEd::CmdRemove::undo()
+    {
+    doc.setCursor(cursorPosAfter);
+    doc._insert(strBefore.c_str(), strBefore.length());
     doc.setCursor(selectPosBefore);
     doc.setCursor(cursorPosBefore, true);
     }
@@ -62,15 +88,8 @@ void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
     return;
     }
 
-void SkEd::EditorDoc::remove(bool backSpace)
+void EditorDoc::_remove()
     {
-    _remove(backSpace);
-    }
-
-void SkEd::EditorDoc::_remove(bool backSpace)
-    {
-    if (!hasSelection())
-        moveCursor(!backSpace, true);
     remove(fCursorPos, selectionPos);
     }
 

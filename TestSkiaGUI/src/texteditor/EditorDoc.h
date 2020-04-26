@@ -59,7 +59,21 @@ class CmdInsert : public Cmd
         TextPosition selectPosBefore;
         TextPosition cursorPosAfter;
 
-        // Inherited via Cmd
+        virtual void execute() override;
+        virtual void undo() override;
+    };
+
+class CmdRemove : public Cmd
+    {
+    public:
+        CmdRemove(EditorDoc& doc) : doc(doc) {}
+        EditorDoc& doc;
+        std::string strBefore;
+        TextPosition cursorPosBefore;
+        TextPosition selectPosBefore;
+        TextPosition cursorPosAfter;
+        bool backspace;
+
         virtual void execute() override;
         virtual void undo() override;
     };
@@ -107,8 +121,9 @@ class EditorDoc
         void fireCursorMoved() { if (cursorMoved) cursorMoved(); }
         void remove(TextPosition, TextPosition);
         void _insert(const char* utf8Text, size_t byteLen);
-        void _remove(bool backSpace = false);
+        void _remove();
         friend class CmdInsert;
+        friend class CmdRemove;
     };
 
 }
