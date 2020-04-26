@@ -148,8 +148,7 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
                 break;
                 }
             case SDLK_ESCAPE:
-                editMode = false;
-                txt.showCursor = false;
+                setEditMode(false);
                 break;
             case SDLK_v:
                 if (!ctrl)

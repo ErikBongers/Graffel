@@ -33,6 +33,7 @@ class Editor : public UIElement
         void setFont(SkFont font) { txt.setFont(font); }
         void insert(const char* text) { txt.doc.insert(text, strlen(text)); }
         void scrollCursorInView();
+        void setEditMode(bool set) { txt.showCursor = editMode = set; }
         //const SkFont& font() const { return fFont; }
 
     //struct Text {
