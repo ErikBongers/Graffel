@@ -81,3 +81,10 @@ void TextBuffer::realloc(std::size_t size) {
     fPtr.reset((char*)std::realloc(fPtr.release(), fCapacity));
     assert(fCapacity >= fLength);
 }
+
+size_t TextBuffer::count_char(char value) 
+    {
+    size_t count = 0;
+    for (char c : *this) { if (c == value) { ++count; } }
+    return count;
+    }

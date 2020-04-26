@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <cstddef>
+#include <algorithm>
 
 namespace SkEd {
 // A lightweight modifiable string class.
@@ -26,6 +27,7 @@ public:
     const char* end() const { return fPtr ? fPtr.get() + fLength : nullptr; }
     std::size_t size() const { return fLength; }
     SkEd::TextSpan view() const { return {fPtr.get(), fLength}; }
+    size_t count_char(char value);
 
     // mutation:
     void insert(std::size_t offset, const char* text, std::size_t length);
@@ -34,7 +36,7 @@ public:
     // modify capacity only:
     void reserve(std::size_t size) { if (size > fCapacity) { this->realloc(size); } }
     void shrink() { this->realloc(fLength); }
-
+    void trim(std::size_t len) { fLength = std::min(len, fLength); }
 private:
     struct FreeWrapper { void operator()(void*); };
     std::unique_ptr<char[], FreeWrapper> fPtr;
