@@ -4,9 +4,12 @@
       - Font stuff: TextView?
         > splits in lines
         > fullHeight
-  > clipboard.
   > auto-resize.
   > undo/redo
+    > cmd stores
+      - text inserted/removed
+      - cursorPosition/selection (before and after?)
+      - undo/redo buffers: see...bigScanner.
     >textgroups?
       >words (whitespace delimited)
       >inserts

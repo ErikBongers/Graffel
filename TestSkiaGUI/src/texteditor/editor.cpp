@@ -171,6 +171,12 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
                     txt.doc.remove();
                 }
                 break;
+            case SDLK_z:
+                if (ctrl && shift)
+                    txt.doc.redo();
+                else if (ctrl)
+                    txt.doc.undo();
+                break;
             default:
                 break;
             }

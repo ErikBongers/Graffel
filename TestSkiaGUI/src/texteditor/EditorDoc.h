@@ -2,6 +2,7 @@
 #include "../pch.h"
 #include "TextBuffer.h"
 #include "TextSpan.h"
+#include "UndoRedo.h"
 
 namespace SkEd
 {
@@ -37,6 +38,23 @@ struct TextPosition {
 
 enum class Movement { kNowhere, kLeft, kUp, kRight, kDown, kHome, kEnd, kWordLeft, kWordRight, };
 
+class EditorDoc;
+class CmdInsert : public Cmd
+    {
+    public:
+        CmdInsert(EditorDoc& doc) : doc(doc) {}
+        EditorDoc& doc;
+        std::string str;
+        std::string strBefore;
+        TextPosition cursorPosBefore;
+        TextPosition selectPosBefore;
+        TextPosition cursorPosAfter;
+
+        // Inherited via Cmd
+        virtual void execute() override;
+        virtual void undo() override;
+    };
+
 class EditorDoc
     {
     public:
@@ -52,9 +70,9 @@ class EditorDoc
 
         std::vector<Paragraph> fParas;
 
-        TextPosition insert(const char* utf8Text, size_t byteLen);
+        void insert(const char* utf8Text, size_t byteLen);
         void remove(bool backSpace = false);
-        bool setCursor(TextPosition pos, bool shift);
+        bool setCursor(TextPosition pos, bool expandSelection = false);
 
         size_t lineCount() const { return fParas.size(); }
         TextSpan line(size_t i) const { return i < fParas.size() ? fParas[i].fText.view() : TextSpan{ nullptr, 0 }; }
@@ -68,13 +86,19 @@ class EditorDoc
         TextPosition getPositionRelative(TextPosition pos, bool right);
         TextPosition getCursorPos() { return fCursorPos; }
         TextPosition getSelectionPos() { return selectionPos; }
+        void undo() { undoRedo.undo(); }
+        void redo() { undoRedo.redo(); }
     private:
         TextPosition fCursorPos{ 0, 0 };
         TextPosition selectionPos{ 0, 0 };
+        UndoRedo undoRedo;
 
         void fireParagraphChanged(Paragraph* para) { if (paragraphChanged) paragraphChanged(*para); }
         void fireCursorMoved() { if (cursorMoved) cursorMoved(); }
         void remove(TextPosition, TextPosition);
+        void _insert(const char* utf8Text, size_t byteLen);
+        void _remove(bool backSpace = false);
+        friend class CmdInsert;
     };
 
 }

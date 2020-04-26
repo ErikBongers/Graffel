@@ -28,6 +28,7 @@
       <Filter>texteditor</Filter>
     </ClCompile>
     <ClCompile Include="src\texteditor\utf8_helpers.cpp" />
+    <ClCompile Include="src\texteditor\UndoRedo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
@@ -60,6 +61,7 @@
       <Filter>texteditor</Filter>
     </ClInclude>
     <ClInclude Include="src\texteditor\utf8_helpers.h" />
+    <ClInclude Include="src\texteditor\UndoRedo.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="images">

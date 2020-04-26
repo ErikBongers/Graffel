@@ -13,34 +13,73 @@ static size_t count_char(const TextBuffer& string, char value) {
     return count;
     }
 
-TextPosition EditorDoc::insert(const char* utf8Text, size_t byteLen) {
-    if (!valid_utf8(utf8Text, byteLen) || 0 == byteLen) {
-        return fCursorPos;
+void EditorDoc::insert(const char* utf8Text, size_t byteLen)
+    {
+    CmdInsert* cmdInsert = new CmdInsert(*this);
+    cmdInsert->str.append(utf8Text, byteLen);
+    undoRedo.execute(cmdInsert);
+    }
+
+void SkEd::CmdInsert::execute()
+    {
+    cursorPosBefore = doc.getCursorPos();
+    selectPosBefore = doc.getSelectionPos();
+    if (doc.hasSelection())
+        {
+        strBefore = doc.selectionToString();
+        doc._remove();
         }
-    if (fCursorPos.Para < fParas.size()) {
+    doc._insert(str.c_str(), str.size());
+    cursorPosAfter = doc.getCursorPos();
+    }
+
+void SkEd::CmdInsert::undo()
+    {
+    doc.setCursor(std::min(selectPosBefore, cursorPosBefore));
+    doc.setCursor(cursorPosAfter, true);
+    doc._remove();
+    if(!strBefore.empty())
+        doc._insert(strBefore.c_str(), strBefore.length());
+    doc.setCursor(selectPosBefore);
+    doc.setCursor(cursorPosBefore, true);
+    }
+
+void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
+    if (!valid_utf8(utf8Text, byteLen) || 0 == byteLen)
+        return;
+
+    if (fCursorPos.Para < fParas.size()) //TODO: can cursor.para every beond the last paragraph???
+        {
         fParas[fCursorPos.Para].fText.insert(fCursorPos.Byte, utf8Text, byteLen);
         fireParagraphChanged(&fParas[fCursorPos.Para]);
         }
-    else {
+    else 
+        {
         fParas.push_back(EditorDoc::Paragraph(TextBuffer(utf8Text, byteLen)));
         }
     fCursorPos = TextPosition{ fCursorPos.Para, fCursorPos.Byte + byteLen };
     size_t newlinecount = count_char(fParas[fCursorPos.Para].fText, '\n');
-    if (newlinecount > 0) {
+    if (newlinecount > 0) 
+        {
         TextBuffer src = std::move(fParas[fCursorPos.Para].fText);
         std::vector<Paragraph>::const_iterator next = fParas.begin() + fCursorPos.Para + 1;
         fParas.insert(next, newlinecount, Paragraph());
         Paragraph* para = &fParas[fCursorPos.Para];
-        forEachLine(src.begin(), src.size(), [&para, this](const char* str, size_t l) {
+        forEachLine(src.begin(), src.size(), [&para, this](const char* str, size_t lineLen) {
             this->fireParagraphChanged(para);
-            (para++)->fText = remove_newline(str, l);
-                    });
+            (para++)->fText = remove_newline(str, lineLen);
+            });
         }
     selectionPos = fCursorPos;
-    return fCursorPos;
+    return;
     }
 
 void SkEd::EditorDoc::remove(bool backSpace)
+    {
+    _remove(backSpace);
+    }
+
+void SkEd::EditorDoc::_remove(bool backSpace)
     {
     if (!hasSelection())
         moveCursor(!backSpace, true);
@@ -176,3 +215,4 @@ TextPosition SkEd::EditorDoc::getPositionRelative(TextPosition pos, bool right)
         }
     return pos;
     }
+

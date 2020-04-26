@@ -26,6 +26,7 @@
     <ClCompile Include="src\texteditor\EditorDoc.cpp" />
     <ClCompile Include="src\texteditor\shape.cpp" />
     <ClCompile Include="src\texteditor\TextBuffer.cpp" />
+    <ClCompile Include="src\texteditor\UndoRedo.cpp" />
     <ClCompile Include="src\texteditor\utf8_helpers.cpp" />
     <ClCompile Include="src\texteditor\word_boundaries.cpp" />
   </ItemGroup>
@@ -51,6 +52,7 @@
     <ClInclude Include="src\texteditor\shape.h" />
     <ClInclude Include="src\texteditor\TextBuffer.h" />
     <ClInclude Include="src\texteditor\TextSpan.h" />
+    <ClInclude Include="src\texteditor\UndoRedo.h" />
     <ClInclude Include="src\texteditor\utf8_helpers.h" />
     <ClInclude Include="src\texteditor\word_boundaries.h" />
   </ItemGroup>

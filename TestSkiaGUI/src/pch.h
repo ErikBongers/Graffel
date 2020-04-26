@@ -50,5 +50,6 @@
 #include <vector>
 #include <cctype>
 #include <algorithm>
+#include <stack>
 
 #include "resources/miniz.h"
