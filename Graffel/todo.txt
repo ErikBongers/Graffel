@@ -1,30 +1,9 @@
-* editor: 
-  > replace all graphical positions with SkScalar
-          > will eventually be replaced by Selection, which can be a pos or a range.
-      - Font stuff: TextView?
-        > splits in lines
-        > fullHeight
-  > auto-resize.
-    >textgroups?
-      >words (whitespace delimited)
-      >inserts
-* Doc: word offsets are part of doc and not of View.
-
 * zoom: still a glitch when, I think, pressing the right mouse button.
-
-Text Editor
-----------------
-struct TextLine : a paragraph, delimited by \n.
-Shape, ShapeResult: get heigth of text paragraph, based on font and width
-SkShaper: algorithm to create font rendering.
-> How do paragraph styles? Or for now, no styles within a text block.
 
 * try to compile all this stuff on linux...
 
 Needed for iDea
 ----------------
-* animations for transitions.
-
 * Adorners?
 * Styles for nodes? (set of preferences, like fixed size, set of colors,...)
 
@@ -35,7 +14,7 @@ iDea v2
 - more like Whiteboard, but with more functionality.
 - also a bit like Word.
 - is brainstorm tool: reopen in the same 'chaos' as it was closed.
--Nodes
+- Nodes
   - all nodes have 3 levels: thumb, post-it and full
   > text
     - a title for thumb 

@@ -4,27 +4,28 @@
 
 using namespace SkEd;
 
+void EditorView::attachDoc(EditorDoc* doc)
+    {
+    this->doc = doc;
+    if (!doc->userData)
+        doc->userData = new EditorUserData(*doc);
+    EditorUserData* userData = (EditorUserData*)doc->userData;
+    userDataIndex = userData->getNewId();
+    userData->registerViewWithDoc(this, userDataIndex);
+    }
+
 EditorView::EditorView()
     {
-    doc.cursorMoved = [this]() {
-        if(this->cursorMoved)
-            this->cursorMoved();
-        this->resetCursorBlink();
-        };
-    doc.paragraphChanged = [this](EditorDoc::Paragraph& para) {
-        this->onParagraphChanged(para);
-        };
     }
 
 void EditorView::onParagraphChanged(EditorDoc::Paragraph& para)
     {
     if (!para.data)
-        para.data = std::make_shared<ParagraphFormat>();
-    auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
-    //ParagraphFormat* pf = nullptr;
-    pf->fBlob = nullptr;
-    pf->fShaped = false;
-    pf->fWordBoundaries = std::vector<bool>();
+        para.data = std::make_shared<ParaData>();
+    auto& pf = formats(para)[userDataIndex];
+    pf.fBlob = nullptr;
+    pf.fShaped = false;
+    pf.fWordBoundaries = std::vector<bool>();
     fNeedsReshape = true;
     if (docChanged)
         docChanged();
@@ -34,7 +35,7 @@ void EditorView::setFont(SkFont font) {
     if (font != fFont) {
         fFont = std::move(font);
         fNeedsReshape = true;
-        for (auto& l : doc.fParas) { onParagraphChanged(l); }
+        for (auto& l : doc->fParas) { onParagraphChanged(l); }
         }
     }
     
@@ -44,61 +45,59 @@ static SkPoint to_point(SkIPoint p) { return { (float)p.x(), (float)p.y() }; }
 TextPosition EditorView::getPosition(SkPoint xy) {
     TextPosition approximatePosition;
     this->reshapeAll();
-    for (size_t iPara = 0; iPara < doc.fParas.size(); ++iPara) {
-        EditorDoc::Paragraph& para = doc.fParas[iPara];
-        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
+    for (size_t iPara = 0; iPara < doc->fParas.size(); ++iPara) {
+        EditorDoc::Paragraph& para = doc->fParas[iPara];
+        auto& pf = format(para);
         SkIRect lineRect = { 0,
-                            pf->fOrigin.y(),
+                            pf.fOrigin.y(),
                             (int)width,
-                            iPara + 1 < doc.fParas.size() ? std::static_pointer_cast<ParagraphFormat>(doc.fParas[iPara + 1].data)->fOrigin.y() : INT_MAX };
-        if (const SkTextBlob* b = pf->fBlob.get()) {
+                            iPara + 1 < doc->fParas.size() ? format(doc->fParas[iPara + 1]).fOrigin.y() : INT_MAX };
+        if (const SkTextBlob* b = pf.fBlob.get()) {
             SkIRect r = b->bounds().roundOut();
-            r.offset(pf->fOrigin);
+            r.offset(pf.fOrigin);
             lineRect.join(r);
             }
         if (!lineRect.contains((int)xy.x(), (int)xy.y())) {
             continue;
             }
-        SkPoint pt = xy - to_point(pf->fOrigin);
-        const std::vector<SkRect>& pos = pf->fCursorPos;
+        SkPoint pt = xy - to_point(pf.fOrigin);
+        const std::vector<SkRect>& pos = pf.fCursorPos;
         for (size_t iByte = 0; iByte < pos.size(); ++iByte) {
             if (pos[iByte] != kUnsetRect && pos[iByte].contains(pt.x(), pt.y())) {
                 return TextPosition{ iPara, iByte };
                 }
             }
-        approximatePosition = { xy.x() <= pf->fOrigin.x() ? 0 : para.fText.size(), iPara };
+        approximatePosition = { xy.x() <= pf.fOrigin.x() ? 0 : para.fText.size(), iPara };
         }
     return approximatePosition;
     }
 
 void EditorView::reshapeAll() {
     if (fNeedsReshape) {
-        if (doc.fParas.empty()) {
-            doc.fParas.push_back(EditorDoc::Paragraph()); //todo: get rid of this -> EditorDoc
+        if (doc->fParas.empty()) {
+            doc->fParas.push_back(EditorDoc::Paragraph()); //todo: get rid of this -> EditorDoc
             }
         float shape_width = (float)(width);
         int i = 0;
-        for (EditorDoc::Paragraph& para : doc.fParas) {
-            if (!para.data)
-                para.data = std::make_shared<ParagraphFormat>();
-            auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
-            if (!pf->fShaped) {
+        for (EditorDoc::Paragraph& para : doc->fParas) {
+            auto& pf = format(para);
+            if (!pf.fShaped) {
                 ShapeResult result = Shape(para.fText.begin(), para.fText.size(),
                                             fFont, fLocale, shape_width);
-                pf->fBlob = std::move(result.blob);
-                pf->fLineEndOffsets = std::move(result.lineBreakOffsets);
-                pf->fCursorPos = std::move(result.glyphBounds);
-                pf->fWordBoundaries = std::move(result.wordBreaks);
-                pf->fHeight = result.verticalAdvance;
-                pf->fShaped = true;
+                pf.fBlob = std::move(result.blob);
+                pf.fLineEndOffsets = std::move(result.lineBreakOffsets);
+                pf.fCursorPos = std::move(result.glyphBounds);
+                pf.fWordBoundaries = std::move(result.wordBreaks);
+                pf.fHeight = result.verticalAdvance;
+                pf.fShaped = true;
                 }
             ++i;
             }
         int y = 0;
-        for (EditorDoc::Paragraph& para : doc.fParas) {
-            auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
-            pf->fOrigin = { 0, y };
-            y += pf->fHeight;
+        for (EditorDoc::Paragraph& para : doc->fParas) {
+            auto& pf = format(para);
+            pf.fOrigin = { 0, y };
+            y += pf.fHeight;
             }
         fullTextHeight = (SkScalar)y;
         fNeedsReshape = false;
@@ -109,17 +108,17 @@ static inline SkRect offset(SkRect r, SkIPoint p) { return r.makeOffset((float)p
 
 SkRect EditorView::getTextLocation(TextPosition cursor) {
     reshapeAll();
-    cursor = doc.refitPosition(cursor);
-    if (doc.fParas.size() > 0) {
-        const EditorDoc::Paragraph& para = doc.fParas[cursor.Para];
-        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
+    cursor = doc->refitPosition(cursor);
+    if (doc->fParas.size() > 0) {
+        EditorDoc::Paragraph& para = doc->fParas[cursor.Para];
+        auto& pf = format(para);
         SkRect pos = { 0, 0, 0, 0 };
-        if (cursor.Byte < pf->fCursorPos.size()) {
-            pos = pf->fCursorPos[cursor.Byte];
+        if (cursor.Byte < pf.fCursorPos.size()) {
+            pos = pf.fCursorPos[cursor.Byte];
             }
         pos.fRight = pos.fLeft + 0.5f;
         pos.fLeft -= 1;
-        return offset(pos, pf->fOrigin);
+        return offset(pos, pf.fOrigin);
         }
     return SkRect{ 0, 0, 0, 0 };
     }
@@ -129,42 +128,42 @@ void EditorView::paint(SkCanvas& canvas)
     reshapeAll();
 
     //paint selection
-    if (doc.hasSelection()) 
+    if (doc->hasSelection()) 
         {
         TextPosition fSelectionBegin;
         TextPosition fSelectionEnd;
-        fSelectionBegin = doc.getSelectionPos();
-        fSelectionEnd = doc.getCursorPos();
+        fSelectionBegin = doc->getSelectionPos();
+        fSelectionEnd = doc->getCursorPos();
         SkPaint selection = SkPaint(fSelectionColor);
         for (TextPosition pos = std::min(fSelectionBegin, fSelectionEnd),
                 end = std::max(fSelectionBegin, fSelectionEnd);
                 pos < end;
                 pos = getPositionMoved(Movement::kRight, pos))
             {
-            const EditorDoc::Paragraph& para = doc.fParas[pos.Para];
-            auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
+            EditorDoc::Paragraph& para = doc->fParas[pos.Para];
+            auto& pf = format(para);
 
-            canvas.drawRect(offset(pf->fCursorPos[pos.Byte], pf->fOrigin), selection);
+            canvas.drawRect(offset(pf.fCursorPos[pos.Byte], pf.fOrigin), selection);
             }
         }
         
     //paint cursor
-    if (doc.fParas.size() > 0)//paras should never be empty???
+    if (doc->fParas.size() > 0)//paras should never be empty???
         {
         if ((cursorBlinkOn && showCursor))
             {
             SkPaint cursorPaint(fCursorColor);
             cursorPaint.setAntiAlias(false);
-            canvas.drawRect(getTextLocation(doc.getCursorPos()), cursorPaint);
+            canvas.drawRect(getTextLocation(doc->getCursorPos()), cursorPaint);
             }
         }
         
     //paint text
     SkPaint foreground = SkPaint(fForegroundColor);
-    for (const EditorDoc::Paragraph& para : doc.fParas) {
-        auto pf = std::static_pointer_cast<ParagraphFormat>(para.data);
-        if (pf->fBlob) {
-            canvas.drawTextBlob(pf->fBlob.get(), (SkScalar)pf->fOrigin.x(), (SkScalar)pf->fOrigin.y(), foreground);
+    for (EditorDoc::Paragraph& para : doc->fParas) {
+        auto& pf = format(para);
+        if (pf.fBlob) {
+            canvas.drawTextBlob(pf.fBlob.get(), (SkScalar)pf.fOrigin.x(), (SkScalar)pf.fOrigin.y(), foreground);
             }
         }
 
@@ -212,94 +211,94 @@ static size_t find_closest_x(const std::vector<SkRect>& bounds, float x, size_t 
 
 TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
     {
-    if (doc.fParas.empty()) {
+    if (doc->fParas.empty()) {
         return { 0, 0 };
         }
-    pos = doc.refitPosition(pos);
+    pos = doc->refitPosition(pos);
     switch (m) {
         case Movement::kNowhere:
             break;
         case Movement::kLeft:
-            pos = doc.getPositionRelative(pos, false);
+            pos = doc->getPositionRelative(pos, false);
             break;
         case Movement::kRight:
-            pos = doc.getPositionRelative(pos, true);
+            pos = doc->getPositionRelative(pos, true);
             break;
         case Movement::kHome:
             {
-            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fLineEndOffsets;
+            const std::vector<size_t>& list = format(doc->fParas[pos.Para]).fLineEndOffsets;
             size_t f = find_first_larger(list, pos.Byte);
             pos.Byte = f > 0 ? list[f - 1] : 0;
             }
             break;
         case Movement::kEnd:
             {
-            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fLineEndOffsets;
+            const std::vector<size_t>& list = format(doc->fParas[pos.Para]).fLineEndOffsets;
             size_t f = find_first_larger(list, pos.Byte);
             if (f < list.size()) {
                 pos.Byte = list[f] > 0 ? list[f] - 1 : 0;
                 }
             else {
-                pos.Byte = doc.fParas[pos.Para].fText.size();
+                pos.Byte = doc->fParas[pos.Para].fText.size();
                 }
             }
             break;
         case Movement::kUp:
             {
-            SkASSERT(pos.Byte < std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fCursorPos.size());
-            float x = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fCursorPos[pos.Byte].left();
-            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fLineEndOffsets;
+            SkASSERT(pos.Byte < format(doc->fParas[pos.Para]).fCursorPos.size());
+            float x = format(doc->fParas[pos.Para]).fCursorPos[pos.Byte].left();
+            const std::vector<size_t>& list = format(doc->fParas[pos.Para]).fLineEndOffsets;
             size_t f = find_first_larger(list, pos.Byte);
             // list[f] > value.  value > list[f-1]
             if (f > 0) {
                 // not the first line in paragraph.
-                pos.Byte = find_closest_x(std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fCursorPos, x,
+                pos.Byte = find_closest_x(format(doc->fParas[pos.Para]).fCursorPos, x,
                                                     (f == 1) ? 0 : list[f - 2],
                                                     list[f - 1]);
                 }
             else if (pos.Para > 0) {
                 --pos.Para;
-                const auto& newPara = doc.fParas[pos.Para];
-                auto pf = std::static_pointer_cast<ParagraphFormat>(newPara.data);
-                size_t r = pf->fLineEndOffsets.size();
+                auto& newPara = doc->fParas[pos.Para];
+                auto& pf = format(newPara);
+                size_t r = pf.fLineEndOffsets.size();
                 if (r > 0) {
-                    pos.Byte = find_closest_x(pf->fCursorPos, x,
-                                                        pf->fLineEndOffsets[r - 1],
-                                                        pf->fCursorPos.size());
+                    pos.Byte = find_closest_x(pf.fCursorPos, x,
+                                                        pf.fLineEndOffsets[r - 1],
+                                                        pf.fCursorPos.size());
                     }
                 else {
-                    pos.Byte = find_closest_x(pf->fCursorPos, x, 0,
-                                                        pf->fCursorPos.size());
+                    pos.Byte = find_closest_x(pf.fCursorPos, x, 0,
+                                                        pf.fCursorPos.size());
                     }
                 }
             pos.Byte =
-                align_column(doc.fParas[pos.Para].fText, pos.Byte);
+                align_column(doc->fParas[pos.Para].fText, pos.Byte);
             }
             break;
         case Movement::kDown:
             {
-            const std::vector<size_t>& list = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fLineEndOffsets;
-            float x = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fCursorPos[pos.Byte].left();
+            const std::vector<size_t>& list = format(doc->fParas[pos.Para]).fLineEndOffsets;
+            float x = format(doc->fParas[pos.Para]).fCursorPos[pos.Byte].left();
 
             size_t f = find_first_larger(list, pos.Byte);
             if (f < list.size()) {
-                const auto& bounds = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fCursorPos;
+                const auto& bounds = format(doc->fParas[pos.Para]).fCursorPos;
                 pos.Byte = find_closest_x(bounds, x, list[f],
                                                     f + 1 < list.size() ? list[f + 1]
                                                     : bounds.size());
                 }
-            else if (pos.Para + 1 < doc.fParas.size()) {
+            else if (pos.Para + 1 < doc->fParas.size()) {
                 ++pos.Para;
-                const auto& bounds = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fCursorPos;
-                const std::vector<size_t>& l2 = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fLineEndOffsets;
+                const auto& bounds = format(doc->fParas[pos.Para]).fCursorPos;
+                const std::vector<size_t>& l2 = format(doc->fParas[pos.Para]).fLineEndOffsets;
                 pos.Byte = find_closest_x(bounds, x, 0,
                                                     l2.size() > 0 ? l2[0] : bounds.size());
                 }
             else {
-                pos.Byte = doc.fParas[pos.Para].fText.size();
+                pos.Byte = doc->fParas[pos.Para].fText.size();
                 }
             pos.Byte =
-                align_column(doc.fParas[pos.Para].fText, pos.Byte);
+                align_column(doc->fParas[pos.Para].fText, pos.Byte);
             }
             break;
         case Movement::kWordLeft:
@@ -308,8 +307,8 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
                 pos = getPositionMoved(Movement::kLeft, pos);
                 break;
                 }
-            const std::vector<bool>& words = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fWordBoundaries;
-            SkASSERT(words.size() == doc.fParas[pos.Para].fText.size());
+            const std::vector<bool>& words = format(doc->fParas[pos.Para]).fWordBoundaries;
+            SkASSERT(words.size() == doc->fParas[pos.Para].fText.size());
             do {
                 --pos.Byte;
                 } while (pos.Byte > 0 && !words[pos.Byte]);
@@ -317,12 +316,12 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
             break;
         case Movement::kWordRight:
             {
-            const TextBuffer& text = doc.fParas[pos.Para].fText;
+            const TextBuffer& text = doc->fParas[pos.Para].fText;
             if (pos.Byte == text.size()) {
                 pos = getPositionMoved(Movement::kRight, pos);
                 break;
                 }
-            const std::vector<bool>& words = std::static_pointer_cast<ParagraphFormat>(doc.fParas[pos.Para].data)->fWordBoundaries;
+            const std::vector<bool>& words = format(doc->fParas[pos.Para]).fWordBoundaries;
             SkASSERT(words.size() == text.size());
             do {
                 ++pos.Byte;
@@ -333,3 +332,32 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
         }
     return pos;
     }
+
+    void SkEd::EditorUserData::registerViewWithDoc(EditorView* view, int userDataIndex)
+        {
+                {
+                if (views.size() <= userDataIndex)
+                    views.resize(userDataIndex + 1);
+                views[userDataIndex] = view;
+                }
+        }
+
+    SkEd::EditorUserData::EditorUserData(EditorDoc& doc)
+        {
+                {
+                doc.cursorMoved = [this]() {
+                    for (auto view : views)
+                        {
+                        if (view->cursorMoved)
+                            view->cursorMoved();
+                        view->resetCursorBlink();
+                        }
+                    };
+                doc.paragraphChanged = [this](EditorDoc::Paragraph& para) {
+                    for (auto view : views)
+                        {
+                        view->onParagraphChanged(para);
+                        }
+                    };
+                }
+        }

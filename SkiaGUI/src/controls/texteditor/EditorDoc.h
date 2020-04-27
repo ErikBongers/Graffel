@@ -1,5 +1,5 @@
 #pragma once
-#include "../pch.h"
+#include "../../pch.h"
 #include "TextBuffer.h"
 #include "TextSpan.h"
 #include "UndoRedo.h"
@@ -81,10 +81,10 @@ class CmdRemove : public Cmd
 class EditorDoc
     {
     public:
-
+        void* userData = nullptr;
         struct Paragraph {
             TextBuffer fText;
-            Paragraph(TextBuffer t) : fText(std::move(t)) {}
+            //Paragraph(TextBuffer t) : fText(std::move(t)) { std::cout << "This actually get's used!"; }
             Paragraph() {}
             std::shared_ptr<void> data = nullptr;
             };

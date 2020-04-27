@@ -1,5 +1,5 @@
 #pragma once
-#include "..\pch.h"
+#include "..\..\pch.h"
 #include <climits>
 #include <utility>
 #include <cstddef>
@@ -9,6 +9,19 @@ namespace SkEd {
 
 typedef std::function<void()> PDocChanged;
 
+class EditorView;
+class EditorUserData
+    {
+    private:
+        int viewerCount = 0;
+        std::vector<EditorView*> views;
+    public:
+        int getNewId() { return viewerCount++; }
+        void registerViewWithDoc(EditorView* view, int userDataIndex);
+
+        EditorUserData(EditorDoc& doc);
+    };
+
 class EditorView
     {
     private:
@@ -16,6 +29,7 @@ class EditorView
         SkScalar width = 0;
         SkScalar fullTextHeight = 0;
         void resetCursorBlink();
+        int userDataIndex = -1;
 
     public:
         struct ParagraphFormat {
@@ -28,7 +42,23 @@ class EditorView
             bool fShaped = false;
             };
 
-        EditorDoc doc;
+        class ParaData
+            {
+            private:
+                std::vector<std::shared_ptr<ParagraphFormat>> formats;
+            public:
+                ParagraphFormat& operator[](std::size_t i) 
+                    { 
+                    if (i >= formats.size())
+                        {
+                        formats.resize(i + 1);
+                        formats[i] = std::make_shared<ParagraphFormat>();
+                        }
+                    return *formats[i]; 
+                    }
+            };
+
+        EditorDoc* doc;
         SkFont fFont;
         const char* fLocale = "en";
         bool showCursor = false;
@@ -40,15 +70,25 @@ class EditorView
 
         
         EditorView();
-        
+        void attachDoc(EditorDoc* doc);
+        ParaData& formats(EditorDoc::Paragraph& para) 
+            { 
+            if (!para.data)
+                para.data = std::make_shared<ParaData>();
+            return *std::static_pointer_cast<ParaData>(para.data); 
+            }
+        ParagraphFormat& format(EditorDoc::Paragraph& para) 
+            { 
+            return formats(para)[userDataIndex]; 
+            }
         void onParagraphChanged(EditorDoc::Paragraph& para);
-        int lineHeight(size_t index) const { return std::static_pointer_cast<ParagraphFormat>(doc.fParas[index].data)->fHeight; }
+        //int lineHeight(size_t index) const { return std::static_pointer_cast<ParagraphFormat>(doc.fParas[index].data)->fHeight; }
         void setFont(SkFont font);
         void setWidth(SkScalar w) {
             if (width != w) {
                 width = w;
                 fNeedsReshape = true;
-                for (auto& l : doc.fParas) { onParagraphChanged(l); }
+                for (auto& l : doc->fParas) { onParagraphChanged(l); }
                 }
             }
         SkScalar getFullTextHeight() { return fullTextHeight; }
@@ -61,7 +101,7 @@ class EditorView
         bool moveCursor(Movement m, bool expandSelection);
         PDocChanged docChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;
-
+        friend class EditorUserData;
     };
 }
 

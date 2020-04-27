@@ -17,6 +17,14 @@
     <ClCompile Include="src\core\Functions.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="src\controls\texteditor\Editor.cpp" />
+    <ClCompile Include="src\controls\texteditor\EditorDoc.cpp" />
+    <ClCompile Include="src\controls\texteditor\EditorView.cpp" />
+    <ClCompile Include="src\controls\texteditor\shape.cpp" />
+    <ClCompile Include="src\controls\texteditor\TextBuffer.cpp" />
+    <ClCompile Include="src\controls\texteditor\UndoRedo.cpp" />
+    <ClCompile Include="src\controls\texteditor\utf8_helpers.cpp" />
+    <ClCompile Include="src\controls\texteditor\word_boundaries.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Fps.h" />
@@ -36,6 +44,15 @@
     <ClInclude Include="src\core\Functions.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="src\controls\texteditor\Editor.h" />
+    <ClInclude Include="src\controls\texteditor\EditorDoc.h" />
+    <ClInclude Include="src\controls\texteditor\EditorView.h" />
+    <ClInclude Include="src\controls\texteditor\shape.h" />
+    <ClInclude Include="src\controls\texteditor\TextBuffer.h" />
+    <ClInclude Include="src\controls\texteditor\TextSpan.h" />
+    <ClInclude Include="src\controls\texteditor\UndoRedo.h" />
+    <ClInclude Include="src\controls\texteditor\utf8_helpers.h" />
+    <ClInclude Include="src\controls\texteditor\word_boundaries.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

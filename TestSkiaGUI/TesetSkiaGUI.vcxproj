@@ -21,14 +21,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\texteditor\editor.cpp" />
-    <ClCompile Include="src\texteditor\EditorView.cpp" />
-    <ClCompile Include="src\texteditor\EditorDoc.cpp" />
-    <ClCompile Include="src\texteditor\shape.cpp" />
-    <ClCompile Include="src\texteditor\TextBuffer.cpp" />
-    <ClCompile Include="src\texteditor\UndoRedo.cpp" />
-    <ClCompile Include="src\texteditor\utf8_helpers.cpp" />
-    <ClCompile Include="src\texteditor\word_boundaries.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resources\miniz.h" />
@@ -46,15 +38,6 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\texteditor\editor.h" />
-    <ClInclude Include="src\texteditor\EditorView.h" />
-    <ClInclude Include="src\texteditor\EditorDoc.h" />
-    <ClInclude Include="src\texteditor\shape.h" />
-    <ClInclude Include="src\texteditor\TextBuffer.h" />
-    <ClInclude Include="src\texteditor\TextSpan.h" />
-    <ClInclude Include="src\texteditor\UndoRedo.h" />
-    <ClInclude Include="src\texteditor\utf8_helpers.h" />
-    <ClInclude Include="src\texteditor\word_boundaries.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\images\ColoredSquare.png" />

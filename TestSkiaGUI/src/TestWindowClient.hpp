@@ -2,7 +2,7 @@
 #include "core/SDLSkiaWindow.h"
 #include "controls/Button.h"
 #include "controls/InfiniteCanvas.h"
-#include "texteditor/editor.h"
+#include "controls/texteditor/editor.h"
 
 class ImageButton : public Button
     {

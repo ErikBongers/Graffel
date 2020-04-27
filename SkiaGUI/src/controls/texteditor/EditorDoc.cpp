@@ -38,7 +38,6 @@ void SkEd::EditorDoc::remove(bool backSpace)
     {
     CmdRemove* cmdRemove = new CmdRemove(*this);
     cmdRemove->backspace = backSpace;
-    cmdRemove->strBefore = selectionToString();
     undoRedo.execute(cmdRemove);
     }
 
@@ -48,6 +47,7 @@ void SkEd::CmdRemove::execute()
     selectPosBefore = doc.getSelectionPos();
     if (!doc.hasSelection())
         doc.moveCursor(!backspace, true);
+    strBefore = doc.selectionToString();
     doc._remove();
     cursorPosAfter = doc.getCursorPos();
     }

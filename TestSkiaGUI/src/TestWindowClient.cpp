@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "TestWindowClient.hpp"
 #include "resources/Resources.h"
-#include "texteditor/editor.h"
 
 void TestWindowClient::initialize()
     {
@@ -124,6 +123,7 @@ void TestWindowClient::initialize()
         };
     infiniteCanvas += curve1;
 
+    editor1.txt.attachDoc(new SkEd::EditorDoc());
     editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
             SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
     
@@ -133,7 +133,7 @@ void TestWindowClient::initialize()
     const char* txt = "aaa\nbbb";
     editor1.insert(txt);
     editor1.setEditMode(true);
-    auto str = editor1.txt.doc.selectionToString();
+    auto str = editor1.txt.doc->selectionToString();
     std::ofstream ofs(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\data\dump.txt)");
     ofs << str;
     ofs.close();

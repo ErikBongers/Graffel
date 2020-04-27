@@ -19,55 +19,11 @@ void Editor::_resize(SDL_WindowEvent& event)
     getWindow()->setInvalid();
     }
 
-//static void append(char** dst, size_t* count, const char* src, size_t n) {
-//    if (*dst) {
-//        ::memcpy(*dst, src, n);
-//        *dst += n;
-//        }
-//    *count += n;
-//    }
-//
-//size_t SkPlainTextEditor::Editor::copy(TextPosition pos1, TextPosition pos2, char* dst) const {
-//    size_t size = 0;
-//    pos1 = this->move(Editor::Movement::kNowhere, pos1);
-//    pos2 = this->move(Editor::Movement::kNowhere, pos2);
-//    auto cmp = [](const Editor::TextPosition& u, const Editor::TextPosition& v) { return u < v; };
-//    Editor::TextPosition start = std::min(pos1, pos2, cmp);
-//    Editor::TextPosition end = std::max(pos1, pos2, cmp);
-//    if (start == end || start.fParagraphIndex == fParas.size()) {
-//        return size;
-//        }
-//    if (start.fParagraphIndex == end.fParagraphIndex) {
-//        SkASSERT(end.fTextByteIndex > start.fTextByteIndex);
-//        auto& str = fParas[start.fParagraphIndex].fText;
-//        append(&dst, &size, str.begin() + start.fTextByteIndex,
-//               end.fTextByteIndex - start.fTextByteIndex);
-//        return size;
-//        }
-//    SkASSERT(end.fParagraphIndex < fParas.size());
-//    const std::vector<TextParagraph>::const_iterator firstP = fParas.begin() + start.fParagraphIndex;
-//    const std::vector<TextParagraph>::const_iterator lastP = fParas.begin() + end.fParagraphIndex;
-//    const auto& first = firstP->fText;
-//    const auto& last = lastP->fText;
-//
-//    append(&dst, &size, first.begin() + start.fTextByteIndex, first.size() - start.fTextByteIndex);
-//    for (auto line = firstP + 1; line < lastP; ++line) {
-//        append(&dst, &size, "\n", 1);
-//        append(&dst, &size, line->fText.begin(), line->fText.size());
-//        }
-//    append(&dst, &size, "\n", 1);
-//    append(&dst, &size, last.begin(), end.fTextByteIndex);
-//    return size;
-//    }
-
-
-// returns smallest i such that list[i] > value.  value > list[i-1]
-// Use a binary search since list is monotonic
 void SkEd::Editor::textInput(SDL_TextInputEvent& event)
     {
     if (!editMode)
         return;
-    txt.doc.insert(event.text, strlen(event.text));
+    txt.doc->insert(event.text, strlen(event.text));
     }
 
 
@@ -99,7 +55,7 @@ void SkEd::Editor::_mouseUp(SDL_MouseButtonEvent& event)
 
 bool SkEd::Editor::scroll(SkScalar delta)
     {
-    SkRect cursorRect = txt.getTextLocation(txt.doc.getCursorPos());
+    SkRect cursorRect = txt.getTextLocation(txt.doc->getCursorPos());
 
     SkScalar maxPos = std::max<SkScalar>(0, txt.getFullTextHeight() + 2 * fMargin - rect.height() / 2);
     SkScalar newpos = std::max<SkScalar>(0, std::min<SkScalar>(scrollPos + delta, maxPos));
@@ -136,15 +92,15 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
                 scroll(-rect.height() * 4 / 5);
                 break;
             case SDLK_DELETE:
-                txt.doc.remove();
+                txt.doc->remove();
                 break;
             case SDLK_BACKSPACE:
-                txt.doc.remove(true);
+                txt.doc->remove(true);
                 break;
             case SDLK_RETURN:
                 {
                 char c = '\n';
-                txt.doc.insert(&c, 1);
+                txt.doc->insert(&c, 1);
                 break;
                 }
             case SDLK_ESCAPE:
@@ -156,7 +112,7 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
                 if (SDL_HasClipboardText())
                     {
                     char* clipTxt = SDL_GetClipboardText();
-                    txt.doc.insert(clipTxt, strlen(clipTxt));
+                    txt.doc->insert(clipTxt, strlen(clipTxt));
                     }
                 break;
             case SDLK_x:
@@ -164,17 +120,17 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
                 {
                 if (!ctrl)
                     break;
-                auto strClip = txt.doc.selectionToString();
+                auto strClip = txt.doc->selectionToString();
                 SDL_SetClipboardText(strClip.c_str());
                 if (event.keysym.sym == SDLK_x)
-                    txt.doc.remove();
+                    txt.doc->remove();
                 }
                 break;
             case SDLK_z:
                 if (ctrl && shift)
-                    txt.doc.redo();
+                    txt.doc->redo();
                 else if (ctrl)
-                    txt.doc.undo();
+                    txt.doc->undo();
                 break;
             default:
                 break;
@@ -184,12 +140,12 @@ void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
 
 bool SkEd::Editor::moveCursor(Movement m, bool shift) 
     {
-    return setCursor(txt.getPositionMoved(m, txt.doc.getCursorPos()), shift);
+    return setCursor(txt.getPositionMoved(m, txt.doc->getCursorPos()), shift);
     }
 
 void SkEd::Editor::scrollCursorInView()
     {
-    SkRect cursor = txt.getTextLocation(txt.doc.getCursorPos());
+    SkRect cursor = txt.getTextLocation(txt.doc->getCursorPos());
     if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
         scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
         }
@@ -201,7 +157,7 @@ void SkEd::Editor::scrollCursorInView()
 
 bool SkEd::Editor::setCursor(TextPosition pos, bool shift)
     {
-    txt.doc.setCursor(pos, shift);
+    txt.doc->setCursor(pos, shift);
     scrollCursorInView();
     return true;
     }

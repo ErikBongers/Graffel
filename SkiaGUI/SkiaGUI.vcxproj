@@ -21,6 +21,14 @@
   <ItemGroup>
     <ClCompile Include="src\controls\Button.cpp" />
     <ClCompile Include="src\controls\InfiniteCanvas.cpp" />
+    <ClCompile Include="src\controls\texteditor\Editor.cpp" />
+    <ClCompile Include="src\controls\texteditor\EditorDoc.cpp" />
+    <ClCompile Include="src\controls\texteditor\EditorView.cpp" />
+    <ClCompile Include="src\controls\texteditor\shape.cpp" />
+    <ClCompile Include="src\controls\texteditor\TextBuffer.cpp" />
+    <ClCompile Include="src\controls\texteditor\UndoRedo.cpp" />
+    <ClCompile Include="src\controls\texteditor\utf8_helpers.cpp" />
+    <ClCompile Include="src\controls\texteditor\word_boundaries.cpp" />
     <ClCompile Include="src\core\Functions.cpp" />
     <ClCompile Include="src\core\SDLSkiaWindow.cpp" />
     <ClCompile Include="src\core\UIElement.cpp" />
@@ -28,6 +36,15 @@
   <ItemGroup>
     <ClInclude Include="src\controls\Button.h" />
     <ClInclude Include="src\controls\InfiniteCanvas.h" />
+    <ClInclude Include="src\controls\texteditor\Editor.h" />
+    <ClInclude Include="src\controls\texteditor\EditorDoc.h" />
+    <ClInclude Include="src\controls\texteditor\EditorView.h" />
+    <ClInclude Include="src\controls\texteditor\shape.h" />
+    <ClInclude Include="src\controls\texteditor\TextBuffer.h" />
+    <ClInclude Include="src\controls\texteditor\TextSpan.h" />
+    <ClInclude Include="src\controls\texteditor\UndoRedo.h" />
+    <ClInclude Include="src\controls\texteditor\utf8_helpers.h" />
+    <ClInclude Include="src\controls\texteditor\word_boundaries.h" />
     <ClInclude Include="src\core\Functions.h" />
     <ClInclude Include="src\Fps.h" />
     <ClCompile Include="src\pch.cpp">
@@ -97,7 +114,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\skia\skia\third_party\externals\harfbuzz\src;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -108,7 +125,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\skia\skia\third_party\externals\harfbuzz\src;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

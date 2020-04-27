@@ -5,7 +5,7 @@ void Object::stream(std::ostream& out) const
     {
     out << '{' << std::endl;
     bool comma = false;
-    for (auto obj : members)
+    for (auto obj : members)// use const auto& ?
         {
         if (comma)
             out << ',' << std::endl;
