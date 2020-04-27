@@ -1,3 +1,5 @@
+* test 2 views.
+
 * zoom: still a glitch when, I think, pressing the right mouse button.
 
 * try to compile all this stuff on linux...

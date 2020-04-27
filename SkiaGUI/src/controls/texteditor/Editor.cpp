@@ -5,12 +5,14 @@ using namespace SkEd;
 Editor::Editor()
     {
     txt.docChanged = [this]() {
-        if(this->getWindow())
-            this->getWindow()->setInvalid();
+        if(getWindow())
+            getWindow()->setInvalid();
         };
     txt.cursorMoved = [this]() {
-        this->scrollCursorInView();
+        if(hasFocus())
+            scrollCursorInView();
         };
+    txt.uiElement = this;
     }
 
 void Editor::_resize(SDL_WindowEvent& event)
@@ -27,12 +29,17 @@ void SkEd::Editor::textInput(SDL_TextInputEvent& event)
     }
 
 
+void SkEd::Editor::setEditMode(bool set) 
+    { 
+    txt.showCursor = editMode = set;
+    takeFocus(set ? this: nullptr);
+    }
+
 void SkEd::Editor::_mouseDown(SDL_MouseButtonEvent& event)
     {
     if (event.clicks == 2)
         {
-        editMode = true;
-        txt.showCursor = true;
+        setEditMode(true);
         return;
         }
     if (!editMode)
@@ -53,6 +60,18 @@ void SkEd::Editor::_mouseUp(SDL_MouseButtonEvent& event)
     setCursor(txt.getPosition({ point.fX - fMargin, point.fY + scrollPos - fMargin }), shift);
     }
 
+void SkEd::Editor::scrollCursorInView()
+    {
+    SkRect cursor = txt.getTextLocation(txt.doc->getCursorPos());
+    if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
+        scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
+        }
+    else if (cursor.top() < scrollPos) {
+        scrollPos = cursor.top();
+        }
+    getWindow()->setInvalid();
+    }
+
 bool SkEd::Editor::scroll(SkScalar delta)
     {
     SkRect cursorRect = txt.getTextLocation(txt.doc->getCursorPos());
@@ -70,7 +89,7 @@ bool SkEd::Editor::scroll(SkScalar delta)
 
 void SkEd::Editor::keyDown(SDL_KeyboardEvent& event)
     {
-    if (!editMode)
+    if (!editMode || !hasFocus())
         return;
 
     if (event.type == SDL_KEYDOWN)
@@ -143,22 +162,11 @@ bool SkEd::Editor::moveCursor(Movement m, bool shift)
     return setCursor(txt.getPositionMoved(m, txt.doc->getCursorPos()), shift);
     }
 
-void SkEd::Editor::scrollCursorInView()
-    {
-    SkRect cursor = txt.getTextLocation(txt.doc->getCursorPos());
-    if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
-        scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
-        }
-    else if (cursor.top() < scrollPos) {
-        scrollPos = cursor.top();
-        }
-    getWindow()->setInvalid();
-    }
-
 bool SkEd::Editor::setCursor(TextPosition pos, bool shift)
     {
     txt.doc->setCursor(pos, shift);
-    scrollCursorInView();
+    if(hasFocus())
+        scrollCursorInView();
     return true;
     }
 

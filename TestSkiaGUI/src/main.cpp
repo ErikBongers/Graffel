@@ -61,9 +61,8 @@ int main(int argc, char** argv) {
         return 1;
     }
     SDL_StartTextInput();
-
-    TestWindowClient* client = new TestWindowClient();
-    SDLSkiaWindow* wnd = new SDLSkiaWindow(*client);
+    TestWindowClient& tst = *(new TestWindowClient());
+    SDLSkiaWindow* wnd = new SDLSkiaWindow(tst);
     
     if(wnd->createWindow((int)(dm.w*0.7), (int)(dm.h*0.7), kStencilBits, kMsaaSampleCount))
         wnd->startEventLoop();

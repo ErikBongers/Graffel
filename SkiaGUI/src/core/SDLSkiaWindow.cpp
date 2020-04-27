@@ -14,7 +14,15 @@ int SDLCALL SDLSkiaWindow::onEventsReceived(void* userdata, SDL_Event* event)
     return 0;//ignored
     }
 
-void SDLSkiaWindow::startEventLoop() 
+SDLSkiaWindow::SDLSkiaWindow(WindowClient& client) 
+    : client(client) 
+    { 
+    client.setWindow(this); 
+    root = client.getRootElement(); 
+    root->window = this; 
+    }
+
+void SDLSkiaWindow::startEventLoop()
     {
     //SDL_AddEventWatch(onEventsReceived, (void*)this);
 

@@ -39,6 +39,8 @@ class UIElement
         void mapPixelsToPoints(SkPoint* points, int count);
         void mapPointsToPixels(SkPoint* dst, SkPoint* src, int count);
         SDLSkiaWindow* getWindow();
+        bool hasFocus() { return window->getClient().hasFocus(this); }
+        void takeFocus(UIElement* el) { window->getClient().takeFocus(el); }
 
     protected:
         void drawBackground();

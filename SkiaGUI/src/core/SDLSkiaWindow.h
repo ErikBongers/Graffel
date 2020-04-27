@@ -10,6 +10,7 @@ class WindowClient
     protected:
         SDLSkiaWindow* window;
         void setWindow(SDLSkiaWindow* window) { this->window = window; }
+        UIElement* focusElement = nullptr;
     public:
         SDLSkiaWindow* getWindow() { return window; }
         virtual void onIdle() {}
@@ -23,6 +24,8 @@ class WindowClient
         virtual void textInput(SDL_TextInputEvent& event) {}
         virtual void resize(SDL_WindowEvent& event) {}
         virtual UIElement* getRootElement() = 0;
+        void takeFocus(UIElement* el) { this->focusElement = el; }
+        bool hasFocus(UIElement* el) { return this->focusElement == el; }
         friend class SDLSkiaWindow;
     };
 
@@ -60,7 +63,7 @@ class SDLSkiaWindow
         std::set<UIElement*> mouseCaptures;
         UIElement* root = nullptr;
     public:
-        SDLSkiaWindow(WindowClient& client) : client(client) { client.setWindow(this); root = client.getRootElement(); }
+        SDLSkiaWindow(WindowClient& client);
         void startEventLoop();
         bool createWindow(int width, int height, int stencilBits, int msaaSampleCount);
         void destroyWindow();
@@ -71,6 +74,7 @@ class SDLSkiaWindow
         void addMouseCapture(UIElement& e);
         void removeMouseCapture(UIElement& e);
         bool isMouseCaptured(UIElement& e) { return mouseCaptures.find(&e) != mouseCaptures.end(); }
+        WindowClient& getClient() { return client; }
         void close() { quit = true; }
     };
 

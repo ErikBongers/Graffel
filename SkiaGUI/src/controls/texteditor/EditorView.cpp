@@ -14,10 +14,6 @@ void EditorView::attachDoc(EditorDoc* doc)
     userData->registerViewWithDoc(this, userDataIndex);
     }
 
-EditorView::EditorView()
-    {
-    }
-
 void EditorView::onParagraphChanged(EditorDoc::Paragraph& para)
     {
     if (!para.data)
@@ -134,7 +130,10 @@ void EditorView::paint(SkCanvas& canvas)
         TextPosition fSelectionEnd;
         fSelectionBegin = doc->getSelectionPos();
         fSelectionEnd = doc->getCursorPos();
-        SkPaint selection = SkPaint(fSelectionColor);
+        SkColor4f selColor = fSelectionColor;
+        if(!this->uiElement->hasFocus())
+            selColor.fA /= 4;
+        SkPaint selection = SkPaint(selColor);
         for (TextPosition pos = std::min(fSelectionBegin, fSelectionEnd),
                 end = std::max(fSelectionBegin, fSelectionEnd);
                 pos < end;
@@ -148,14 +147,11 @@ void EditorView::paint(SkCanvas& canvas)
         }
         
     //paint cursor
-    if (doc->fParas.size() > 0)//paras should never be empty???
+    if (cursorBlinkOn && showCursor && this->uiElement->hasFocus())
         {
-        if ((cursorBlinkOn && showCursor))
-            {
-            SkPaint cursorPaint(fCursorColor);
-            cursorPaint.setAntiAlias(false);
-            canvas.drawRect(getTextLocation(doc->getCursorPos()), cursorPaint);
-            }
+        SkPaint cursorPaint(fCursorColor);
+        cursorPaint.setAntiAlias(false);
+        canvas.drawRect(getTextLocation(doc->getCursorPos()), cursorPaint);
         }
         
     //paint text
@@ -256,19 +252,19 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
                                                     (f == 1) ? 0 : list[f - 2],
                                                     list[f - 1]);
                 }
-            else if (pos.Para > 0) {
+            else if (pos.Para > 0) 
+                {
                 --pos.Para;
                 auto& newPara = doc->fParas[pos.Para];
                 auto& pf = format(newPara);
                 size_t r = pf.fLineEndOffsets.size();
-                if (r > 0) {
-                    pos.Byte = find_closest_x(pf.fCursorPos, x,
-                                                        pf.fLineEndOffsets[r - 1],
-                                                        pf.fCursorPos.size());
+                if (r > 0) 
+                    {
+                    pos.Byte = find_closest_x(pf.fCursorPos, x, pf.fLineEndOffsets[r - 1], pf.fCursorPos.size());
                     }
-                else {
-                    pos.Byte = find_closest_x(pf.fCursorPos, x, 0,
-                                                        pf.fCursorPos.size());
+                else 
+                    {
+                    pos.Byte = find_closest_x(pf.fCursorPos, x, 0, pf.fCursorPos.size());
                     }
                 }
             pos.Byte =
@@ -281,21 +277,17 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
             float x = format(doc->fParas[pos.Para]).fCursorPos[pos.Byte].left();
 
             size_t f = find_first_larger(list, pos.Byte);
-            if (f < list.size()) {
+            if (f < list.size()) 
+                {
                 const auto& bounds = format(doc->fParas[pos.Para]).fCursorPos;
-                pos.Byte = find_closest_x(bounds, x, list[f],
-                                                    f + 1 < list.size() ? list[f + 1]
-                                                    : bounds.size());
+                pos.Byte = find_closest_x(bounds, x, list[f], f + 1 < list.size() ? list[f + 1] : bounds.size());
                 }
-            else if (pos.Para + 1 < doc->fParas.size()) {
+            else if (pos.Para + 1 < doc->fParas.size()) 
+                {
                 ++pos.Para;
                 const auto& bounds = format(doc->fParas[pos.Para]).fCursorPos;
                 const std::vector<size_t>& l2 = format(doc->fParas[pos.Para]).fLineEndOffsets;
-                pos.Byte = find_closest_x(bounds, x, 0,
-                                                    l2.size() > 0 ? l2[0] : bounds.size());
-                }
-            else {
-                pos.Byte = doc->fParas[pos.Para].fText.size();
+                pos.Byte = find_closest_x(bounds, x, 0, l2.size() > 0 ? l2[0] : bounds.size());
                 }
             pos.Byte =
                 align_column(doc->fParas[pos.Para].fText, pos.Byte);

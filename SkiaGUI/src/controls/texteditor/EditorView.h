@@ -4,6 +4,7 @@
 #include <utility>
 #include <cstddef>
 #include "EditorDoc.h"
+#include "core/UIElement.h"
 
 namespace SkEd {
 
@@ -30,7 +31,7 @@ class EditorView
         SkScalar fullTextHeight = 0;
         void resetCursorBlink();
         int userDataIndex = -1;
-
+        UIElement* uiElement = nullptr;
     public:
         struct ParagraphFormat {
             sk_sp<const SkTextBlob> fBlob;
@@ -60,16 +61,14 @@ class EditorView
 
         EditorDoc* doc;
         SkFont fFont;
-        const char* fLocale = "en";
+        const char* fLocale = "en"; //TODO: should this not be in Doc?
         bool showCursor = false;
         std::chrono::time_point<std::chrono::steady_clock> startCursorTime; //TODO: add cursor blinktime user defined.
         bool cursorBlinkOn = false;
         SkColor4f fForegroundColor = { 1, 1, 1, 1 };
         SkColor4f fSelectionColor = { 0.729f, 0.827f, 0.988f, 1 };
         SkColor4f fCursorColor = { 1, 0, 0, 1 };
-
         
-        EditorView();
         void attachDoc(EditorDoc* doc);
         ParaData& formats(EditorDoc::Paragraph& para) 
             { 
@@ -98,10 +97,10 @@ class EditorView
         void paint(SkCanvas& canvas);
         bool onIdle();
         TextPosition getPositionMoved(Movement m, TextPosition pos);
-        bool moveCursor(Movement m, bool expandSelection);
         PDocChanged docChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;
         friend class EditorUserData;
+        friend class Editor; //is this ok?
     };
 }
 

@@ -125,12 +125,22 @@ void TestWindowClient::initialize()
 
     editor1.txt.attachDoc(new SkEd::EditorDoc());
     editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
-            SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
-    
+                                                    SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
+    editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
+    editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
+    infiniteCanvas += editor1;
+
+    editor2.txt.attachDoc(editor1.txt.doc);
+    editor2.setFont(SkFont(SkTypeface::MakeFromName("Courier New", //serif, monospace,...
+                                                    SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
+    editor2.rect = SkRect::MakeXYWH(500, 200, 300, 300);
+    editor2.backgroundColor = SkColorSetARGB(128, 80, 80, 255);
+    infiniteCanvas += editor2;
+
     //TESTS
-    
-    //const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
-    const char* txt = "aaa\nbbb";
+
+    const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
+    //const char* txt = "aaa\nbbb";
     editor1.insert(txt);
     editor1.setEditMode(true);
     auto str = editor1.txt.doc->selectionToString();
@@ -138,13 +148,7 @@ void TestWindowClient::initialize()
     ofs << str;
     ofs.close();
 
-
     // END TESTS
-    editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
-    editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
-    infiniteCanvas += editor1;
-
-
     getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 

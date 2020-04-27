@@ -98,6 +98,7 @@ class TestWindowClient : public WindowClient
         ImageButton imgButton3;
             
         SkEd::Editor editor1;
+        SkEd::Editor editor2;
 
     public:
         void initialize() override;
