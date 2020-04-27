@@ -25,6 +25,9 @@
     <ClCompile Include="src\controls\texteditor\UndoRedo.cpp" />
     <ClCompile Include="src\controls\texteditor\utf8_helpers.cpp" />
     <ClCompile Include="src\controls\texteditor\word_boundaries.cpp" />
+    <ClCompile Include="src\resources\miniz.c" />
+    <ClCompile Include="src\resources\Resources.cpp" />
+    <ClCompile Include="src\resources\Zip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Fps.h" />
@@ -53,6 +56,9 @@
     <ClInclude Include="src\controls\texteditor\UndoRedo.h" />
     <ClInclude Include="src\controls\texteditor\utf8_helpers.h" />
     <ClInclude Include="src\controls\texteditor\word_boundaries.h" />
+    <ClInclude Include="src\resources\miniz.h" />
+    <ClInclude Include="src\resources\Resources.h" />
+    <ClInclude Include="src\resources\Zip.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

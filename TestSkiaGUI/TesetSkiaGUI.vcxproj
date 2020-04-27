@@ -11,9 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\resources\miniz.c" />
-    <ClCompile Include="src\resources\Resources.cpp" />
-    <ClCompile Include="src\resources\Zip.cpp" />
     <ClCompile Include="src\TestWindowClient.cpp" />
     <ClCompile Include="src\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -23,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\resources\miniz.h" />
-    <ClInclude Include="src\resources\Resources.h" />
-    <ClInclude Include="src\resources\Zip.h" />
     <ClInclude Include="src\TestWindowClient.hpp" />
     <ClInclude Include="src\Fps.h" />
     <ClCompile Include="src\pch.cpp">

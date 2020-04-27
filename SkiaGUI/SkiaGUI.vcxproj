@@ -32,6 +32,9 @@
     <ClCompile Include="src\core\Functions.cpp" />
     <ClCompile Include="src\core\SDLSkiaWindow.cpp" />
     <ClCompile Include="src\core\UIElement.cpp" />
+    <ClCompile Include="src\resources\miniz.c" />
+    <ClCompile Include="src\resources\Resources.cpp" />
+    <ClCompile Include="src\resources\Zip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\controls\Button.h" />
@@ -59,6 +62,9 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\SDLSkiaWindow.h" />
     <ClInclude Include="src\core\UIElement.h" />
+    <ClInclude Include="src\resources\miniz.h" />
+    <ClInclude Include="src\resources\Resources.h" />
+    <ClInclude Include="src\resources\Zip.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
