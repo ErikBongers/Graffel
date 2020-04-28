@@ -6,6 +6,7 @@
 #include "json/json.h"
 #include "json/Tokenizer.h"
 #include "json/Parser.h"
+#include "resources/Zip.h"
 
 #undef main
 
@@ -37,7 +38,7 @@ int mainGUI(int argc, char** argv) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
         handle_error();
         return 1;
-    }
+        }
 
     // Setup window
     // This code will create a window with the same resolution as the user's desktop.
@@ -45,12 +46,12 @@ int mainGUI(int argc, char** argv) {
     if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
         handle_error();
         return 1;
-    }
+        }
+    SDL_StartTextInput();
+    TestWindowClient& tst = *(new TestWindowClient());
+    SDLSkiaWindow* wnd = new SDLSkiaWindow(tst);
 
-    TestWindowClient* client = new TestWindowClient();
-    SDLSkiaWindow* wnd = new SDLSkiaWindow(*client);
-    
-    if(wnd->createWindow((int)(dm.w*0.7), (int)(dm.h*0.7), kStencilBits, kMsaaSampleCount))
+    if (wnd->createWindow((int)(dm.w * 0.7), (int)(dm.h * 0.7), kStencilBits, kMsaaSampleCount))
         wnd->startEventLoop();
     wnd->destroyWindow();
 

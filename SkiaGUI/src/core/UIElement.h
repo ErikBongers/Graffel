@@ -41,6 +41,7 @@ class UIElement
         SDLSkiaWindow* getWindow();
         bool hasFocus() { return window->getClient().hasFocus(this); }
         void takeFocus(UIElement* el) { window->getClient().takeFocus(el); }
+        SkCanvas& Canvas() { return window->Canvas(); }
 
     protected:
         void drawBackground();

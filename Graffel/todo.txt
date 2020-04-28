@@ -1,4 +1,65 @@
-* test 2 views.
+Phase -1
+-----------
+* Create a ImageTextButton
+  > to be used as a menu-item.
+* Create a (dynamically sized) ListView
+  > to be used as a popup menu.
+
+Phase 0
+---------
+* Create view layout
+  > A view can contain 2 other views (divided by a splitter), split hor or vert., or contain a group (tree, list) or an infiniteCanvas
+    > by default, a new view contains an empty canvas.
+    > you can drop an item in it and make it fill the view.
+    > a number of contents have been predefined and cannot be deleted (but may be part of no view):
+      - list of all nodes.
+      - tree of all groups
+  > Assign a container to a view. Right click and list all containers?
+
+Phase 1
+---------------
+* Create basic data model
+  - Document OK
+  - Nodes OK
+     - Node: (text)
+       - ID
+       - txtTitle (keyword? title?)
+       - txtDscr
+       - txtBody
+  - Default layout: canvas (infinite)
+    - positions of each node.
+  - create StickyNote visual
+    > set fixed size.
+    > add 3 editors.
+* Save/read
+* Create basic node visual (stycky note)
+* Add/remove nodes to data model
+* start with just a single infinite canvas, nodes get added at (0,0)
+Phase 2
+------------
+* Implement a sortable list.
+* Grid
+
+
+Idea data model
+------------------
+Main doc:
+ - List of nodes, with each an ID
+ - Various hierarchies
+   - Lists
+   - Trees
+   -...
+ - Various layouts (especially for lists)
+   - Linear list
+   - Grid list
+     - Different directions (horizontal, vertical,...)
+ - Various canvasses
+   - A fixed tree on the side
+   - options:
+     - zoomable
+     - sticky
+     - infinitecanvas
+
 
 * zoom: still a glitch when, I think, pressing the right mouse button.
 
@@ -12,7 +73,6 @@ Needed for iDea
 iDea v2
 ------------
 - Goal is combine Word with Whiteboard
-- no OneNote !!!!! Too loose.
 - more like Whiteboard, but with more functionality.
 - also a bit like Word.
 - is brainstorm tool: reopen in the same 'chaos' as it was closed.

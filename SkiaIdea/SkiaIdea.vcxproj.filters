@@ -13,6 +13,7 @@
     <ClCompile Include="src\json\Parser.cpp">
       <Filter>json</Filter>
     </ClCompile>
+    <ClCompile Include="src\visuals\ListView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />
@@ -27,6 +28,10 @@
     <ClInclude Include="src\json\json.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="src\model\Document.h" />
+    <ClInclude Include="src\visuals\StickyNote.h" />
+    <ClInclude Include="src\visuals\ImageTextButton.h" />
+    <ClInclude Include="src\visuals\ListView.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="json">

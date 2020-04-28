@@ -21,11 +21,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\visuals\ListView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json\json.h" />
     <ClInclude Include="src\json\Parser.h" />
     <ClInclude Include="src\json\Tokenizer.h" />
+    <ClInclude Include="src\model\Document.h" />
     <ClInclude Include="src\TestWindowClient.hpp" />
     <ClInclude Include="src\Fps.h" />
     <ClCompile Include="src\pch.cpp">
@@ -38,6 +40,9 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\visuals\ImageTextButton.h" />
+    <ClInclude Include="src\visuals\ListView.h" />
+    <ClInclude Include="src\visuals\StickyNote.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test.json" />
@@ -99,7 +104,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;skshaper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -120,7 +125,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;skshaper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

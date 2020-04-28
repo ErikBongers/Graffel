@@ -1,75 +1,92 @@
 #include "pch.h"
 #include "TestWindowClient.hpp"
+#include "resources/Resources.h"
 
-void TestWindowClient::initialize(SDLSkiaWindow& window)
+void TestWindowClient::initialize()
     {
-    full.backgroundColor = SK_ColorWHITE;
-    full.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
-        e.rect = SkRect::MakeWH((SkScalar)window.getWidth(), (SkScalar)window.getHeight());
-        window.setInvalid();
+    full.backgroundColor = SkColorSetRGB(50, 50, 50);
+    full.resize = [](UIElement& e, SDL_WindowEvent& event) {
+        e.rect = SkRect::MakeWH((SkScalar)e.getWindow()->getWidth(), (SkScalar)e.getWindow()->getHeight());
+        e.getWindow()->setInvalid();
         };
 
-    toolbar.rect = SkRect::MakeXYWH(20, 10, 500, 40);
-    toolbar.backgroundColor = SK_ColorLTGRAY;
+    toolbar.resize = [](UIElement& e, SDL_WindowEvent& event) {
+        e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)e.getWindow()->getWidth(), 40);
+        e.getWindow()->setInvalid();
+        };
     full += toolbar;
+    Resources res(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images)");
 
-    button1.rect = SkRect::MakeXYWH(5, 5, 20, 20);
-    button1.backgroundColor = SK_ColorDKGRAY;
-    button1.highlightColor = SK_ColorYELLOW;
-    button1.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event, SDLSkiaWindow& window) {
+    imgButton.rect = SkRect::MakeXYWH(5, 5, 20, 23);
+    imgButton.img = res.get("SquareSquare.png");
+    imgButton.xOffset = imgButton.yOffset = 1;
+    imgButton.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
         std::cout << "Clicked!" << std::endl;
-        this->button2.backgroundColor = SK_ColorRED;
-        window.setInvalid();
+        e.getWindow()->setInvalid();
         };
-    toolbar += button1;
+    toolbar += imgButton;
 
-    button2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 20);
-    button2.backgroundColor = SK_ColorDKGRAY;
-    toolbar += button2; 
-
-    infiniteCanvas.resize = [](UIElement& e, SDL_WindowEvent& event, SDLSkiaWindow& window) {
-        e.rect = SkRect::MakeLTRB(20, 50, (SkScalar)window.getWidth() - 30, (SkScalar)window.getHeight() - 30);
-        window.setInvalid();
+    imgButton2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 23);
+    imgButton2.img = res.get("ColoredSquare.png");
+    imgButton2.xOffset = imgButton2.yOffset = 1;
+    imgButton2.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Clicked 2!" << std::endl;
+        e.getWindow()->setInvalid();
         };
-    infiniteCanvas.backgroundColor = SK_ColorDKGRAY;
+    toolbar += imgButton2;
+
+    imgButton3.rect = SkRect::MakeXYWH(5 + 20 + 5 + 20 + 5, 5, 20, 23);
+    imgButton3.img = res.get("RedSquare.png");
+    imgButton3.xOffset = imgButton3.yOffset = 1;
+    imgButton3.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Clicked 3!" << std::endl;
+        e.getWindow()->setInvalid();
+        };
+    toolbar += imgButton3;
+
+    infiniteCanvas.resize = [](UIElement& e, SDL_WindowEvent& event) {
+        e.rect = SkRect::MakeLTRB(10, 30, (SkScalar)e.getWindow()->getWidth() - 10, (SkScalar)e.getWindow()->getHeight() - 10);
+        e.getWindow()->setInvalid();
+        };
+    infiniteCanvas.backgroundColor = SkColorSetRGB(35, 35, 35);
     full += infiniteCanvas;
 
-    square1.rect = SkRect::MakeXYWH(200, 200, 200, 200);
-    square1.backgroundColor = SK_ColorBLUE;
+    square1.rect = SkRect::MakeXYWH(200, 200, 100, 100);
+    square1.backgroundColor = SkColorSetARGB(40, 50, 50, 255);
     infiniteCanvas += square1;
 
-    bullet.rect = SkRect::MakeXYWH(300, 300, 20, 20);
-    bullet.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+    bullet.rect = SkRect::MakeXYWH(400, 300, 20, 40);
+    bullet.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
         Bullet& bullet = (Bullet&)e;
         if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
             {
             bullet.color = SK_ColorYELLOW;
-            window.addMouseCapture(bullet); //todo: not efficient.
+            e.getWindow()->addMouseCapture(bullet); //todo: not efficient.
             }
         else
             {
             bullet.color = SK_ColorRED;
-            window.removeMouseCapture(bullet);
+            e.getWindow()->removeMouseCapture(bullet);
             }
-        window.setInvalid();//todo: not efficient.
+        e.getWindow()->setInvalid();//todo: not efficient.
         };
 
     infiniteCanvas += bullet;
 
     blueChild.rect = SkRect::MakeXYWH(10, 10, 20, 20);
-    blueChild.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+    blueChild.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
         Bullet& bullet = (Bullet&)e;
         if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
             {
             bullet.color = SK_ColorYELLOW;
-            window.addMouseCapture(bullet); //todo: not efficient.
+            e.getWindow()->addMouseCapture(bullet); //todo: not efficient.
             }
         else
             {
             bullet.color = SK_ColorRED;
-            window.removeMouseCapture(bullet);
+            e.getWindow()->removeMouseCapture(bullet);
             }
-        window.setInvalid();//todo: not efficient.
+        e.getWindow()->setInvalid();//todo: not efficient.
         };
     square1 += blueChild;
 
@@ -85,13 +102,13 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
     p4.rect = SkRect::MakeXYWH(100, 100, 10, 10);
     infiniteCanvas += p4;
 
-    curve1.rect = SkRect::MakeXYWH(0,0,1,1); //must be at (0, 0) to work, currently!!!
+    curve1.rect = SkRect::MakeXYWH(0, 0, 1, 1); //must be at (0, 0) to work, currently!!!
     curve1.p1 = &p1;
     curve1.p2 = &p2;
     curve1.p3 = &p3;
     curve1.p4 = &p4;
-    window.addMouseCapture(curve1);
-    curve1.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event, SDLSkiaWindow& window) {
+    getWindow()->addMouseCapture(curve1);
+    curve1.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
         Curve& curve = (Curve&)e;
         SkPoint mouse = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
         curve.mapPixelsToPoints(&mouse, 1);
@@ -102,44 +119,108 @@ void TestWindowClient::initialize(SDLSkiaWindow& window)
                 col = SK_ColorYELLOW;
             }
         curve.color = col;
-        window.setInvalid();//todo: not efficient.
+        e.getWindow()->setInvalid();//todo: not efficient.
         };
     infiniteCanvas += curve1;
-    window.addMouseCapture(infiniteCanvas); //todo: put in constructor.
+
+    editor1.txt.attachDoc(new SkEd::EditorDoc());
+    editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
+                                                    SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
+    editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
+    editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
+    infiniteCanvas += editor1;
+
+    editor2.txt.attachDoc(editor1.txt.doc);
+    editor2.setFont(SkFont(SkTypeface::MakeFromName("Courier New", //serif, monospace,...
+                                                    SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
+    editor2.rect = SkRect::MakeXYWH(500, 200, 300, 300);
+    editor2.backgroundColor = SkColorSetARGB(128, 80, 80, 255);
+    infiniteCanvas += editor2;
+
+    //TESTS
+
+    const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
+    //const char* txt = "aaa\nbbb";
+    editor1.insert(txt);
+    editor1.setEditMode(true);
+    auto str = editor1.txt.doc->selectionToString();
+    std::ofstream ofs(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\data\dump.txt)");
+    ofs << str;
+    ofs.close();
+
+    // END TESTS
+
+    listView.rect = SkRect::MakeXYWH(500, 500, 1, 1);
+
+    imgTextButton1.rect = SkRect::MakeXYWH(0, 0, 150, 30);
+    imgTextButton1.img = res.get("SquareSquare.png");
+    imgTextButton1.text = "Den tekst";
+    imgTextButton1.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+        std::cout << "den tekst klikt!" << std::endl;
+        };
+    listView += imgTextButton1;
+
+    imgTextButton2.rect = SkRect::MakeXYWH(0, 0, 150, 30);
+    imgTextButton2.img = res.get("SquareSquare.png");
+    imgTextButton2.text = "Den tekst 2";
+    imgTextButton2.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+        std::cout << "den tekst 2 klikt!" << std::endl;
+        };
+    listView += imgTextButton2;
+
+    imgTextButton3.rect = SkRect::MakeXYWH(0, 0, 150, 30);
+    imgTextButton3.img = res.get("SquareSquare.png");
+    imgTextButton3.text = "Den tekst 3";
+    imgTextButton3.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+        std::cout << "den tekst 3 klikt!" << std::endl;
+        };
+    listView += imgTextButton3;
+    infiniteCanvas += listView;
+
+    getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 
-void TestWindowClient::update(SDLSkiaWindow& window)
+void TestWindowClient::onIdle()
     {
+    full.trickleIdle();
     }
 
-void TestWindowClient::draw(SDLSkiaWindow& window)
+void TestWindowClient::draw()
     {
-    SkCanvas& c = window.Canvas();
-    full.drawAll(window);
+    full.drawAll();
     }
 
-void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event)
     {
-    full.trickleMouseMoveEvent(event, window);
+    full.trickleMouseMoveEvent(event);
     }
 
-void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseDown(SDL_MouseButtonEvent& event)
     {
-    window.setInvalid();
-    infiniteCanvas.mouseDown(event, window);
+    full.trickleMouseDownEvent(event);
     }
 
-void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event)
     {
-    full.trickleMouseUpEvent(event, window);
+    full.trickleMouseUpEvent(event);
     }
 
-void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event)
     {
-    infiniteCanvas.mouseWheel(event, window);
+    infiniteCanvas.mouseWheel(event);
     }
 
-void TestWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
+void TestWindowClient::resize(SDL_WindowEvent& event)
     {
-    full.trickleResizeEvent(event, window);
+    full.trickleResizeEvent(event);
+    }
+
+void TestWindowClient::textInput(SDL_TextInputEvent& event)
+    {
+    full.trickleTextEvent(event);
+    }
+
+void TestWindowClient::keyDown(SDL_KeyboardEvent& event)
+    {
+    full.trickleKeyDown(event);
     }
