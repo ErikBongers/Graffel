@@ -10,7 +10,9 @@ void TestWindowClient::initialize()
 
 void TestWindowClient::initializeViewsTEST()
     {
-    mainView.splitView(&view1, View::Location::RIGHT);
+    full.backgroundColor = SkColorSetRGB(50, 50, 50);
+    view3.setContent(&full);
+    mainView.splitView(&view1, View::Location::LEFT);
     view1.splitView(&view2, View::Location::ABOVE);
     view3.defaultSizePrefs.mmWidth.prefSize = View::PrefSize::FIXED;
     view3.defaultSizePrefs.mmWidth.min = view3.defaultSizePrefs.mmWidth.max = 200;
@@ -19,11 +21,6 @@ void TestWindowClient::initializeViewsTEST()
 
 void TestWindowClient::initializeElementsTEST()
     {
-    full.backgroundColor = SkColorSetRGB(50, 50, 50);
-    full.resize = [](UIArea& e) {
-        e.rect = SkRect::MakeWH((SkScalar)e.getWindow()->getWidth(), (SkScalar)e.getWindow()->getHeight());
-        e.getWindow()->setInvalid();
-        };
 
     toolbar.resize = [](UIArea& e) {
         e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)e.getWindow()->getWidth(), 40);

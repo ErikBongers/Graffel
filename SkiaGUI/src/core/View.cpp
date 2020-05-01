@@ -108,12 +108,13 @@ void View::trickleTextEvent(SDL_TextInputEvent& event)
         area->trickleTextEvent(event);
      }
 
-inline void View::setContent(UIArea* area) 
+ void View::setContent(UIArea* area) 
     { 
     if (myCreatedView)
         delete myCreatedView;
     view1 = view2 = myCreatedView = nullptr;
-    this->area = area; 
+    this->area = area;
+    area->parent = this;
     _resizeContent();
     }
 
@@ -123,6 +124,11 @@ void View::splitView(View* secondView, Location loc)
     View* clone = new View(*this);
     clone->parent = this;
     clone->view = this; //TODO: is both parent and view needed?
+    if (clone->area)
+        {
+        clone->area->parent = clone;
+        this->area = nullptr;;
+        }
     myCreatedView = clone;
     if (loc == Location::BELOW || loc == Location::RIGHT)
         {
@@ -141,13 +147,17 @@ void View::splitView(View* secondView, Location loc)
     else
         splitDirection = Direction::LEFT_RIGHT;
 
-    SDL_WindowEvent event;
-    event.type = SDL_EventType::SDL_WINDOWEVENT;
     _resizeContent();
     }
 
 void View::_resizeContent()
     {
+    if (area)
+        {
+        area->rect = rect.makeOffset(-rect.fLeft, -rect.fTop);
+        area->trickleResizeEvent();
+        return;
+        }
     SkScalar halfGap = mindTheGap / 2;
     if (view1 && view2)
         {
@@ -201,5 +211,6 @@ void View::_resizeContent()
         view2->_resizeContent();
         }
     oldSize = rect;
-    getWindow()->setInvalid();
+    if(getWindow())
+        window->setInvalid();
     }

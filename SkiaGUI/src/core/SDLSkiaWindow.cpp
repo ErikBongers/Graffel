@@ -125,7 +125,7 @@ bool  SDLSkiaWindow::createWindow(int width, int height, int stencilBits, int ms
     SkASSERT(grContext);
 
     canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
-
+    getRootView()->window = this;
     client.resize(); //force a size for rootView.
     client.initialize();
     auto prefs = getRootView()->getSizePrefs();
