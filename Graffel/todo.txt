@@ -1,3 +1,9 @@
+* EditorDoc.onPAragraphChanged should only be called after reshaping (I think)
+  > in other places, just mark as dirty?
+Phase 0
+------------
+* View: split drag bar.
+
 Phase 1
 ---------------
 * Create basic data model

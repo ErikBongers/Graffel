@@ -87,7 +87,8 @@ class EditorView
             if (width != w) {
                 width = w;
                 fNeedsReshape = true;
-                for (auto& l : doc->fParas) { onParagraphChanged(l); }
+                if(doc)
+                    for (auto& l : doc->fParas) { onParagraphChanged(l); }
                 }
             }
         SkScalar getFullTextHeight() { return fullTextHeight; }

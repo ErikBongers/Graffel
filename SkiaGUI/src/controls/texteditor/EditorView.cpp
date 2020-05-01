@@ -31,7 +31,8 @@ void EditorView::setFont(SkFont font) {
     if (font != fFont) {
         fFont = std::move(font);
         fNeedsReshape = true;
-        for (auto& l : doc->fParas) { onParagraphChanged(l); }
+        if(doc)
+            for (auto& l : doc->fParas) { onParagraphChanged(l); }
         }
     }
     
