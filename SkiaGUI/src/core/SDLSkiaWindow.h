@@ -4,17 +4,19 @@
 #include <set>
 
 class SDLSkiaWindow;
+class UIArea;
 class UIElement;
+class View;
 class WindowClient
     {
     protected:
         SDLSkiaWindow* window;
         void setWindow(SDLSkiaWindow* window) { this->window = window; }
-        UIElement* focusElement = nullptr;
+        UIArea* focusElement = nullptr;
+        void draw();
     public:
         SDLSkiaWindow* getWindow() { return window; }
         virtual void onIdle() {}
-        virtual void draw() {}
         virtual void initialize() {}
         virtual void mouseMoved(SDL_MouseMotionEvent& event) {}
         virtual void mouseDown(SDL_MouseButtonEvent& event) {}
@@ -22,10 +24,10 @@ class WindowClient
         virtual void mouseWheel(SDL_MouseWheelEvent& event) {}
         virtual void keyDown(SDL_KeyboardEvent& event) {}
         virtual void textInput(SDL_TextInputEvent& event) {}
-        virtual void resize(SDL_WindowEvent& event) {}
-        virtual UIElement* getRootElement() = 0;
-        void takeFocus(UIElement* el) { this->focusElement = el; }
-        bool hasFocus(UIElement* el) { return this->focusElement == el; }
+        void resize(SDL_WindowEvent& event);
+        virtual View* getMainView() = 0;
+        void takeFocus(UIArea* el) { this->focusElement = el; }
+        bool hasFocus(UIArea* el) { return this->focusElement == el; }
         friend class SDLSkiaWindow;
     };
 
@@ -60,8 +62,8 @@ class SDLSkiaWindow
         void resizeViewportToWindow(SDL_Window* window);
         void loopOnce();
         static int onEventsReceived(void* userdata, SDL_Event* event);
-        std::set<UIElement*> mouseCaptures;
-        UIElement* root = nullptr;
+        std::set<UIArea*> mouseCaptures;
+        View* rootView = nullptr;
     public:
         SDLSkiaWindow(WindowClient& client);
         void startEventLoop();
@@ -71,10 +73,11 @@ class SDLSkiaWindow
         int getHeight() { return dh; }
         SkCanvas& Canvas() { return *canvas; }
         void setInvalid() { invalid = true; }
-        void addMouseCapture(UIElement& e);
-        void removeMouseCapture(UIElement& e);
-        bool isMouseCaptured(UIElement& e) { return mouseCaptures.find(&e) != mouseCaptures.end(); }
+        void addMouseCapture(UIArea& e);
+        void removeMouseCapture(UIArea& e);
+        bool isMouseCaptured(UIArea& e) { return mouseCaptures.find(&e) != mouseCaptures.end(); }
         WindowClient& getClient() { return client; }
         void close() { quit = true; }
+        View* getRootView() { return rootView; }
     };
 

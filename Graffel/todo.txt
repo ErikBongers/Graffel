@@ -1,20 +1,6 @@
-Phase -1
------------
-* Create a ImageTextButton
-  > to be used as a menu-item.
-* Create a (dynamically sized) ListView
-  > to be used as a popup menu.
-
 Phase 0
 ---------
-* Create view layout
-  > A view can contain 2 other views (divided by a splitter), split hor or vert., or contain a group (tree, list) or an infiniteCanvas
-    > by default, a new view contains an empty canvas.
-    > you can drop an item in it and make it fill the view.
-    > a number of contents have been predefined and cannot be deleted (but may be part of no view):
-      - list of all nodes.
-      - tree of all groups
-  > Assign a container to a view. Right click and list all containers?
+* does UIArea in a View always fill the view? (probably yes.)
 
 Phase 1
 ---------------

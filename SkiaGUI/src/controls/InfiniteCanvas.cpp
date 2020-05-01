@@ -1,10 +1,8 @@
 #include "pch.h"
 #include "InfiniteCanvas.h"
 
-void InfiniteCanvas::drawAll()
+void InfiniteCanvas::_drawMe()
     {
-    getWindow()->Canvas().save();
-    getWindow()->Canvas().translate(rect.fLeft, rect.fTop);
     baseTransform = getWindow()->Canvas().getTotalMatrix();
     drawBackground();
     drawMe();
@@ -13,7 +11,6 @@ void InfiniteCanvas::drawAll()
     getWindow()->Canvas().scale(scaleFactor, scaleFactor); //pre scaling!
     totalTransform = getWindow()->Canvas().getTotalMatrix();
     drawChildren();
-    getWindow()->Canvas().restore();
     }
 
 void InfiniteCanvas::_mouseMove(SDL_MouseMotionEvent& event)
@@ -43,9 +40,9 @@ void InfiniteCanvas::_mouseDown(SDL_MouseButtonEvent& event)
     {
     if (isDragging)
         return;
-    for (std::vector<UIElement*>::reverse_iterator it = children.rbegin(); it != children.rend(); ++it)
+    for (auto it = children.rbegin(); it != children.rend(); ++it)
         {
-        UIElement* e = *it;
+        auto e = *it;
         if (e->hitTest((SkScalar)event.x, (SkScalar)event.y))
             {
             //start drag of object

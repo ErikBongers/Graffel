@@ -1,57 +1,25 @@
 #pragma once
-#include "pch.h"
-#include "SDLSkiaWindow.h"
+#include "UIArea.h"
 
-class UIElement;
-typedef std::function<void(UIElement& e, SDL_WindowEvent& event)> PResize;
-typedef std::function<void(UIElement& e, SDL_MouseMotionEvent& event)> PMouseMove;
-typedef std::function<void(UIElement& e, SDL_MouseButtonEvent& event)> PMouseClick;
-
-class UIElement
+class UIElement : public UIArea
     {
-    friend class SDLSkiaWindow;
-    private:
-        SDLSkiaWindow* window = nullptr;
     public:
-        UIElement* parent = nullptr;
-        SkRect rect;
         SkColor backgroundColor = SK_ColorTRANSPARENT;
-        std::vector<UIElement*> children;
-        virtual void drawAll();
-        UIElement& operator+=(UIElement* child);
-        UIElement& operator+=(UIElement& child) { return *this += &child; }
-        void trickleResizeEvent(SDL_WindowEvent& event);
-        bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event);
-        bool trickleMouseUpEvent(SDL_MouseButtonEvent& event);
-        bool trickleMouseDownEvent(SDL_MouseButtonEvent& event);
-        void trickleIdle() { onIdle();  for (auto c : children) c->trickleIdle(); }
-        void trickleKeyDown(SDL_KeyboardEvent& event) { keyDown(event);  for (auto c : children) c->trickleKeyDown(event); }
-        void trickleTextEvent(SDL_TextInputEvent& event) { textInput(event);  for (auto c : children) c->trickleTextEvent(event); }
-        SkRect absoluteRect();
-        virtual bool hitTest(SkScalar x, SkScalar y);
-        SkMatrix totalTransform;
+        std::vector<UIArea*> children;
+        UIElement& operator+=(UIArea* child);
+        UIElement& operator+=(UIArea& child) { return *this += &child; }
         
-        //event callbacks
-        PResize resize = nullptr;
-        PMouseMove mouseMove = nullptr;
-        PMouseClick mouseUp = nullptr;
-        PMouseClick mouseDown = nullptr;
-        void mapPixelsToPoints(SkPoint* points, int count);
-        void mapPointsToPixels(SkPoint* dst, SkPoint* src, int count);
-        SDLSkiaWindow* getWindow();
-        bool hasFocus() { return window->getClient().hasFocus(this); }
-        void takeFocus(UIElement* el) { window->getClient().takeFocus(el); }
-        SkCanvas& Canvas() { return window->Canvas(); }
+        virtual void trickleResizeEvent(SDL_WindowEvent& event) override;
+        virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event) override;
+        virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event) override;
+        virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event) override;
+        virtual void trickleIdle() override;
+        virtual void trickleKeyDown(SDL_KeyboardEvent& event) override;
+        virtual void trickleTextEvent(SDL_TextInputEvent& event) override;
+        virtual void drawMe() {}
 
     protected:
         void drawBackground();
         void drawChildren();
-        virtual void drawMe() {}
-        virtual void _resize(SDL_WindowEvent& event) {}
-        virtual void _mouseMove(SDL_MouseMotionEvent& event) {}
-        virtual void _mouseUp(SDL_MouseButtonEvent& event) {}
-        virtual void _mouseDown(SDL_MouseButtonEvent& event) {}
-        virtual void onIdle() {}
-        virtual void keyDown(SDL_KeyboardEvent& event) {}
-        virtual void textInput(SDL_TextInputEvent& event) {}
+        virtual void _drawMe() override;
     };

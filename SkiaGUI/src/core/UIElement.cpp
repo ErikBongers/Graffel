@@ -1,24 +1,11 @@
 #include "UIElement.h"
+#include "UIArea.h"
 
-SDLSkiaWindow* UIElement::getWindow()
+void UIElement::_drawMe()
     {
-    if (!window)
-        {
-        if(parent)
-            window = parent->getWindow();
-        }
-    return window;
-    }
-
-void UIElement::drawAll()
-    {
-    getWindow()->Canvas().save();
-    getWindow()->Canvas().translate(rect.fLeft, rect.fTop);
     drawBackground();
-    totalTransform = getWindow()->Canvas().getTotalMatrix();
     drawMe();
     drawChildren();
-    getWindow()->Canvas().restore();
     }
 
 void UIElement::drawChildren()
@@ -27,108 +14,70 @@ void UIElement::drawChildren()
         el->drawAll();
     }
 
-UIElement& UIElement::operator+=(UIElement* child)
+UIElement& UIElement::operator+=(UIArea* child)
     {
     children.push_back(child);
     child->parent = this;
     return *this;
     }
 
-void UIElement::trickleResizeEvent(SDL_WindowEvent& event)
-    {
-    if(resize)
-        resize(*this, event);
-    _resize(event);
-    for (auto el : children)
-        {
-            el->trickleResizeEvent(event);
-        }
+
+void UIElement::trickleIdle() 
+    { 
+    onIdle();  
+    for (auto c : children) 
+        c->trickleIdle(); 
     }
 
-bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
-    {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+void UIElement::trickleKeyDown(SDL_KeyboardEvent& event) 
+    { 
+    keyDown(event);  
+    for (auto c : children) 
+        c->trickleKeyDown(event); 
+    }
+
+void UIElement::trickleTextEvent(SDL_TextInputEvent& event) 
+    { 
+    textInput(event);
+    for (auto c : children) 
+        c->trickleTextEvent(event); 
+    }
+
+void UIElement::trickleResizeEvent(SDL_WindowEvent& event) 
+    { 
+    UIArea::trickleResizeEvent(event); 
+    for (auto el : children) 
+        el->trickleResizeEvent(event); 
+    }
+
+bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event) 
+    { 
+    if (!UIArea::trickleMouseMoveEvent(event))
         return false;
-    _mouseMove(event);
-    if (mouseMove)
-        mouseMove(*this, event);
     for (auto el : children)
-        {
         if (el->trickleMouseMoveEvent(event))
-            break; //assuming no overlapping UIElements.
-        }
-    return true;
+            return true;
+    return false; 
     }
 
-bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
-    {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
-        return false;
-    if (!getWindow()->isMouseCaptured(*this))
-        {
-        _mouseUp(event);
-        if (mouseUp)
-            mouseUp(*this, event);
-        }
+bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event) 
+    { 
+   if(!UIArea::trickleMouseUpEvent(event))
+      return false;
     for (auto el : children)
-        {
         if (el->trickleMouseUpEvent(event))
-            break; //assuming no overlapping UIElements.
-        }
-    return true;
+            return true; 
+    return false;
     }
 
-bool UIElement::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
-    {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+bool UIElement::trickleMouseDownEvent(SDL_MouseButtonEvent& event) 
+    { 
+    if(!UIArea::trickleMouseDownEvent(event))
         return false;
-    _mouseDown(event);
-    if (mouseDown)
-        mouseDown(*this, event);
     for (auto el : children)
-        {
         if (el->trickleMouseDownEvent(event))
-            break; //assuming no overlapping UIElements.
-        }
-    return true;
-    }
-
-void UIElement::mapPixelsToPoints(SkPoint* points, int count)
-    {
-    SkMatrix invertedMatrix;
-    invertedMatrix.reset();
-    totalTransform.invert(&invertedMatrix);
-    invertedMatrix.mapPoints(points, 1);
-    }
-
-void UIElement::mapPointsToPixels(SkPoint* dst, SkPoint* src, int count)
-    {
-    totalTransform.mapPoints(dst, src, 1);
-    }
-
-bool UIElement::hitTest(SkScalar x, SkScalar y)
-    {
-    SkPoint mouse = SkPoint::Make(x, y);
-    if(parent)
-        parent->mapPixelsToPoints(&mouse, 1);
-    return rect.contains(mouse.fX, mouse.fY);
-    }
-
-SkRect UIElement::absoluteRect()
-    {
-    SkScalar xOffset, yOffset;
-    xOffset = 0;
-    yOffset = 0;
-    UIElement* p = parent;
-    while (p)
-        {
-        xOffset += p->rect.left();
-        yOffset += p->rect.top();
-        p = p->parent;
-        }
-    SkRect rectAbs = rect;
-    rectAbs.offset(xOffset, yOffset);
-    return rectAbs;
+            return true;
+    return false; 
     }
 
 void UIElement::drawBackground()

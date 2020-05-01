@@ -4,12 +4,13 @@
 
 class InfiniteCanvas : public UIElement
     {
+    protected:
+        void _drawMe() override;
     private:
-        void drawAll();
         SkPoint dragStartMousePos;
         SkPoint dragStartDrageePos;
         bool isDragging = false;
-        UIElement* dragee = nullptr;
+        UIArea* dragee = nullptr;
 
         SkScalar xTranslate = 0, yTranslate = 0;
         SkScalar scaleFactor = 1;

@@ -5,5 +5,5 @@
 class ListView : public UIElement
     {
     protected:
-        void _resize(SDL_WindowEvent& event) override;
+        void _resizeContent(SDL_WindowEvent& event) override;
     };

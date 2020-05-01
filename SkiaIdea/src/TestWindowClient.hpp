@@ -5,6 +5,7 @@
 #include "controls/texteditor/editor.h"
 #include "visuals/ImageTextButton.h"
 #include "visuals/ListView.h"
+#include "core/View.h"
 
 class ImageButton : public Button
     {
@@ -107,18 +108,22 @@ class TestWindowClient : public WindowClient
         ImageTextButton imgTextButton3;
 
         ListView listView;
+        View mainView;
+        View view1;
+        View view2;
+        View view3;
 
     public:
         void initialize() override;
+        void initializeElementsTEST();
+        void initializeViewsTEST();
         void onIdle() override;
-        void draw() override;
         void mouseMoved(SDL_MouseMotionEvent& event) override;
         void mouseDown(SDL_MouseButtonEvent& event) override;
         void mouseUp(SDL_MouseButtonEvent& event) override;
         void mouseWheel(SDL_MouseWheelEvent& event) override;
-        void resize(SDL_WindowEvent& event) override;
         void keyDown(SDL_KeyboardEvent& event) override;
         void textInput(SDL_TextInputEvent& event) override;
-        UIElement* getRootElement() override { return &full; }
+        View* getMainView() override { return &mainView; }
 
     };

@@ -4,13 +4,28 @@
 
 void TestWindowClient::initialize()
     {
+    //initializeElementsTEST();
+    initializeViewsTEST();
+    }
+
+void TestWindowClient::initializeViewsTEST()
+    {
+    mainView.splitView(&view1, View::Location::RIGHT);
+    view1.splitView(&view2, View::Location::ABOVE);
+    view3.defaultSizePrefs.mmWidth.prefSize = View::PrefSize::FIXED;
+    view3.defaultSizePrefs.mmWidth.min = view3.defaultSizePrefs.mmWidth.max = 200;
+    view2.splitView(&view3, View::Location::RIGHT);
+    }
+
+void TestWindowClient::initializeElementsTEST()
+    {
     full.backgroundColor = SkColorSetRGB(50, 50, 50);
-    full.resize = [](UIElement& e, SDL_WindowEvent& event) {
+    full.resize = [](UIArea& e, SDL_WindowEvent& event) {
         e.rect = SkRect::MakeWH((SkScalar)e.getWindow()->getWidth(), (SkScalar)e.getWindow()->getHeight());
         e.getWindow()->setInvalid();
         };
 
-    toolbar.resize = [](UIElement& e, SDL_WindowEvent& event) {
+    toolbar.resize = [](UIArea& e, SDL_WindowEvent& event) {
         e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)e.getWindow()->getWidth(), 40);
         e.getWindow()->setInvalid();
         };
@@ -20,7 +35,7 @@ void TestWindowClient::initialize()
     imgButton.rect = SkRect::MakeXYWH(5, 5, 20, 23);
     imgButton.img = res.get("SquareSquare.png");
     imgButton.xOffset = imgButton.yOffset = 1;
-    imgButton.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+    imgButton.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
         std::cout << "Clicked!" << std::endl;
         e.getWindow()->setInvalid();
         };
@@ -29,7 +44,7 @@ void TestWindowClient::initialize()
     imgButton2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 23);
     imgButton2.img = res.get("ColoredSquare.png");
     imgButton2.xOffset = imgButton2.yOffset = 1;
-    imgButton2.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+    imgButton2.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
         std::cout << "Clicked 2!" << std::endl;
         e.getWindow()->setInvalid();
         };
@@ -38,14 +53,14 @@ void TestWindowClient::initialize()
     imgButton3.rect = SkRect::MakeXYWH(5 + 20 + 5 + 20 + 5, 5, 20, 23);
     imgButton3.img = res.get("RedSquare.png");
     imgButton3.xOffset = imgButton3.yOffset = 1;
-    imgButton3.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+    imgButton3.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
         std::cout << "Clicked 3!" << std::endl;
         e.getWindow()->setInvalid();
         };
     toolbar += imgButton3;
 
-    infiniteCanvas.resize = [](UIElement& e, SDL_WindowEvent& event) {
-        e.rect = SkRect::MakeLTRB(10, 30, (SkScalar)e.getWindow()->getWidth() - 10, (SkScalar)e.getWindow()->getHeight() - 10);
+    infiniteCanvas.resize = [](UIArea& e, SDL_WindowEvent& event) {
+        e.rect = SkRect::MakeLTRB(300, 30, (SkScalar)e.getWindow()->getWidth() - 10, (SkScalar)e.getWindow()->getHeight() - 10);
         e.getWindow()->setInvalid();
         };
     infiniteCanvas.backgroundColor = SkColorSetRGB(35, 35, 35);
@@ -56,7 +71,7 @@ void TestWindowClient::initialize()
     infiniteCanvas += square1;
 
     bullet.rect = SkRect::MakeXYWH(400, 300, 20, 40);
-    bullet.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
+    bullet.mouseMove = [](UIArea& e, SDL_MouseMotionEvent& event) {
         Bullet& bullet = (Bullet&)e;
         if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
             {
@@ -74,7 +89,7 @@ void TestWindowClient::initialize()
     infiniteCanvas += bullet;
 
     blueChild.rect = SkRect::MakeXYWH(10, 10, 20, 20);
-    blueChild.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
+    blueChild.mouseMove = [](UIArea& e, SDL_MouseMotionEvent& event) {
         Bullet& bullet = (Bullet&)e;
         if (bullet.hitTest((SkScalar)event.x, (SkScalar)event.y))
             {
@@ -108,7 +123,7 @@ void TestWindowClient::initialize()
     curve1.p3 = &p3;
     curve1.p4 = &p4;
     getWindow()->addMouseCapture(curve1);
-    curve1.mouseMove = [](UIElement& e, SDL_MouseMotionEvent& event) {
+    curve1.mouseMove = [](UIArea& e, SDL_MouseMotionEvent& event) {
         Curve& curve = (Curve&)e;
         SkPoint mouse = SkPoint::Make((SkScalar)event.x, (SkScalar)event.y);
         curve.mapPixelsToPoints(&mouse, 1);
@@ -154,16 +169,16 @@ void TestWindowClient::initialize()
 
     imgTextButton1.rect = SkRect::MakeXYWH(0, 0, 150, 30);
     imgTextButton1.img = res.get("SquareSquare.png");
-    imgTextButton1.text = "Den tekst";
-    imgTextButton1.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
-        std::cout << "den tekst klikt!" << std::endl;
+    imgTextButton1.text = "Menu 1";
+    imgTextButton1.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Menu 1 klikt!" << std::endl;
         };
     listView += imgTextButton1;
 
     imgTextButton2.rect = SkRect::MakeXYWH(0, 0, 150, 30);
     imgTextButton2.img = res.get("SquareSquare.png");
     imgTextButton2.text = "Den tekst 2";
-    imgTextButton2.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+    imgTextButton2.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
         std::cout << "den tekst 2 klikt!" << std::endl;
         };
     listView += imgTextButton2;
@@ -171,11 +186,14 @@ void TestWindowClient::initialize()
     imgTextButton3.rect = SkRect::MakeXYWH(0, 0, 150, 30);
     imgTextButton3.img = res.get("SquareSquare.png");
     imgTextButton3.text = "Den tekst 3";
-    imgTextButton3.mouseUp = [this](UIElement& e, SDL_MouseButtonEvent& event) {
+    imgTextButton3.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
         std::cout << "den tekst 3 klikt!" << std::endl;
         };
     listView += imgTextButton3;
     infiniteCanvas += listView;
+
+    mainView.rect = SkRect::MakeXYWH(50, 50, 150, 150);
+    //full += view;
 
     getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
@@ -183,11 +201,6 @@ void TestWindowClient::initialize()
 void TestWindowClient::onIdle()
     {
     full.trickleIdle();
-    }
-
-void TestWindowClient::draw()
-    {
-    full.drawAll();
     }
 
 void TestWindowClient::mouseMoved(SDL_MouseMotionEvent& event)
@@ -208,11 +221,6 @@ void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event)
 void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event)
     {
     infiniteCanvas.mouseWheel(event);
-    }
-
-void TestWindowClient::resize(SDL_WindowEvent& event)
-    {
-    full.trickleResizeEvent(event);
     }
 
 void TestWindowClient::textInput(SDL_TextInputEvent& event)

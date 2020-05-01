@@ -31,7 +31,9 @@
     <ClCompile Include="src\controls\texteditor\word_boundaries.cpp" />
     <ClCompile Include="src\core\Functions.cpp" />
     <ClCompile Include="src\core\SDLSkiaWindow.cpp" />
+    <ClCompile Include="src\core\UIArea.cpp" />
     <ClCompile Include="src\core\UIElement.cpp" />
+    <ClCompile Include="src\core\View.cpp" />
     <ClCompile Include="src\resources\miniz.c" />
     <ClCompile Include="src\resources\Resources.cpp" />
     <ClCompile Include="src\resources\Zip.cpp" />
@@ -49,6 +51,8 @@
     <ClInclude Include="src\controls\texteditor\utf8_helpers.h" />
     <ClInclude Include="src\controls\texteditor\word_boundaries.h" />
     <ClInclude Include="src\core\Functions.h" />
+    <ClInclude Include="src\core\UIArea.h" />
+    <ClInclude Include="src\core\View.h" />
     <ClInclude Include="src\Fps.h" />
     <ClCompile Include="src\pch.cpp">
       <FileType>CppCode</FileType>

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #endif
 #include "UIElement.h"
-
+#include "View.h"
 
 int SDLCALL SDLSkiaWindow::onEventsReceived(void* userdata, SDL_Event* event)
     {
@@ -18,8 +18,8 @@ SDLSkiaWindow::SDLSkiaWindow(WindowClient& client)
     : client(client) 
     { 
     client.setWindow(this); 
-    root = client.getRootElement(); 
-    root->window = this; 
+    rootView = client.getMainView(); 
+    rootView->window = this; 
     }
 
 void SDLSkiaWindow::startEventLoop()
@@ -30,6 +30,18 @@ void SDLSkiaWindow::startEventLoop()
         loopOnce();
         Sleep(10);
         }
+    }
+
+void WindowClient::resize(SDL_WindowEvent& event)
+    {
+    auto view = window->getRootView();
+    view->rect = SkRect::MakeXYWH(0, 0, (SkScalar)getWindow()->getWidth(), (SkScalar)getWindow()->getHeight());
+    view->_resizeContent(event);
+    }
+
+void WindowClient::draw() 
+    { 
+    window->getRootView()->drawAll(); 
     }
 
 void SDLSkiaWindow::loopOnce()
@@ -113,13 +125,13 @@ bool  SDLSkiaWindow::createWindow(int width, int height, int stencilBits, int ms
     SkASSERT(grContext);
 
     canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
-    //canvas->scale((float)dw/dm.w, (float)dh/dm.h); //scales to about 1:1
 
-    client.initialize();
-    if (client.getRootElement())
-        client.getRootElement()->window = this;
     SDL_WindowEvent event;
     event.type = SDL_EventType::SDL_WINDOWEVENT;
+    client.resize(event); //force a size for rootView.
+    client.initialize();
+    auto prefs = getRootView()->getSizePrefs();
+    SDL_SetWindowMinimumSize(window, std::max((int)prefs.mmWidth.min, 1), std::max((int)prefs.mmHeight.min, 1));
     client.resize(event);
     return true;
     }
@@ -133,12 +145,12 @@ void SDLSkiaWindow::destroyWindow()
     SDL_DestroyWindow(window);
     }
 
-void SDLSkiaWindow::addMouseCapture(UIElement& e)
+void SDLSkiaWindow::addMouseCapture(UIArea& e)
     {
     mouseCaptures.insert(&e);
     }
 
-void SDLSkiaWindow::removeMouseCapture(UIElement& e)
+void SDLSkiaWindow::removeMouseCapture(UIArea& e)
     {
     mouseCaptures.extract(&e);
     }
@@ -192,14 +204,13 @@ bool SDLSkiaWindow::handleEvents()
                     if((*el)->mouseMove)
                         (*el)->mouseMove(**el, event.motion);
                     }
-                //std::cout << event.motion.x << ", " << event.motion.y << std::endl;
                 client.mouseMoved(event.motion);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 client.mouseDown(event.button);
                 break;
             case SDL_MOUSEBUTTONUP:
-                for (UIElement* el : mouseCaptures)
+                for (auto el : mouseCaptures)
                     {
                     el->_mouseUp(event.button);
                     if (el->mouseUp)
