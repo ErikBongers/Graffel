@@ -85,7 +85,7 @@ void GraffelWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& 
     infiniteCanvas.mouseWheel(event, window);
     }
 
-void GraffelWindowClient::resize(SDL_WindowEvent& event, SDLSkiaWindow& window)
+void GraffelWindowClient::resize(SDLSkiaWindow& window)
     {
-    full.trickleResizeEvent(event, window);
+    full.trickleResizeEvent(window);
     }

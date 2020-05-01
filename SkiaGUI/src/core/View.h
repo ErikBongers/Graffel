@@ -17,7 +17,7 @@ class View : public UIArea
         enum class Direction { LEFT_RIGHT, ABOVE_BELOW};
         Direction splitDirection = Direction::LEFT_RIGHT;
         SkScalar splitPoint = -1;
-        void _resizeContent(SDL_WindowEvent& event) override;
+        void _resizeContent() override;
         SkScalar mindTheGap = 4;
     public:
         enum class PrefSize { PROPORTIONAL = 0, DONTCARE = -1, FIXED = 1 };
@@ -37,7 +37,15 @@ class View : public UIArea
         SizePrefs getSizePrefs();
         SizePrefs defaultSizePrefs;
         void _drawMe() override;
-        void setContent(UIArea* area) { this->area = area; }
+        virtual void trickleResizeEvent() override;
+        virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event) override;
+        virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event) override;
+        virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event) override;
+        virtual void trickleIdle() override;
+        virtual void trickleKeyDown(SDL_KeyboardEvent& event) override;
+        virtual void trickleTextEvent(SDL_TextInputEvent& event) override;
+
+        void setContent(UIArea* area);
         enum class Location { BELOW, ABOVE, LEFT, RIGHT };
         void splitView(View* secondView, Location loc);
         friend class SDLSkiaWindow;

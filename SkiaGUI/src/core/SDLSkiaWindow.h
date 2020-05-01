@@ -24,7 +24,7 @@ class WindowClient
         virtual void mouseWheel(SDL_MouseWheelEvent& event) {}
         virtual void keyDown(SDL_KeyboardEvent& event) {}
         virtual void textInput(SDL_TextInputEvent& event) {}
-        void resize(SDL_WindowEvent& event);
+        void resize();
         virtual View* getMainView() = 0;
         void takeFocus(UIArea* el) { this->focusElement = el; }
         bool hasFocus(UIArea* el) { return this->focusElement == el; }

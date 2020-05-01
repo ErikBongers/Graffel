@@ -1,6 +1,6 @@
 #include "ListView.h"
 
-void ListView::_resizeContent(SDL_WindowEvent& event)
+void ListView::_resizeContent()
     {
     SkScalar width = 0;
     SkScalar height = 0;

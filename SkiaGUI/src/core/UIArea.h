@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "SDLSkiaWindow.h"
 
-typedef std::function<void(UIArea& e, SDL_WindowEvent& event)> PResize;
+typedef std::function<void(UIArea& e)> PResize;
 typedef std::function<void(UIArea& e, SDL_MouseMotionEvent& event)> PMouseMove;
 typedef std::function<void(UIArea& e, SDL_MouseButtonEvent& event)> PMouseClick;
 
@@ -17,7 +17,7 @@ class UIArea
         UIArea* parent = nullptr;
         SkRect rect;
         void drawAll();
-        virtual void trickleResizeEvent(SDL_WindowEvent& event);
+        virtual void trickleResizeEvent();
         virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event);
         virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event);
         virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event);
@@ -34,7 +34,7 @@ class UIArea
         SkCanvas& Canvas() { return window->Canvas(); }
     protected:
         virtual void _drawMe() {}
-        virtual void _resizeContent(SDL_WindowEvent& event) {}
+        virtual void _resizeContent() {}
         virtual void _mouseMove(SDL_MouseMotionEvent& event) {}
         virtual void _mouseUp(SDL_MouseButtonEvent& event) {}
         virtual void _mouseDown(SDL_MouseButtonEvent& event) {}

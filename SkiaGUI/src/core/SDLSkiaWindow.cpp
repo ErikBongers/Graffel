@@ -32,11 +32,11 @@ void SDLSkiaWindow::startEventLoop()
         }
     }
 
-void WindowClient::resize(SDL_WindowEvent& event)
+void WindowClient::resize()
     {
     auto view = window->getRootView();
     view->rect = SkRect::MakeXYWH(0, 0, (SkScalar)getWindow()->getWidth(), (SkScalar)getWindow()->getHeight());
-    view->_resizeContent(event);
+    view->_resizeContent();
     }
 
 void WindowClient::draw() 
@@ -126,13 +126,11 @@ bool  SDLSkiaWindow::createWindow(int width, int height, int stencilBits, int ms
 
     canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
 
-    SDL_WindowEvent event;
-    event.type = SDL_EventType::SDL_WINDOWEVENT;
-    client.resize(event); //force a size for rootView.
+    client.resize(); //force a size for rootView.
     client.initialize();
     auto prefs = getRootView()->getSizePrefs();
     SDL_SetWindowMinimumSize(window, std::max((int)prefs.mmWidth.min, 1), std::max((int)prefs.mmHeight.min, 1));
-    client.resize(event);
+    client.resize();
     return true;
     }
 
@@ -233,7 +231,7 @@ bool SDLSkiaWindow::handleEvents()
                         break;
                     case SDL_WINDOWEVENT_SIZE_CHANGED: //always called
                         resizeViewportToWindow(window);
-                        client.resize(event.window);
+                        client.resize();
                         canvas = NULL;
                         break;
                     }

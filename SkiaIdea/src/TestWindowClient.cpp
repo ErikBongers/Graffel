@@ -20,12 +20,12 @@ void TestWindowClient::initializeViewsTEST()
 void TestWindowClient::initializeElementsTEST()
     {
     full.backgroundColor = SkColorSetRGB(50, 50, 50);
-    full.resize = [](UIArea& e, SDL_WindowEvent& event) {
+    full.resize = [](UIArea& e) {
         e.rect = SkRect::MakeWH((SkScalar)e.getWindow()->getWidth(), (SkScalar)e.getWindow()->getHeight());
         e.getWindow()->setInvalid();
         };
 
-    toolbar.resize = [](UIArea& e, SDL_WindowEvent& event) {
+    toolbar.resize = [](UIArea& e) {
         e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)e.getWindow()->getWidth(), 40);
         e.getWindow()->setInvalid();
         };
@@ -59,7 +59,7 @@ void TestWindowClient::initializeElementsTEST()
         };
     toolbar += imgButton3;
 
-    infiniteCanvas.resize = [](UIArea& e, SDL_WindowEvent& event) {
+    infiniteCanvas.resize = [](UIArea& e) {
         e.rect = SkRect::MakeLTRB(300, 30, (SkScalar)e.getWindow()->getWidth() - 10, (SkScalar)e.getWindow()->getHeight() - 10);
         e.getWindow()->setInvalid();
         };

@@ -33,7 +33,90 @@ void View::_drawMe()
         view1->drawAll();
     if (view2)
         view2->drawAll();
+    else if (area)
+        area->drawAll();
     }
+
+void View::trickleResizeEvent()
+    {
+    if (view1)
+        view1->trickleResizeEvent();
+    if (view2)
+        view2->trickleResizeEvent();
+    else if (area)
+        area->trickleResizeEvent();
+    }
+bool View::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
+    {
+    bool res = false;
+    if (view1)
+        res |= view1->trickleMouseMoveEvent(event);
+    if (view2)
+        res |= view2->trickleMouseMoveEvent(event);
+    else if (area)
+        res |= area->trickleMouseMoveEvent(event);
+    return res;
+    }
+bool View::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
+    {
+    bool res = false;
+    if (view1)
+        res |= view1->trickleMouseUpEvent(event);
+    if (view2)
+        res |= view2->trickleMouseUpEvent(event);
+    else if (area)
+        res |= area->trickleMouseUpEvent(event);
+    return res;
+    }
+bool View::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
+    {
+    bool res = false;
+    if (view1)
+        res |= view1->trickleMouseDownEvent(event);
+    if (view2)
+        res |= view2->trickleMouseDownEvent(event);
+    else if (area)
+        res |= area->trickleMouseDownEvent(event);
+    return res;
+    }
+void View::trickleIdle()
+    {
+    if (view1)
+        view1->trickleIdle();
+    if (view2)
+        view2->trickleIdle();
+    else if (area)
+        area->trickleIdle();
+    }
+void View::trickleKeyDown(SDL_KeyboardEvent& event)
+    {
+    if (view1)
+        view1->trickleKeyDown(event);
+    if (view2)
+        view2->trickleKeyDown(event);
+    else if (area)
+        area->trickleKeyDown(event);
+
+    }
+void View::trickleTextEvent(SDL_TextInputEvent& event)
+    {
+    if (view1)
+        view1->trickleTextEvent(event);
+    if (view2)
+        view2->trickleTextEvent(event);
+    else if (area)
+        area->trickleTextEvent(event);
+     }
+
+inline void View::setContent(UIArea* area) 
+    { 
+    if (myCreatedView)
+        delete myCreatedView;
+    view1 = view2 = myCreatedView = nullptr;
+    this->area = area; 
+    _resizeContent();
+    }
+
 
 void View::splitView(View* secondView, Location loc)
     {
@@ -60,10 +143,10 @@ void View::splitView(View* secondView, Location loc)
 
     SDL_WindowEvent event;
     event.type = SDL_EventType::SDL_WINDOWEVENT;
-    _resizeContent(event);
+    _resizeContent();
     }
 
-void View::_resizeContent(SDL_WindowEvent& event)
+void View::_resizeContent()
     {
     SkScalar halfGap = mindTheGap / 2;
     if (view1 && view2)
@@ -114,8 +197,8 @@ void View::_resizeContent(SDL_WindowEvent& event)
             view1->rect = SkRect::MakeXYWH(0, 0, rect.width(), splitPoint - halfGap);
             view2->rect = SkRect::MakeXYWH(0, splitPoint + halfGap, rect.width(), rect.height() - splitPoint - halfGap);
             }
-        view1->_resizeContent(event);
-        view2->_resizeContent(event);
+        view1->_resizeContent();
+        view2->_resizeContent();
         }
     oldSize = rect;
     getWindow()->setInvalid();

@@ -183,9 +183,9 @@ void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event)
     infiniteCanvas.mouseWheel(event);
     }
 
-void TestWindowClient::resize(SDL_WindowEvent& event)
+void TestWindowClient::resize()
     {
-    full.trickleResizeEvent(event);
+    full.trickleResizeEvent();
     }
 
 void TestWindowClient::textInput(SDL_TextInputEvent& event)

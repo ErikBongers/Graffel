@@ -18,7 +18,7 @@ class Editor : public UIElement
         void textInput(SDL_TextInputEvent& event) override;
         void _mouseDown(SDL_MouseButtonEvent& event) override;
         void _mouseUp(SDL_MouseButtonEvent& event) override;
-        void _resizeContent(SDL_WindowEvent& event) override;
+        void _resizeContent() override;
         void drawMe() override;
         void onIdle() override;
         bool moveCursor(Movement m, bool shift);

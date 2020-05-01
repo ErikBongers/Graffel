@@ -9,7 +9,7 @@ class UIElement : public UIArea
         UIElement& operator+=(UIArea* child);
         UIElement& operator+=(UIArea& child) { return *this += &child; }
         
-        virtual void trickleResizeEvent(SDL_WindowEvent& event) override;
+        virtual void trickleResizeEvent() override;
         virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event) override;
         virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event) override;
         virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event) override;

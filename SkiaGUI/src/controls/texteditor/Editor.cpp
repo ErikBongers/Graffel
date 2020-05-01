@@ -15,7 +15,7 @@ Editor::Editor()
     txt.uiElement = this;
     }
 
-void Editor::_resizeContent(SDL_WindowEvent& event)
+void Editor::_resizeContent()
     {
     txt.setWidth(rect.width()-fMargin);
     getWindow()->setInvalid();

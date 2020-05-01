@@ -23,11 +23,11 @@ void UIArea::drawAll()
     getWindow()->Canvas().restore();
     }
 
-void UIArea::trickleResizeEvent(SDL_WindowEvent& event)
+void UIArea::trickleResizeEvent()
     {
     if (resize)
-        resize(*this, event);
-    _resizeContent(event);
+        resize(*this);
+    _resizeContent();
     }
 
 bool UIArea::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)

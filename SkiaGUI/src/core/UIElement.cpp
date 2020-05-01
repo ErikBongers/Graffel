@@ -43,11 +43,11 @@ void UIElement::trickleTextEvent(SDL_TextInputEvent& event)
         c->trickleTextEvent(event); 
     }
 
-void UIElement::trickleResizeEvent(SDL_WindowEvent& event) 
+void UIElement::trickleResizeEvent() 
     { 
-    UIArea::trickleResizeEvent(event); 
+    UIArea::trickleResizeEvent(); 
     for (auto el : children) 
-        el->trickleResizeEvent(event); 
+        el->trickleResizeEvent(); 
     }
 
 bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event) 
