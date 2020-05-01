@@ -40,6 +40,16 @@ bool UIArea::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     return true;
     }
 
+bool UIArea::trickleMouseWheelEvent(SDL_MouseWheelEvent& event)
+    {
+    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+        return false;
+    _mouseWheel(event);
+    if (mouseWheel)
+        mouseWheel(*this, event);
+    return true;
+    }
+
 bool UIArea::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     {
     if (!hitTest((SkScalar)event.x, (SkScalar)event.y))

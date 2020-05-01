@@ -79,6 +79,17 @@ bool View::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
         res |= area->trickleMouseDownEvent(event);
     return res;
     }
+bool View::trickleMouseWheelEvent(SDL_MouseWheelEvent& event)
+    {
+    bool res = false;
+    if (view1)
+        res |= view1->trickleMouseWheelEvent(event);
+    if (view2)
+        res |= view2->trickleMouseWheelEvent(event);
+    else if (area)
+        res |= area->trickleMouseWheelEvent(event);
+    return res;
+    }
 void View::trickleIdle()
     {
     if (view1)

@@ -44,12 +44,42 @@ void WindowClient::draw()
     window->getRootView()->drawAll(); 
     }
 
+void WindowClient::mouseMoved(SDL_MouseMotionEvent& event) 
+    { 
+    getMainView()->trickleMouseMoveEvent(event); 
+    }
+
+void WindowClient::mouseDown(SDL_MouseButtonEvent& event) 
+    { 
+    getMainView()->trickleMouseDownEvent(event); 
+    }
+
+void WindowClient::mouseUp(SDL_MouseButtonEvent& event) 
+    { 
+    getMainView()->trickleMouseUpEvent(event); 
+    }   
+
+void WindowClient::mouseWheel(SDL_MouseWheelEvent& event) 
+    { 
+    getMainView()->trickleMouseWheelEvent(event); 
+    }   
+
+void WindowClient::keyDown(SDL_KeyboardEvent& event) 
+    { 
+    getMainView()->trickleKeyDown(event); 
+    }   
+
+void WindowClient::textInput(SDL_TextInputEvent& event) 
+    { 
+    getMainView()->trickleTextEvent(event); 
+    }   
+
 void SDLSkiaWindow::loopOnce()
     {
     loopCounter++;
 
     if (!handleEvents())
-        client.onIdle();
+        client.getMainView()->onIdle();
     if (canvas == NULL)
         canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
 

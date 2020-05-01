@@ -5,6 +5,7 @@
 typedef std::function<void(UIArea& e)> PResize;
 typedef std::function<void(UIArea& e, SDL_MouseMotionEvent& event)> PMouseMove;
 typedef std::function<void(UIArea& e, SDL_MouseButtonEvent& event)> PMouseClick;
+typedef std::function<void(UIArea& e, SDL_MouseWheelEvent& event)> PMouseWheel;
 
 class View;
 class UIArea
@@ -21,6 +22,7 @@ class UIArea
         virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event);
         virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event);
         virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event);
+        virtual bool trickleMouseWheelEvent(SDL_MouseWheelEvent& event);
         virtual void trickleIdle() { onIdle(); }
         virtual void trickleKeyDown(SDL_KeyboardEvent& event) { keyDown(event); }
         virtual void trickleTextEvent(SDL_TextInputEvent& event) { textInput(event); }
@@ -36,6 +38,7 @@ class UIArea
         virtual void _drawMe() {}
         virtual void _resizeContent() {}
         virtual void _mouseMove(SDL_MouseMotionEvent& event) {}
+        virtual void _mouseWheel(SDL_MouseWheelEvent& event) {}
         virtual void _mouseUp(SDL_MouseButtonEvent& event) {}
         virtual void _mouseDown(SDL_MouseButtonEvent& event) {}
         virtual void onIdle() {}
@@ -47,6 +50,7 @@ class UIArea
         PMouseMove mouseMove = nullptr;
         PMouseClick mouseUp = nullptr;
         PMouseClick mouseDown = nullptr;
+        PMouseWheel mouseWheel = nullptr;
         bool hasFocus() { return window->getClient().hasFocus(this); }
         void takeFocus(UIArea* el) { window->getClient().takeFocus(el); }
     };

@@ -117,13 +117,6 @@ class TestWindowClient : public WindowClient
         void initialize() override;
         void initializeElementsTEST();
         void initializeViewsTEST();
-        void onIdle() override;
-        void mouseMoved(SDL_MouseMotionEvent& event) override;
-        void mouseDown(SDL_MouseButtonEvent& event) override;
-        void mouseUp(SDL_MouseButtonEvent& event) override;
-        void mouseWheel(SDL_MouseWheelEvent& event) override;
-        void keyDown(SDL_KeyboardEvent& event) override;
-        void textInput(SDL_TextInputEvent& event) override;
         View* getMainView() override { return &mainView; }
 
     };

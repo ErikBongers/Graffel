@@ -1,7 +1,3 @@
-Phase 0
----------
-* does UIArea in a View always fill the view? (probably yes.)
-
 Phase 1
 ---------------
 * Create basic data model

@@ -16,14 +16,14 @@ class WindowClient
         void draw();
     public:
         SDLSkiaWindow* getWindow() { return window; }
-        virtual void onIdle() {}
+        void onIdle() {}
         virtual void initialize() {}
-        virtual void mouseMoved(SDL_MouseMotionEvent& event) {}
-        virtual void mouseDown(SDL_MouseButtonEvent& event) {}
-        virtual void mouseUp(SDL_MouseButtonEvent& event) {}
-        virtual void mouseWheel(SDL_MouseWheelEvent& event) {}
-        virtual void keyDown(SDL_KeyboardEvent& event) {}
-        virtual void textInput(SDL_TextInputEvent& event) {}
+        void mouseMoved(SDL_MouseMotionEvent& event);
+        void mouseDown(SDL_MouseButtonEvent& event);
+        void mouseUp(SDL_MouseButtonEvent& event);
+        void mouseWheel(SDL_MouseWheelEvent& event);
+        void keyDown(SDL_KeyboardEvent& event);
+        void textInput(SDL_TextInputEvent& event);
         void resize();
         virtual View* getMainView() = 0;
         void takeFocus(UIArea* el) { this->focusElement = el; }
