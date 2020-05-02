@@ -5,7 +5,7 @@
 typedef std::function<void(UIArea& e)> PResize;
 typedef std::function<void(UIArea& e, SDL_MouseMotionEvent& event)> PMouseMove;
 typedef std::function<void(UIArea& e, SDL_MouseButtonEvent& event)> PMouseClick;
-typedef std::function<void(UIArea& e, SDL_MouseWheelEvent& event)> PMouseWheel;
+typedef std::function<void(UIArea& e, SDL_MouseWheelEvent_EX& event)> PMouseWheel;
 
 class View;
 class UIArea
@@ -22,7 +22,7 @@ class UIArea
         virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event);
         virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event);
         virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event);
-        virtual bool trickleMouseWheelEvent(SDL_MouseWheelEvent& event);
+        virtual bool trickleMouseWheelEvent(SDL_MouseWheelEvent_EX& event);
         virtual void trickleIdle() { onIdle(); }
         virtual void trickleKeyDown(SDL_KeyboardEvent& event) { keyDown(event); }
         virtual void trickleTextEvent(SDL_TextInputEvent& event) { textInput(event); }
@@ -38,7 +38,7 @@ class UIArea
         virtual void _drawMe() {}
         virtual void _resizeContent() {}
         virtual void _mouseMove(SDL_MouseMotionEvent& event) {}
-        virtual void _mouseWheel(SDL_MouseWheelEvent& event) {}
+        virtual void _mouseWheel(SDL_MouseWheelEvent_EX& event) {}
         virtual void _mouseUp(SDL_MouseButtonEvent& event) {}
         virtual void _mouseDown(SDL_MouseButtonEvent& event) {}
         virtual void onIdle() {}

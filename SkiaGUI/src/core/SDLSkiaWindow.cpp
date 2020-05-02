@@ -59,7 +59,7 @@ void WindowClient::mouseUp(SDL_MouseButtonEvent& event)
     getMainView()->trickleMouseUpEvent(event); 
     }   
 
-void WindowClient::mouseWheel(SDL_MouseWheelEvent& event) 
+void WindowClient::mouseWheel(SDL_MouseWheelEvent_EX& event) 
     { 
     getMainView()->trickleMouseWheelEvent(event); 
     }   
@@ -247,7 +247,12 @@ bool SDLSkiaWindow::handleEvents()
                 client.mouseUp(event.button);
                 break;
             case SDL_MOUSEWHEEL:
-                client.mouseWheel(event.wheel);
+                {
+                SDL_MouseWheelEvent_EX event2;
+                event2.mouseWheelEvent = event.wheel;
+                SDL_GetMouseState(&event2.x, &event2.y);
+                client.mouseWheel(event2);
+                }
                 break;
             case SDL_KEYDOWN:
                 client.keyDown(event.key);

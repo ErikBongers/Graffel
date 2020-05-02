@@ -79,7 +79,7 @@ bool View::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
         res |= area->trickleMouseDownEvent(event);
     return res;
     }
-bool View::trickleMouseWheelEvent(SDL_MouseWheelEvent& event)
+bool View::trickleMouseWheelEvent(SDL_MouseWheelEvent_EX& event)
     {
     bool res = false;
     if (view1)

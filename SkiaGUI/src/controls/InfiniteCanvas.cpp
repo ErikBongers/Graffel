@@ -70,22 +70,19 @@ void InfiniteCanvas::_mouseUp(SDL_MouseButtonEvent& event)
     isDragging = false;
     }
 
-void InfiniteCanvas::_mouseWheel(SDL_MouseWheelEvent& event)
+void InfiniteCanvas::_mouseWheel(SDL_MouseWheelEvent_EX& event)
     {
     auto state = SDL_GetMouseState(nullptr, nullptr);
     if (SDL_BUTTON(SDL_BUTTON_MIDDLE) & state)
         return; //accidentally scrolled while pressing the middle (wheel) button
 
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-
     SkPoint mouseLoc;
     SkPoint canvasLoc;
-    mouseLoc.set((SkScalar)x, (SkScalar)y);
+    mouseLoc.set((SkScalar)event.x, (SkScalar)event.y);
     canvasLoc = mouseLoc;
     mapPixelsToPoints(&canvasLoc, 1);
 
-    if (event.y > 0)
+    if (event.mouseWheelEvent.y > 0)
         scaleFactor *= 1 + scaleSpeed;
     else
         scaleFactor *= 1 - scaleSpeed;

@@ -60,7 +60,7 @@ bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     return false;
     }
 
-bool UIElement::trickleMouseWheelEvent(SDL_MouseWheelEvent& event)
+bool UIElement::trickleMouseWheelEvent(SDL_MouseWheelEvent_EX& event)
     {
     if (!UIArea::trickleMouseWheelEvent(event))
         return false;

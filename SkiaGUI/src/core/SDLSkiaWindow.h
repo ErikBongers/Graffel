@@ -29,7 +29,7 @@ class WindowClient
         void mouseMoved(SDL_MouseMotionEvent& event);
         void mouseDown(SDL_MouseButtonEvent& event);
         void mouseUp(SDL_MouseButtonEvent& event);
-        void mouseWheel(SDL_MouseWheelEvent& event);
+        void mouseWheel(SDL_MouseWheelEvent_EX& event);
         void keyDown(SDL_KeyboardEvent& event);
         void textInput(SDL_TextInputEvent& event);
         void resize();

@@ -80,7 +80,7 @@ void GraffelWindowClient::mouseUp(SDL_MouseButtonEvent& event, SDLSkiaWindow& wi
     infiniteCanvas.mouseUp(event, window);
     }
 
-void GraffelWindowClient::mouseWheel(SDL_MouseWheelEvent& event, SDLSkiaWindow& window)
+void GraffelWindowClient::mouseWheel(SDL_MouseWheelEvent_EX& event, SDLSkiaWindow& window)
     {
     infiniteCanvas.mouseWheel(event, window);
     }

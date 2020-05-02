@@ -178,7 +178,7 @@ void TestWindowClient::mouseUp(SDL_MouseButtonEvent& event)
     full.trickleMouseUpEvent(event);
     }
 
-void TestWindowClient::mouseWheel(SDL_MouseWheelEvent& event)
+void TestWindowClient::mouseWheel(SDL_MouseWheelEvent_EX& event)
     {
     infiniteCanvas.mouseWheel(event);
     }
