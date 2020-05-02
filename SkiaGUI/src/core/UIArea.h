@@ -30,6 +30,7 @@ class UIArea
         bool hitTest(int x, int y) { return hitTest(rect, (SkScalar)x, (SkScalar)y); }
         bool hitTest(SkScalar x, SkScalar y) { return hitTest(rect, x, y); }
         virtual bool hitTest(const SkRect& rect, SkScalar x, SkScalar y);
+        bool hitTest(const SkRect& rect, int x, int y) { return hitTest(rect, (SkScalar)x, (SkScalar)y); }
         SkMatrix totalTransform;
         void mapPixelsToPoints(SkPoint* points, int count);
         void mapPointsToPixels(SkPoint* dst, SkPoint* src, int count);
@@ -39,10 +40,10 @@ class UIArea
     protected:
         virtual void _drawMe() {}
         virtual void _resizeContent() {}
-        virtual void _mouseMove(SDL_MouseMotionEvent& event) {}
         virtual void _mouseWheel(SDL_MouseWheelEvent_EX& event) {}
-        virtual void _mouseUp(SDL_MouseButtonEvent& event) {}
         virtual void _mouseDown(SDL_MouseButtonEvent& event) {}
+        virtual void _mouseMove(SDL_MouseMotionEvent& event) {}
+        virtual void _mouseUp(SDL_MouseButtonEvent& event) {}
         virtual void onIdle() {}
         virtual void keyDown(SDL_KeyboardEvent& event) {}
         virtual void textInput(SDL_TextInputEvent& event) {}

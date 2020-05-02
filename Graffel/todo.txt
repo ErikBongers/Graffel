@@ -1,7 +1,6 @@
 Phase 0
 ------------
-* View: split drag bar.
-
+* Doc: limit to x lines and x wide.
 Phase 1
 ---------------
 * Create basic data model

@@ -54,10 +54,13 @@ bool View::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     if (!hitTest(event.x, event.y))
         return false;
     if (!area && hitTest(rectGap, event.x, event.y))
+        {
         window->setCursor(splitDirection == Direction::LEFT_RIGHT ? SDL_SYSTEM_CURSOR_SIZEWE : SDL_SYSTEM_CURSOR_SIZENS);
+        }
     else
         window->setCursor();
 
+    _mouseMove(event);
     bool res = false;
     if (view1)
         res |= view1->trickleMouseMoveEvent(event);
@@ -71,6 +74,7 @@ bool View::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     {
     if (!hitTest(event.x, event.y))
         return false;
+    _mouseUp(event);
     bool res = false;
     if (view1)
         res |= view1->trickleMouseUpEvent(event);
@@ -84,6 +88,7 @@ bool View::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
     {
     if (!hitTest(event.x, event.y))
         return false;
+    _mouseDown(event);
     bool res = false;
     if (view1)
         res |= view1->trickleMouseDownEvent(event);
@@ -184,7 +189,6 @@ void View::_resizeContent()
         area->trickleResizeEvent();
         return;
         }
-    SkScalar halfGap = mindTheGap / 2;
     if (view1 && view2)
         {
         if (splitPoint == -1)
@@ -221,27 +225,61 @@ void View::_resizeContent()
             splitPoint = (splitDirection == Direction::LEFT_RIGHT ? rect.width() : rect.height()) - prefs2[idxDir].min;
         splitPoint = std::clamp(splitPoint, prefs1[idxDir].min, prefs1[idxDir].max);
         splitPoint = std::clamp(splitPoint, mySize - prefs2[idxDir].max, mySize - prefs2[idxDir].min);
-    
-        //resizing sub-views
-        if (splitDirection == Direction::LEFT_RIGHT)
-            {
-            view1->rect = SkRect::MakeXYWH(0, 0, splitPoint - halfGap, rect.height());
-            view2->rect = SkRect::MakeXYWH(splitPoint + halfGap, 0, rect.width() - splitPoint - halfGap, rect.height());
-            }
-        else
-            {
-            view1->rect = SkRect::MakeXYWH(0, 0, rect.width(), splitPoint - halfGap);
-            view2->rect = SkRect::MakeXYWH(0, splitPoint + halfGap, rect.width(), rect.height() - splitPoint - halfGap);
-            }
-        view1->_resizeContent();
-        view2->_resizeContent();
+        resizeViews();
         }
     oldSize = rect;
-    if(splitDirection == Direction::LEFT_RIGHT)
+
+    if(getWindow())
+        window->setInvalid(); //TODO: needed? resize always invalidates window?
+    }
+
+void View::resizeViews()
+    {
+    SkScalar halfGap = mindTheGap / 2;
+    if (splitDirection == Direction::LEFT_RIGHT)
+        {
+        view1->rect = SkRect::MakeXYWH(0, 0, splitPoint - halfGap, rect.height());
+        view2->rect = SkRect::MakeXYWH(splitPoint + halfGap, 0, rect.width() - splitPoint - halfGap, rect.height());
+        }
+    else
+        {
+        view1->rect = SkRect::MakeXYWH(0, 0, rect.width(), splitPoint - halfGap);
+        view2->rect = SkRect::MakeXYWH(0, splitPoint + halfGap, rect.width(), rect.height() - splitPoint - halfGap);
+        }
+    view1->_resizeContent();
+    view2->_resizeContent();
+    if (splitDirection == Direction::LEFT_RIGHT)
         rectGap = SkRect::MakeXYWH(splitPoint - halfGap, 0, mindTheGap, rect.height());
     else
         rectGap = SkRect::MakeXYWH(0, splitPoint - halfGap, rect.width(), mindTheGap);
+    }
 
-    if(getWindow())
-        window->setInvalid();
+
+void View::_mouseDown(SDL_MouseButtonEvent& event)
+    {
+    if (!area && hitTest(rectGap, event.x, event.y))
+        {
+            startSplitPos = splitPoint;
+            dragging = true;
+        if (splitDirection == Direction::LEFT_RIGHT)
+            startDragMousePos = event.x;
+        else
+            startDragMousePos = event.y;
+        }
+    }
+void View::_mouseMove(SDL_MouseMotionEvent& event)
+    {
+    if (!dragging)
+        return;
+    if (splitDirection == Direction::LEFT_RIGHT)
+        splitPoint = startSplitPos + event.x - startDragMousePos;
+    else
+        splitPoint = startSplitPos + event.y - startDragMousePos;
+
+    resizeViews();
+    window->setInvalid();
+    }
+void View::_mouseUp(SDL_MouseButtonEvent& event)
+    {
+    dragging = false;
     }

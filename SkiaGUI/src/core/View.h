@@ -8,6 +8,10 @@ class View : public UIArea
     private:
         View* myCreatedView = nullptr;
         SkRect oldSize;
+        Sint32 startDragMousePos;
+        SkScalar startSplitPos;
+        bool dragging = false;
+        void resizeViews();
     protected:
         UIArea* area = nullptr; //always fills the view.
         //OR
@@ -46,6 +50,10 @@ class View : public UIArea
         virtual void trickleIdle() override;
         virtual void trickleKeyDown(SDL_KeyboardEvent& event) override;
         virtual void trickleTextEvent(SDL_TextInputEvent& event) override;
+
+        void _mouseDown(SDL_MouseButtonEvent& event) override;
+        void _mouseMove(SDL_MouseMotionEvent& event) override;
+        void _mouseUp(SDL_MouseButtonEvent& event) override;
 
         void setContent(UIArea* area);
         enum class Location { BELOW, ABOVE, LEFT, RIGHT };
