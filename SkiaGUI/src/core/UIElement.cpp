@@ -50,17 +50,27 @@ void UIElement::trickleResizeEvent()
         el->trickleResizeEvent(); 
     }
 
-bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event) 
-    { 
+bool UIElement::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
+    {
     if (!UIArea::trickleMouseMoveEvent(event))
         return false;
     for (auto el : children)
         if (el->trickleMouseMoveEvent(event))
             return true;
-    return false; 
+    return false;
     }
 
-bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event) 
+bool UIElement::trickleMouseWheelEvent(SDL_MouseWheelEvent& event)
+    {
+    if (!UIArea::trickleMouseWheelEvent(event))
+        return false;
+    for (auto el : children)
+        if (el->trickleMouseWheelEvent(event))
+            return true;
+    return false;
+    }
+
+bool UIElement::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     { 
    if(!UIArea::trickleMouseUpEvent(event))
       return false;

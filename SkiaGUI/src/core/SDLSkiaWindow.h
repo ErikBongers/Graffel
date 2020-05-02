@@ -7,6 +7,14 @@ class SDLSkiaWindow;
 class UIArea;
 class UIElement;
 class View;
+
+struct SDL_MouseWheelEvent_EX
+    {
+    int x;
+    int y;
+    SDL_MouseWheelEvent mouseWheelEvent;
+    };
+
 class WindowClient
     {
     protected:

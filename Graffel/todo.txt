@@ -1,5 +1,6 @@
 Phase 0
 ------------
+* add infiniteCanvas.
 * View: split drag bar.
 
 Phase 1

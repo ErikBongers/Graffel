@@ -12,6 +12,7 @@ void TestWindowClient::initializeViewsTEST()
     {
     full.backgroundColor = SkColorSetRGB(50, 50, 50);
     view3.setContent(&full);
+    mainView.setContent(&infiniteCanvas);
     mainView.splitView(&view1, View::Location::LEFT);
 
     editor2.setFont(SkFont(SkTypeface::MakeFromName("Courier New", SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
@@ -35,51 +36,7 @@ void TestWindowClient::initializeViewsTEST()
 
     editor2.txt.attachDoc(editor1.txt.doc);
 
-    }
-
-void TestWindowClient::initializeElementsTEST()
-    {
-
-    toolbar.resize = [](UIArea& e) {
-        e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)e.getWindow()->getWidth(), 40);
-        e.getWindow()->setInvalid();
-        };
-    full += toolbar;
-    Resources res(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images)");
-
-    imgButton.rect = SkRect::MakeXYWH(5, 5, 20, 23);
-    imgButton.img = res.get("SquareSquare.png");
-    imgButton.xOffset = imgButton.yOffset = 1;
-    imgButton.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
-        std::cout << "Clicked!" << std::endl;
-        e.getWindow()->setInvalid();
-        };
-    toolbar += imgButton;
-
-    imgButton2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 23);
-    imgButton2.img = res.get("ColoredSquare.png");
-    imgButton2.xOffset = imgButton2.yOffset = 1;
-    imgButton2.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
-        std::cout << "Clicked 2!" << std::endl;
-        e.getWindow()->setInvalid();
-        };
-    toolbar += imgButton2;
-
-    imgButton3.rect = SkRect::MakeXYWH(5 + 20 + 5 + 20 + 5, 5, 20, 23);
-    imgButton3.img = res.get("RedSquare.png");
-    imgButton3.xOffset = imgButton3.yOffset = 1;
-    imgButton3.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
-        std::cout << "Clicked 3!" << std::endl;
-        e.getWindow()->setInvalid();
-        };
-    toolbar += imgButton3;
-
-    infiniteCanvas.resize = [](UIArea& e) {
-        e.rect = SkRect::MakeLTRB(300, 30, (SkScalar)e.getWindow()->getWidth() - 10, (SkScalar)e.getWindow()->getHeight() - 10);
-        e.getWindow()->setInvalid();
-        };
     infiniteCanvas.backgroundColor = SkColorSetRGB(35, 35, 35);
-    full += infiniteCanvas;
 
     square1.rect = SkRect::MakeXYWH(200, 200, 100, 100);
     square1.backgroundColor = SkColorSetARGB(40, 50, 50, 255);
@@ -153,6 +110,74 @@ void TestWindowClient::initializeElementsTEST()
         };
     infiniteCanvas += curve1;
 
+    listView.rect = SkRect::MakeXYWH(500, 500, 1, 1);
+
+    Resources res(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images)");
+    imgTextButton1.rect = SkRect::MakeXYWH(0, 0, 150, 30);
+    imgTextButton1.img = res.get("SquareSquare.png");
+    imgTextButton1.text = "Menu 1";
+    imgTextButton1.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Menu 1 klikt!" << std::endl;
+        };
+    listView += imgTextButton1;
+
+    imgTextButton2.rect = SkRect::MakeXYWH(0, 0, 150, 30);
+    imgTextButton2.img = res.get("SquareSquare.png");
+    imgTextButton2.text = "Den tekst 2";
+    imgTextButton2.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "den tekst 2 klikt!" << std::endl;
+        };
+    listView += imgTextButton2;
+
+    imgTextButton3.rect = SkRect::MakeXYWH(0, 0, 150, 30);
+    imgTextButton3.img = res.get("SquareSquare.png");
+    imgTextButton3.text = "Den tekst 3";
+    imgTextButton3.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "den tekst 3 klikt!" << std::endl;
+        };
+    listView += imgTextButton3;
+    infiniteCanvas += listView; 
+    getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
+    }
+
+void TestWindowClient::initializeElementsTEST()
+    {
+
+    toolbar.resize = [](UIArea& e) {
+        e.rect = SkRect::MakeLTRB(0, 0, (SkScalar)e.getWindow()->getWidth(), 40);
+        e.getWindow()->setInvalid();
+        };
+    full += toolbar;
+    Resources res(R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images\images.zip)", R"(D:\Documents\Programming\CppProjects\Graffel\TestSkiaGUI\src\images)");
+
+    imgButton.rect = SkRect::MakeXYWH(5, 5, 20, 23);
+    imgButton.img = res.get("SquareSquare.png");
+    imgButton.xOffset = imgButton.yOffset = 1;
+    imgButton.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Clicked!" << std::endl;
+        e.getWindow()->setInvalid();
+        };
+    toolbar += imgButton;
+
+    imgButton2.rect = SkRect::MakeXYWH(5 + 20 + 5, 5, 20, 23);
+    imgButton2.img = res.get("ColoredSquare.png");
+    imgButton2.xOffset = imgButton2.yOffset = 1;
+    imgButton2.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Clicked 2!" << std::endl;
+        e.getWindow()->setInvalid();
+        };
+    toolbar += imgButton2;
+
+    imgButton3.rect = SkRect::MakeXYWH(5 + 20 + 5 + 20 + 5, 5, 20, 23);
+    imgButton3.img = res.get("RedSquare.png");
+    imgButton3.xOffset = imgButton3.yOffset = 1;
+    imgButton3.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
+        std::cout << "Clicked 3!" << std::endl;
+        e.getWindow()->setInvalid();
+        };
+    toolbar += imgButton3;
+
+
     editor1.txt.attachDoc(new SkEd::EditorDoc());
     editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
                                                     SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
@@ -180,35 +205,9 @@ void TestWindowClient::initializeElementsTEST()
 
     // END TESTS
 
-    listView.rect = SkRect::MakeXYWH(500, 500, 1, 1);
-
-    imgTextButton1.rect = SkRect::MakeXYWH(0, 0, 150, 30);
-    imgTextButton1.img = res.get("SquareSquare.png");
-    imgTextButton1.text = "Menu 1";
-    imgTextButton1.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
-        std::cout << "Menu 1 klikt!" << std::endl;
-        };
-    listView += imgTextButton1;
-
-    imgTextButton2.rect = SkRect::MakeXYWH(0, 0, 150, 30);
-    imgTextButton2.img = res.get("SquareSquare.png");
-    imgTextButton2.text = "Den tekst 2";
-    imgTextButton2.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
-        std::cout << "den tekst 2 klikt!" << std::endl;
-        };
-    listView += imgTextButton2;
-
-    imgTextButton3.rect = SkRect::MakeXYWH(0, 0, 150, 30);
-    imgTextButton3.img = res.get("SquareSquare.png");
-    imgTextButton3.text = "Den tekst 3";
-    imgTextButton3.mouseUp = [this](UIArea& e, SDL_MouseButtonEvent& event) {
-        std::cout << "den tekst 3 klikt!" << std::endl;
-        };
-    listView += imgTextButton3;
-    infiniteCanvas += listView;
+   
 
     mainView.rect = SkRect::MakeXYWH(50, 50, 150, 150);
     //full += view;
 
-    getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }

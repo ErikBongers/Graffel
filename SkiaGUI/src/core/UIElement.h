@@ -13,6 +13,7 @@ class UIElement : public UIArea
         virtual bool trickleMouseMoveEvent(SDL_MouseMotionEvent& event) override;
         virtual bool trickleMouseUpEvent(SDL_MouseButtonEvent& event) override;
         virtual bool trickleMouseDownEvent(SDL_MouseButtonEvent& event) override;
+        virtual bool trickleMouseWheelEvent(SDL_MouseWheelEvent& event) override;
         virtual void trickleIdle() override;
         virtual void trickleKeyDown(SDL_KeyboardEvent& event) override;
         virtual void trickleTextEvent(SDL_TextInputEvent& event) override;

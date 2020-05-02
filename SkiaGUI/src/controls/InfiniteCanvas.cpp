@@ -70,7 +70,7 @@ void InfiniteCanvas::_mouseUp(SDL_MouseButtonEvent& event)
     isDragging = false;
     }
 
-void InfiniteCanvas::mouseWheel(SDL_MouseWheelEvent& event)
+void InfiniteCanvas::_mouseWheel(SDL_MouseWheelEvent& event)
     {
     auto state = SDL_GetMouseState(nullptr, nullptr);
     if (SDL_BUTTON(SDL_BUTTON_MIDDLE) & state)
