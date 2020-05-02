@@ -48,30 +48,35 @@ struct TextPosition {
 enum class Movement { kNowhere, kLeft, kUp, kRight, kDown, kHome, kEnd, kWordLeft, kWordRight, };
 
 class EditorDoc;
-class CmdInsert : public Cmd
+
+class DocCmd : public Cmd
     {
     public:
-        CmdInsert(EditorDoc& doc) : doc(doc) {}
-        EditorDoc& doc;
-        std::string str;
-        std::string strBefore;
         TextPosition cursorPosBefore;
         TextPosition selectPosBefore;
         TextPosition cursorPosAfter;
+        EditorDoc& doc;
+        DocCmd(EditorDoc& doc) : doc(doc) {}
+        void saveSelBefore();
+        void setSelBefore();
+    };
+
+class CmdInsert : public DocCmd
+    {
+    public:
+        CmdInsert(EditorDoc& doc) : DocCmd(doc) {}
+        std::string str;
+        std::string strBefore;
 
         virtual void execute() override;
         virtual void undo() override;
     };
 
-class CmdRemove : public Cmd
+class CmdRemove : public DocCmd
     {
     public:
-        CmdRemove(EditorDoc& doc) : doc(doc) {}
-        EditorDoc& doc;
+        CmdRemove(EditorDoc& doc) : DocCmd(doc), backspace(false) {}
         std::string strBefore;
-        TextPosition cursorPosBefore;
-        TextPosition selectPosBefore;
-        TextPosition cursorPosAfter;
         bool backspace;
 
         virtual void execute() override;

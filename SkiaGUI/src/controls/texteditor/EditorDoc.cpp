@@ -7,13 +7,13 @@ void EditorDoc::insert(const char* utf8Text, size_t byteLen)
     {
     CmdInsert* cmdInsert = new CmdInsert(*this);
     cmdInsert->str.append(utf8Text, byteLen);
+    cmdInsert->saveSelBefore();
     undoRedo.execute(cmdInsert);
     }
 
 void SkEd::CmdInsert::execute()
     {
-    cursorPosBefore = doc.getCursorPos();
-    selectPosBefore = doc.getSelectionPos();
+    setSelBefore();
     if (doc.hasSelection())
         {
         strBefore = doc.selectionToString();
@@ -30,21 +30,20 @@ void SkEd::CmdInsert::undo()
     doc._remove();
     if (!strBefore.empty())
         doc._insert(strBefore.c_str(), strBefore.length());
-    doc.setCursor(selectPosBefore);
-    doc.setCursor(cursorPosBefore, true);
+    setSelBefore();
     }
 
 void SkEd::EditorDoc::remove(bool backSpace)
     {
     CmdRemove* cmdRemove = new CmdRemove(*this);
     cmdRemove->backspace = backSpace;
+    cmdRemove->saveSelBefore();
     undoRedo.execute(cmdRemove);
     }
 
 void SkEd::CmdRemove::execute()
     {
-    cursorPosBefore = doc.getCursorPos();
-    selectPosBefore = doc.getSelectionPos();
+    setSelBefore();
     if (!doc.hasSelection())
         doc.moveCursor(!backspace, true);
     strBefore = doc.selectionToString();
@@ -56,8 +55,7 @@ void SkEd::CmdRemove::undo()
     {
     doc.setCursor(cursorPosAfter);
     doc._insert(strBefore.c_str(), strBefore.length());
-    doc.setCursor(selectPosBefore);
-    doc.setCursor(cursorPosBefore, true);
+    setSelBefore();
     }
 
 void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
@@ -223,3 +221,13 @@ TextPosition SkEd::EditorDoc::getPositionRelative(TextPosition pos, bool right)
     return pos;
     }
 
+void SkEd::DocCmd::saveSelBefore() {
+    cursorPosBefore = doc.getCursorPos();
+    selectPosBefore = doc.getSelectionPos();
+    }
+
+void SkEd::DocCmd::setSelBefore()
+    {
+    doc.setCursor(selectPosBefore);
+    doc.setCursor(cursorPosBefore, true);
+    }

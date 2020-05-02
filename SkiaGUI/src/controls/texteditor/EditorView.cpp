@@ -32,7 +32,7 @@ void EditorView::setFont(SkFont font) {
         fFont = std::move(font);
         fNeedsReshape = true;
         if(doc)
-            for (auto& l : doc->fParas) { onParagraphChanged(l); }
+            for (auto& para : doc->fParas) { format(para).fShaped = false; }
         }
     }
     
