@@ -19,6 +19,7 @@ class View : public UIArea
         SkScalar splitPoint = -1;
         void _resizeContent() override;
         SkScalar mindTheGap = 4;
+        SkRect rectGap;
     public:
         enum class PrefSize { PROPORTIONAL = 0, DONTCARE = -1, FIXED = 1 };
         struct MinMax {

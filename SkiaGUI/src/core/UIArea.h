@@ -27,7 +27,9 @@ class UIArea
         virtual void trickleKeyDown(SDL_KeyboardEvent& event) { keyDown(event); }
         virtual void trickleTextEvent(SDL_TextInputEvent& event) { textInput(event); }
         SkRect absoluteRect();
-        virtual bool hitTest(SkScalar x, SkScalar y);
+        bool hitTest(int x, int y) { return hitTest(rect, (SkScalar)x, (SkScalar)y); }
+        bool hitTest(SkScalar x, SkScalar y) { return hitTest(rect, x, y); }
+        virtual bool hitTest(const SkRect& rect, SkScalar x, SkScalar y);
         SkMatrix totalTransform;
         void mapPixelsToPoints(SkPoint* points, int count);
         void mapPointsToPixels(SkPoint* dst, SkPoint* src, int count);

@@ -183,6 +183,17 @@ void SDLSkiaWindow::removeMouseCapture(UIArea& e)
     mouseCaptures.extract(&e);
     }
 
+void SDLSkiaWindow::setCursor(SDL_SystemCursor id)
+    {
+    if (currentCursorId == id)
+        return;
+    if(currentCursor)
+        SDL_FreeCursor(currentCursor);
+    currentCursor = SDL_CreateSystemCursor(id);
+    SDL_SetCursor(currentCursor);
+    currentCursorId = id;
+    }
+
 
 SkCanvas* SDLSkiaWindow::createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac, uint32_t windowFormat, int contextType, sk_sp<GrContext> grContext)
     {

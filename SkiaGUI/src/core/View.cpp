@@ -30,9 +30,12 @@ void View::_drawMe()
         Canvas().drawRect(rBkg, paint);
         }
     if (view1)
+        {
         view1->drawAll();
-    if (view2)
         view2->drawAll();
+        SkPaint paint({ 1, 0, 0, 1 });
+        Canvas().drawRect(rectGap, paint);
+        }
     else if (area)
         area->drawAll();
     }
@@ -48,6 +51,13 @@ void View::trickleResizeEvent()
     }
 bool View::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     {
+    if (!hitTest(event.x, event.y))
+        return false;
+    if (!area && hitTest(rectGap, event.x, event.y))
+        window->setCursor(splitDirection == Direction::LEFT_RIGHT ? SDL_SYSTEM_CURSOR_SIZEWE : SDL_SYSTEM_CURSOR_SIZENS);
+    else
+        window->setCursor();
+
     bool res = false;
     if (view1)
         res |= view1->trickleMouseMoveEvent(event);
@@ -59,6 +69,8 @@ bool View::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     }
 bool View::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     {
+    if (!hitTest(event.x, event.y))
+        return false;
     bool res = false;
     if (view1)
         res |= view1->trickleMouseUpEvent(event);
@@ -70,6 +82,8 @@ bool View::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     }
 bool View::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
     {
+    if (!hitTest(event.x, event.y))
+        return false;
     bool res = false;
     if (view1)
         res |= view1->trickleMouseDownEvent(event);
@@ -81,6 +95,8 @@ bool View::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
     }
 bool View::trickleMouseWheelEvent(SDL_MouseWheelEvent_EX& event)
     {
+    if (!hitTest(event.x, event.y))
+        return false;
     bool res = false;
     if (view1)
         res |= view1->trickleMouseWheelEvent(event);
@@ -128,7 +144,6 @@ void View::trickleTextEvent(SDL_TextInputEvent& event)
     area->parent = this;
     _resizeContent();
     }
-
 
 void View::splitView(View* secondView, Location loc)
     {
@@ -222,6 +237,11 @@ void View::_resizeContent()
         view2->_resizeContent();
         }
     oldSize = rect;
+    if(splitDirection == Direction::LEFT_RIGHT)
+        rectGap = SkRect::MakeXYWH(splitPoint - halfGap, 0, mindTheGap, rect.height());
+    else
+        rectGap = SkRect::MakeXYWH(0, splitPoint - halfGap, rect.width(), mindTheGap);
+
     if(getWindow())
         window->setInvalid();
     }

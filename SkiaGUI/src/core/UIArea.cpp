@@ -32,7 +32,7 @@ void UIArea::trickleResizeEvent()
 
 bool UIArea::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
     {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+    if (!hitTest(event.x, event.y))
         return false;
     _mouseMove(event);
     if (mouseMove)
@@ -42,7 +42,7 @@ bool UIArea::trickleMouseMoveEvent(SDL_MouseMotionEvent& event)
 
 bool UIArea::trickleMouseWheelEvent(SDL_MouseWheelEvent_EX& event)
     {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+    if (!hitTest(event.x, event.y))
         return false;
     _mouseWheel(event);
     if (mouseWheel)
@@ -52,7 +52,7 @@ bool UIArea::trickleMouseWheelEvent(SDL_MouseWheelEvent_EX& event)
 
 bool UIArea::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
     {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+    if (!hitTest(event.x, event.y))
         return false;
     if (!getWindow()->isMouseCaptured(*this))
         {
@@ -65,7 +65,7 @@ bool UIArea::trickleMouseUpEvent(SDL_MouseButtonEvent& event)
 
 bool UIArea::trickleMouseDownEvent(SDL_MouseButtonEvent& event)
     {
-    if (!hitTest((SkScalar)event.x, (SkScalar)event.y))
+    if (!hitTest(event.x, event.y))
         return false;
     _mouseDown(event);
     if (mouseDown)
@@ -86,12 +86,12 @@ void UIArea::mapPointsToPixels(SkPoint* dst, SkPoint* src, int count)
     totalTransform.mapPoints(dst, src, 1);
     }
 
-bool UIArea::hitTest(SkScalar x, SkScalar y)
+bool UIArea::hitTest(const SkRect& rect, SkScalar x, SkScalar y)
     {
-    SkPoint mouse = SkPoint::Make(x, y);
+    SkPoint pos = SkPoint::Make(x, y);
     if (parent)
-        parent->mapPixelsToPoints(&mouse, 1);
-    return rect.contains(mouse.fX, mouse.fY);
+        parent->mapPixelsToPoints(&pos, 1);
+    return rect.contains(pos.fX, pos.fY);
     }
 
 SkRect UIArea::absoluteRect()

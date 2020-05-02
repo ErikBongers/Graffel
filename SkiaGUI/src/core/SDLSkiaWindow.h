@@ -64,6 +64,8 @@ class SDLSkiaWindow
         sk_sp<GrContext> grContext;
         bool invalid = true;
         int loopCounter = 0;
+        SDL_SystemCursor currentCursorId = SDL_SYSTEM_CURSOR_ARROW;
+        SDL_Cursor* currentCursor = nullptr;
 
         SkCanvas* createSurfaceAndCanvas(sk_sp<const GrGLInterface> interfac, uint32_t windowFormat, int contextType, sk_sp<GrContext> grContext);
         bool handleEvents();
@@ -87,5 +89,6 @@ class SDLSkiaWindow
         WindowClient& getClient() { return client; }
         void close() { quit = true; }
         View* getRootView() { return rootView; }
+        void setCursor(SDL_SystemCursor id = SDL_SYSTEM_CURSOR_ARROW);
     };
 
