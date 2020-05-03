@@ -141,6 +141,8 @@ void TestWindowClient::initializeViewsTEST()
         };
     listView += imgTextButton3;
     infiniteCanvas += listView; 
+
+    infiniteCanvas += sticky1;
     getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 

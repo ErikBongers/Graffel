@@ -23,7 +23,7 @@ void Editor::_resizeContent()
 
 void SkEd::Editor::textInput(SDL_TextInputEvent& event)
     {
-    if (!editMode)
+    if (!editMode || !hasFocus())
         return;
     txt.doc->insert(event.text, strlen(event.text));
     }
@@ -62,6 +62,9 @@ void SkEd::Editor::_mouseUp(SDL_MouseButtonEvent& event)
 
 void SkEd::Editor::scrollCursorInView()
     {
+    if (txt.doc->maxParagraphs == 1)
+        return;
+
     SkRect cursor = txt.getTextLocation(txt.doc->getCursorPos());
     if (scrollPos < cursor.bottom() - (int)rect.height() + 2 * fMargin) {
         scrollPos = cursor.bottom() - (int)rect.height() + 2 * fMargin;
@@ -74,6 +77,9 @@ void SkEd::Editor::scrollCursorInView()
 
 bool SkEd::Editor::scroll(SkScalar delta)
     {
+    if (txt.doc->maxParagraphs == 1)
+        return false;
+
     SkRect cursorRect = txt.getTextLocation(txt.doc->getCursorPos());
 
     SkScalar maxPos = std::max<SkScalar>(0, txt.getFullTextHeight() + 2 * fMargin - rect.height() / 2);

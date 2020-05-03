@@ -15,14 +15,14 @@ class Node
         friend class Document;
     };
 
-class View
-    {
-    public:
-        enum class Type { INFINITE_CANVAS };
-        Type type;
-        enum class Location { LEFT, TOP, RIGHT, BOTTOM};
-    };
-
+//class View
+//    {
+//    public:
+//        enum class Type { INFINITE_CANVAS };
+//        Type type;
+//        enum class Location { LEFT, TOP, RIGHT, BOTTOM};
+//    };
+//
 class Document
     {
     private:

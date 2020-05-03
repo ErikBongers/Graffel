@@ -1,5 +1,8 @@
 Phase 1
 ---------------
+* create StickyNote visual
+  > set fixed size.
+  > add 3 editors.
 * Create basic data model
   - Document OK
   - Nodes OK
@@ -10,9 +13,6 @@ Phase 1
        - txtBody
   - Default layout: canvas (infinite)
     - positions of each node.
-  - create StickyNote visual
-    > set fixed size.
-    > add 3 editors.
 * Save/read
 * Create basic node visual (stycky note)
 * Add/remove nodes to data model

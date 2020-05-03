@@ -165,7 +165,6 @@ void EditorView::paint(SkCanvas& canvas)
             canvas.drawTextBlob(pf.fBlob.get(), (SkScalar)pf.fOrigin.x(), (SkScalar)pf.fOrigin.y(), foreground);
             }
         }
-
     }
 
 void EditorView::resetCursorBlink()
@@ -181,7 +180,7 @@ bool EditorView::onIdle()
         {
         cursorBlinkOn = !cursorBlinkOn;
         startCursorTime = std::chrono::steady_clock::now();
-        return true;
+        return this->showCursor; //only update window if cursor is actually shown.
         }
     return false;
     }

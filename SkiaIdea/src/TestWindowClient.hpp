@@ -6,6 +6,7 @@
 #include "visuals/ImageTextButton.h"
 #include "visuals/ListView.h"
 #include "core/View.h"
+#include "visuals/StickyNote.h"
 
 class ImageButton : public Button
     {
@@ -112,6 +113,8 @@ class TestWindowClient : public WindowClient
         View view1;
         View view2;
         View view3;
+
+        StickyNode sticky1;
 
     public:
         void initialize() override;

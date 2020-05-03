@@ -79,7 +79,7 @@ void SDLSkiaWindow::loopOnce()
     loopCounter++;
 
     if (!handleEvents())
-        client.getMainView()->onIdle();
+        client.getMainView()->trickleIdle();
     if (canvas == NULL)
         canvas = createSurfaceAndCanvas(interfac, windowFormat, contextType, grContext);
 

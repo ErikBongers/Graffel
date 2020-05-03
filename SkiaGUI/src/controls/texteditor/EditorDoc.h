@@ -144,6 +144,7 @@ class EditorDoc
         std::vector<Paragraph> fParas;
 
         void insert(const char* utf8Text, size_t byteLen);
+        void insert(const std::string& str) { insert(str.c_str(), str.size()); }
         void remove(bool backSpace = false);
         bool setCursor(TextPosition pos, bool expandSelection = false);
 

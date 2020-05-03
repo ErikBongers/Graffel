@@ -22,19 +22,10 @@ View::SizePrefs View::getSizePrefs()
 
 void View::_drawMe()
     {
-    if (!view1)
-        {
-        SkPaint paint({ 0,0,0, 1 });
-        paint.setStyle(SkPaint::Style::kStroke_Style);
-        SkRect rBkg = rect.makeOffset(-rect.fLeft, -rect.fTop);
-        Canvas().drawRect(rBkg, paint);
-        }
     if (view1)
         {
         view1->drawAll();
         view2->drawAll();
-        SkPaint paint({ 1, 0, 0, 1 });
-        Canvas().drawRect(rectGap, paint);
         }
     else if (area)
         area->drawAll();
