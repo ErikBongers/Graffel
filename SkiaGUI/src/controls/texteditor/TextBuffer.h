@@ -8,6 +8,7 @@
 #include <memory>
 #include <cstddef>
 #include <algorithm>
+#include "src/utils/SkUTF.h"
 
 namespace SkEd {
 // A lightweight modifiable string class.
@@ -28,6 +29,7 @@ public:
     std::size_t size() const { return fLength; }
     SkEd::TextSpan view() const { return {fPtr.get(), fLength}; }
     size_t count_char(char value);
+    size_t count_utf8() { return SkUTF::CountUTF8(fPtr.get(), fLength); }
 
     // mutation:
     void insert(std::size_t offset, const char* text, std::size_t length);

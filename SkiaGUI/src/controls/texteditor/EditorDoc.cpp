@@ -5,6 +5,8 @@ using namespace SkEd;
 
 void EditorDoc::insert(const char* utf8Text, size_t byteLen)
     {
+    if (!canInsert(utf8Text, byteLen))
+        return;
     CmdInsert* cmdInsert = new CmdInsert(*this);
     cmdInsert->str.append(utf8Text, byteLen);
     cmdInsert->saveSelBefore();
@@ -58,17 +60,30 @@ void SkEd::CmdRemove::undo()
     setSelBefore();
     }
 
-void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
+bool EditorDoc::canInsert(const char* utf8Text, size_t byteLen)
+    {
     if (!valid_utf8(utf8Text, byteLen) || 0 == byteLen)
-        return;
+        return false;
+    if (maxLength && SkUTF::CountUTF8(utf8Text, byteLen) + sizeUtf8() > maxLength)
+        return false;
+    return true;
+    }
 
+void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
+    if (!canInsert(utf8Text, byteLen))
+        return;
     TextBuffer txt(utf8Text, byteLen);
     size_t newlinecount = txt.count_char('\n');
     Paragraph* para = &fParas[fCursorPos.Para];
-    forEachLine(txt.begin(), txt.size(), [&para, this](const char* str, size_t lineLen, bool isNewLine) {
-        if (isNewLine)
+    LineLooper looper(utf8Text, byteLen);
+    //forEachLine(txt.begin(), txt.size(), [&para, this](const char* str, size_t lineLen, bool isNewLine) 
+    for(auto it : looper)
+        {
+        if (it.newLine)
             {
             Paragraph newPara;
+            if (maxParagraphs && fParas.size() >= maxParagraphs)
+                break;
             //split current line at current cursorLoc.
             const char* strAfterSplitPart = fParas[fCursorPos.Para].fText.begin() + fCursorPos.Byte;
             newPara.fText.insert(0, strAfterSplitPart, fParas[fCursorPos.Para].fText.end() - strAfterSplitPart);
@@ -78,10 +93,10 @@ void EditorDoc::_insert(const char* utf8Text, size_t byteLen) {
             fCursorPos.Para++;
             fCursorPos.Byte = 0;
             }
-        fParas[fCursorPos.Para].fText.insert(fCursorPos.Byte, str, lineLen);
+        fParas[fCursorPos.Para].fText.insert(fCursorPos.Byte, it.startOfLine, it.len);
         fireParagraphChanged(&this->fParas[fCursorPos.Para]);
-        fCursorPos.Byte += lineLen;
-        });
+        fCursorPos.Byte += it.len;
+        }
     selectionPos = fCursorPos;
     return;
     }
@@ -131,6 +146,14 @@ bool EditorDoc::setCursor(TextPosition pos, bool expandSelection)
         selectionPos = fCursorPos = pos;
     fireCursorMoved();
     return true;
+    }
+
+size_t SkEd::EditorDoc::sizeUtf8()
+    {
+    size_t size = 0;
+    for (auto para : fParas)
+        size += para.fText.count_utf8();
+    return size;
     }
 
 

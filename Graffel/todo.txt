@@ -1,6 +1,3 @@
-Phase 0
-------------
-* Doc: limit to x lines and x wide.
 Phase 1
 ---------------
 * Create basic data model
@@ -20,6 +17,7 @@ Phase 1
 * Create basic node visual (stycky note)
 * Add/remove nodes to data model
 * start with just a single infinite canvas, nodes get added at (0,0)
+
 Phase 2
 ------------
 * Implement a sortable list.

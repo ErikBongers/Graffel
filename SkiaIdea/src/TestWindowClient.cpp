@@ -25,12 +25,16 @@ void TestWindowClient::initializeViewsTEST()
     view3.defaultSizePrefs.mmWidth.min = view3.defaultSizePrefs.mmWidth.max = 200;
     view2.splitView(&view3, View::Location::RIGHT);
 
-    editor1.txt.attachDoc(new SkEd::EditorDoc());
+    SkEd::EditorDoc* doc = new SkEd::EditorDoc();
+    editor1.txt.attachDoc(doc);
     editor1.setFont(SkFont(SkTypeface::MakeFromName("sans-serif", //serif, monospace,...
                                                     SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
     editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
     editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
-    const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
+    //const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
+    doc->maxParagraphs = 0;
+    doc->maxLength = 5;
+    const char* txt = "abc";
     editor1.insert(txt);
     view2.setContent(&editor1);
 

@@ -42,7 +42,8 @@ static SkPoint to_point(SkIPoint p) { return { (float)p.x(), (float)p.y() }; }
 TextPosition EditorView::getPosition(SkPoint xy) {
     TextPosition approximatePosition;
     this->reshapeAll();
-    for (size_t iPara = 0; iPara < doc->fParas.size(); ++iPara) {
+    for (size_t iPara = 0; iPara < doc->fParas.size(); ++iPara)
+        {
         EditorDoc::Paragraph& para = doc->fParas[iPara];
         auto& pf = format(para);
         SkIRect lineRect = { 0,
@@ -64,7 +65,8 @@ TextPosition EditorView::getPosition(SkPoint xy) {
                 return TextPosition{ iPara, iByte };
                 }
             }
-        approximatePosition = { xy.x() <= pf.fOrigin.x() ? 0 : para.fText.size(), iPara };
+        approximatePosition.Para = iPara;
+        approximatePosition.Byte = xy.x() <= pf.fOrigin.x() ? 0 : para.fText.size();
         }
     return approximatePosition;
     }
@@ -330,7 +332,7 @@ TextPosition EditorView::getPositionMoved(Movement m, TextPosition pos)
         {
                 {
                 if (views.size() <= userDataIndex)
-                    views.resize(userDataIndex + 1);
+                    views.resize((size_t)userDataIndex + 1);
                 views[userDataIndex] = view;
                 }
         }
