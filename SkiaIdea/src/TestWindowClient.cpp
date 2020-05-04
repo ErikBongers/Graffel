@@ -10,6 +10,16 @@ void TestWindowClient::initialize()
 
 void TestWindowClient::initializeViewsTEST()
     {
+    //TESTS
+
+    const char* txtxt = u8"aaa€bbb";
+    std::ofstream ofs(R"(C:\Users\erikb\Desktop\test.txt)");
+    ofs << txtxt;
+    ofs.close();
+
+    // END TESTS
+
+
     full.backgroundColor = SkColorSetRGB(50, 50, 50);
     view3.setContent(&full);
     mainView.setContent(&infiniteCanvas);
@@ -31,7 +41,7 @@ void TestWindowClient::initializeViewsTEST()
                                                     SkFontStyle(SkFontStyle::kNormal_Weight, SkFontStyle::kNormal_Width, SkFontStyle::kUpright_Slant)), 18));
     editor1.rect = SkRect::MakeXYWH(300, 300, 200, 200);
     editor1.backgroundColor = SkColorSetARGB(128, 30, 30, 255);
-    //const char* txt = "Hellow, Earl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
+    //const char* txt = "Hellow, €arl Duh! This is the second time that I came across an issue with framing everything. \nI'm sure you know what I'm talking about. It probably has to do with margins, \nbut I think we need to double check. I'll follow up on the second page with some more info.";
     doc->maxParagraphs = 0;
     doc->maxLength = 5;
     const char* txt = "abc";
@@ -217,3 +227,4 @@ void TestWindowClient::initializeElementsTEST()
     //full += view;
 
     }
+

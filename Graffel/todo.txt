@@ -1,18 +1,10 @@
 Phase 1
 ---------------
-* create StickyNote visual
-  > set fixed size.
-  > add 3 editors.
-* Create basic data model
-  - Document OK
-  - Nodes OK
-     - Node: (text)
-       - ID
-       - txtTitle (keyword? title?)
-       - txtDscr
-       - txtBody
-  - Default layout: canvas (infinite)
-    - positions of each node.
+* Bind Node to StickyNode.
+  > Since StickyNode is dedicated to the Idea-model, use:
+  > doc
+  > nodeId
+  >> How to bind text fields in node to EditorDoc-s?
 * Save/read
 * Create basic node visual (stycky note)
 * Add/remove nodes to data model

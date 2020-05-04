@@ -1,5 +1,6 @@
 #pragma once
 #include "../pch.h"
+#include "json/json.h"
 
 namespace idea{
 
@@ -13,6 +14,8 @@ class Node
         std::string dscr;
         std::string body;
         friend class Document;
+        const json::Object to_json() const;
+        Node(json::Object& object);
     };
 
 //class View
@@ -27,14 +30,15 @@ class Document
     {
     private:
         int idCounter = 0;
-    std::map<int, Node*> nodes;
+        void addNode(const Node& node);
     public:
-        Node* createNode() { 
-            auto node = new Node(); 
-            node->id = idCounter++;
-            nodes.insert({ node->id, node });
-            return node;
-            }
+        std::map<int, Node*> nodes;
+        Node* createNode();
         void deleteNode(Node& node) { nodes.erase(node.id); delete &node; }
+        Document(json::Object& object);
+        Document() {}
     };
 }
+
+std::ostream& operator << (std::ostream& out, const idea::Document& doc);
+std::ostream& operator << (std::ostream& out, const idea::Node& node);

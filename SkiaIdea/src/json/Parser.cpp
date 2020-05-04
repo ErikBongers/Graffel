@@ -30,47 +30,45 @@ void Parser::reportError(const std::string& msg, Token& tok)
     std::cout << msg << std::endl;
     }
 
-Object* Parser::parse()
+Object Parser::parse()
     {
     return parseObject();
     }
 
 Value Parser::parseValue()
     {
-    Value value;
     next();
     if (t == TokenType::STRING)
-        value.str = t.str_value;
+        return Value(t.str_value);
     else if (t == TokenType::NUMBER)
-        value.number = t.double_value;
+        return Value(t.double_value);
     else if (t == TokenType::TRUE_)
-        value.literal = Literal::TRUE_;
+        return Value(Literal::TRUE_);
     else if (t == TokenType::FALSE_)
-        value.literal = Literal::FALSE_;
+        return Value(Literal::FALSE_);
     else if (t == TokenType::NULL_)
-        value.literal = Literal::NULL_;
+        return Value(Literal::NULL_);
     else if (t == TokenType::BRAC_OPEN)
         {
         push_back();
-        value.object = parseObject();
+        return Value(parseObject());
         }
     else if (t == TokenType::SQR_OPEN)
         {
         push_back();
-        parseArray(value.array);
+        return parseArray();
         }
     else
         push_back();
-    return value;
+    return Value(-1); //error
     }
 
-Object* Parser::parseObject()
+Object Parser::parseObject()
     {
-    Object* object = new Object();
+    Object object;
     next();
     if (t != TokenType::BRAC_OPEN)
         return object; //error
-    Value value;
     next();
     while (t != TokenType::EOT)
         {
@@ -80,8 +78,7 @@ Object* Parser::parseObject()
         next();
         if (t != TokenType::COLON)
             return object; //error
-        value = parseValue();
-        object->add(name, value);
+        object.add(name, parseValue());
         next();
         if (t != TokenType::COMMA)
             break;
@@ -92,19 +89,20 @@ Object* Parser::parseObject()
     return object;
     }
 
-void json::Parser::parseArray(std::vector<Value> &array)
+Value json::Parser::parseArray()
     {
+    std::vector<Value> values;
     next();
     if (t != TokenType::SQR_OPEN)
-        return;//error
+        return Value(-1);//error
     while (t != TokenType::EOT)
         {
-        array.push_back(parseValue());
+        values.push_back(parseValue());
         next();
         if (t != TokenType::COMMA)
             break;
         }
     if (t != TokenType::SQR_CLOSE)
-        return; //error
-    return;
+        return Value(-1); //error
+    return Value(values);
     }

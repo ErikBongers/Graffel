@@ -7,6 +7,7 @@
 #include "json/Tokenizer.h"
 #include "json/Parser.h"
 #include "resources/Zip.h"
+#include "model/Document.h"
 
 #undef main
 
@@ -61,33 +62,45 @@ int mainGUI(int argc, char** argv) {
 }
 
 using namespace json;
-
+using namespace idea;
 void testJson()
     {
-    Object root;
-    root.add("voornaam", "Ikke");
-    root.add("naam", "EnDenDikke");
-    Value punten;
-    punten.array.push_back(Value(1));
-    punten.array.push_back(Value(2));
-    root.add("punten", punten);
-    
-    std::cout << root;
+    Document doc;
 
-    std::ifstream ifs(R"(D:\Documents\Programming\CppProjects\Graffel\SkiaIdea\test.json)");
+    auto node = doc.createNode();
+    node->title = "den title";
+    node->dscr = "omschrijving";
+    node->body = "sexy body...";
+
+    node = doc.createNode();
+    node->title = "den title 2";
+    node->dscr = "omschrijving 2";
+    node->body = "sexy body... 2";
+
+    std::string fileName = R"(C:\Users\erikb\Desktop\test.idea)";
+    std::ofstream ofs(fileName);
+    ofs << doc;
+    ofs.close();
+    
+    std::cout << doc;
+
+    std::ifstream ifs(fileName);
     json::Tokenizer tok(ifs);
     json::Parser parser(tok);
 
-    Object* object = parser.parse();
+    Object object = parser.parse();
 
     ifs.close();
 
-    std::cout << "-------------" << std::endl << *object;
+    Document doc2(object);
+    auto node2 = doc2.createNode();
+
+    std::cout << "-------------" << std::endl << doc2;
     }
 
 int main(int argc, char** argv) 
     {
-    mainGUI(argc, argv);
-    //testJson();
+    //mainGUI(argc, argv);
+    testJson();
     }
 

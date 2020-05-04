@@ -15,11 +15,11 @@ class Parser
         Parser(Tokenizer& tok) : tok(tok) {}
         void reportError(const std::string& msg, Token& tok);
         void reportError(const std::string& msg) { reportError(msg, t); }
-        Object* parse();
+        Object parse();
 
         Value parseValue();
-        Object* parseObject();
-        void parseArray(std::vector<Value>& array);
+        Object parseObject();
+        Value parseArray();
     };
 
 }

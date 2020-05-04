@@ -14,6 +14,7 @@
       <Filter>json</Filter>
     </ClCompile>
     <ClCompile Include="src\visuals\ListView.cpp" />
+    <ClCompile Include="src\model\Document.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TestWindowClient.hpp" />

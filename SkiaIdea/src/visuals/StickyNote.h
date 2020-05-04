@@ -21,11 +21,11 @@ class StickyNode : public UIElement
             txtTitle.rect = SkRect::MakeXYWH(3, 3, 300 - 3 - 3, lineHeight);
             txtDscr.rect = SkRect::MakeXYWH(3, 3 + lineHeight + 3, 300 - 3 - 3, 300 - 3 - 3 - 3 - lineHeight);
             backgroundColor = SkColorSetRGB(255, 255, 200);
-            docTitle.insert("den titel...");
-            docTitle.maxLength = 50;
+            docTitle.insert(u8"d€n titel...");
+            docTitle.maxLength = 30;
             docTitle.maxParagraphs = 1;
             docDscr.insert("dscr.......\n........!");
-            docDscr.maxLength = 400;
+            docDscr.maxLength = 200;
             docDscr.maxParagraphs = 4;
             txtTitle.txt.attachDoc(&docTitle);
             txtDscr.txt.attachDoc(&docDscr);

@@ -11,49 +11,47 @@ void Object::stream(std::ostream& out) const
             out << ',' << std::endl;
         else
             comma = true;
-        out << obj.first << ':' << obj.second;
+        out << '"' << obj.first << '"' << ':' << obj.second;
         }
     out << std::endl << '}' << std::endl;
     }
 
 void Value::stream(std::ostream& out) const
     {
-    if (object)
-        out << *object;
-    else if (array.size())
+    switch (type)
         {
-        bool comma = false;
-        out << '[' << std::endl;
-        for (auto obj : array)
+        case ValueType::OBJECT:
+            out << object;
+            break;
+        case ValueType::ARRAY:
             {
-            if (comma)
-                out << ',' << std::endl;
-            else
-                comma = true;
-            out << obj;
+            bool comma = false;
+            out << '[' << std::endl;
+            for (auto obj : array)
+                {
+                if (comma)
+                    out << ',' << std::endl;
+                else
+                    comma = true;
+                out << obj;
+                }
+            out << ']';
             }
-        out << ']';
+            break;
+        case ValueType::NUMBER:
+            out << number;
+            break;
+        case ValueType::LITERAL:
+            switch (literal)
+                {
+                case Literal::TRUE_: out << "true"; break;
+                case Literal::FALSE_: out << "false"; break;
+                case Literal::NULL_: out << "null"; break;
+                }
+            break;
+        case ValueType::STRING:
+            out << '"' << str << '"';
         }
-    else if (number != DBL_MIN)
-        out << number;
-    else if (literal != Literal::NONE)
-        {
-        switch (literal)
-            {
-            case Literal::TRUE_: out << "true"; break;
-            case Literal::FALSE_: out << "false"; break;
-            case Literal::NULL_: out << "null"; break;
-            }
-        }
-    else
-        out << '"' << str << '"';
-    }
-
-void Object::add(std::string name, std::string value)
-    {
-    Value valueObject;
-    valueObject.str = value;
-    members.insert({ name, valueObject });
     }
 
 void Object::add(std::string name, Value value)
