@@ -154,8 +154,10 @@ class EditorDoc
         TextSpan line(size_t i) const { return i < fParas.size() ? fParas[i].fText.view() : TextSpan{ nullptr, 0 }; }
         PParagraphChanged paragraphChanged = nullptr;
         PCursorMoved cursorMoved = nullptr;
-        std::string selectionToString();
-        bool hasSelection() { return fCursorPos != selectionPos; }
+        std::string toString() const;
+        std::string toString(TextPosition startPos, TextPosition endPos) const;
+        std::string selectionToString() const;
+        bool hasSelection() const { return fCursorPos != selectionPos; }
         void refitSelection();
         TextPosition refitPosition(TextPosition pos);
         void moveCursor(bool right, bool expandSelection = false);
@@ -168,6 +170,7 @@ class EditorDoc
         int maxParagraphs = 0;
         int maxWidth = 0;
         int maxLength = 0;
+        EditorDoc& operator=(const std::string str);
     private:
         TextPosition fCursorPos{ 0, 0 };
         TextPosition selectionPos{ 0, 0 };

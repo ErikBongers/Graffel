@@ -106,6 +106,15 @@ void EditorDoc::_remove()
     remove(fCursorPos, selectionPos);
     }
 
+EditorDoc& SkEd::EditorDoc::operator=(const std::string str)
+    {
+    fParas.clear();
+    fParas.push_back(EditorDoc::Paragraph()); // a doc has always at least 1 paragraph.
+    _insert(str.c_str(), str.length());
+    undoRedo.clear();
+    return *this;
+    }
+
 void EditorDoc::remove(TextPosition pos1, TextPosition pos2) {
     TextPosition start = std::min(pos1, pos2);
     TextPosition end = std::max(pos1, pos2);
@@ -157,14 +166,24 @@ size_t SkEd::EditorDoc::sizeUtf8()
     }
 
 
-std::string EditorDoc::selectionToString()
+std::string EditorDoc::selectionToString() const
+    {
+    return toString(fCursorPos, selectionPos);
+    }
+
+std::string EditorDoc::toString() const
+    {
+    return toString({ 0, 0 }, { fParas.size() - 1, fParas[fParas.size() - 1].fText.size() });
+    }
+
+std::string EditorDoc::toString(TextPosition startPos, TextPosition endPos) const
     {
     std::string str;
-    TextPosition start = std::min(fCursorPos, selectionPos);
-    TextPosition end = std::max(fCursorPos, selectionPos);
+    TextPosition start = std::min(startPos, endPos);
+    TextPosition end = std::max(startPos, endPos);
     if (start == end)
         return "";
-    if (start.Para == end.Para) 
+    if (start.Para == end.Para)
         {
         auto& fText = fParas[start.Para].fText;
         str.append(fText.begin() + start.Byte, end.Byte - start.Byte);
@@ -174,7 +193,7 @@ std::string EditorDoc::selectionToString()
     const std::vector<Paragraph>::const_iterator lastP = fParas.begin() + end.Para;
     const auto& first = firstP->fText;
     const auto& last = lastP->fText;
-    
+
     str.append(first.begin() + start.Byte, first.size() - start.Byte);
     for (auto para = firstP + 1; para < lastP; ++para) {
         str += "\n";

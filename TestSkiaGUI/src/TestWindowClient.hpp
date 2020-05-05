@@ -104,13 +104,6 @@ class TestWindowClient : public WindowClient
         void initialize() override;
         void onIdle() override;
         void draw() override;
-        void mouseMoved(SDL_MouseMotionEvent& event) override;
-        void mouseDown(SDL_MouseButtonEvent& event) override;
-        void mouseUp(SDL_MouseButtonEvent& event) override;
-        void mouseWheel(SDL_MouseWheelEvent_EX& event) override;
-        void resize(SDL_WindowEvent& event) override;
-        void keyDown(SDL_KeyboardEvent& event) override;
-        void textInput(SDL_TextInputEvent& event) override;
         UIElement* getRootElement() override { return &full; }
 
     };

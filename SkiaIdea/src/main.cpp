@@ -49,8 +49,8 @@ int mainGUI(int argc, char** argv) {
         return 1;
         }
     SDL_StartTextInput();
-    TestWindowClient& tst = *(new TestWindowClient());
-    SDLSkiaWindow* wnd = new SDLSkiaWindow(tst);
+    auto x = TestWindowClient();
+    SDLSkiaWindow* wnd = new SDLSkiaWindow(x);
 
     if (wnd->createWindow((int)(dm.w * 0.7), (int)(dm.h * 0.7), kStencilBits, kMsaaSampleCount))
         wnd->startEventLoop();
@@ -100,7 +100,7 @@ void testJson()
 
 int main(int argc, char** argv) 
     {
-    //mainGUI(argc, argv);
-    testJson();
+    mainGUI(argc, argv);
+    //testJson();
     }
 

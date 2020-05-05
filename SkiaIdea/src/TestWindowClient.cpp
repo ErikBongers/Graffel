@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TestWindowClient.hpp"
 #include "resources/Resources.h"
+#include "model/Document.h"
 
 void TestWindowClient::initialize()
     {
@@ -152,7 +153,24 @@ void TestWindowClient::initializeViewsTEST()
     listView += imgTextButton3;
     infiniteCanvas += listView; 
 
-    infiniteCanvas += sticky1;
+    Document document;
+
+    auto node = document.createNode();
+    node->title = "den title";
+    node->dscr = "omschrijving";
+    node->body = "sexy body...";
+
+    auto node2 = document.createNode();
+    node2->title = "den title 2";
+    node2->dscr = "omschrijving 2";
+    node2->body = "sexy body...2";
+
+    sticky1 = new StickyNode(document, node->id);
+    infiniteCanvas += *sticky1;
+    sticky2 = new StickyNode(document, node->id);
+    infiniteCanvas += *sticky2;
+    sticky3 = new StickyNode(document, node2->id);
+    infiniteCanvas += *sticky3;
     getWindow()->addMouseCapture(infiniteCanvas); //todo: put in constructor.
     }
 

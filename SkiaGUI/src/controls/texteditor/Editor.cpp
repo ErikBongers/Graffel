@@ -33,6 +33,7 @@ void SkEd::Editor::setEditMode(bool set)
     { 
     txt.showCursor = editMode = set;
     takeFocus(set ? this: nullptr);
+    window->setInvalid();
     }
 
 void SkEd::Editor::_mouseDown(SDL_MouseButtonEvent& event)

@@ -34,7 +34,7 @@ class Value
         Value(){}
         Value(double number) : number(number), type(ValueType::NUMBER) {}
         Value(const Object& o) : object(o), type(ValueType::OBJECT) {}
-        Value(std::string str) : str(str), type(ValueType::STRING) {}
+        Value(const std::string str) : str(str), type(ValueType::STRING) {}
         Value(Literal literal) : literal(literal), type(ValueType::LITERAL) {}
         Value(std::vector < Value> values) : array(values), type(ValueType::ARRAY) {}
     };

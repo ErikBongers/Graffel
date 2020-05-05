@@ -1,10 +1,5 @@
 Phase 1
 ---------------
-* Bind Node to StickyNode.
-  > Since StickyNode is dedicated to the Idea-model, use:
-  > doc
-  > nodeId
-  >> How to bind text fields in node to EditorDoc-s?
 * Save/read
 * Create basic node visual (stycky note)
 * Add/remove nodes to data model

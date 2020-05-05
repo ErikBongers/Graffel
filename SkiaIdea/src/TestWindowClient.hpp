@@ -114,7 +114,9 @@ class TestWindowClient : public WindowClient
         View view2;
         View view3;
 
-        StickyNode sticky1;
+        StickyNode* sticky1;
+        StickyNode* sticky2;
+        StickyNode* sticky3;
 
     public:
         void initialize() override;

@@ -23,9 +23,9 @@ const json::Object idea::Node::to_json() const
     {
     Object o;
     o.add("id", id);
-    o.add("title", title);
-    o.add("dscr", dscr);
-    o.add("body", body);
+    o.add("title", title.toString());
+    o.add("dscr", dscr.toString());
+    o.add("body", body.toString());
     return o;
     }
 

@@ -22,7 +22,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\visuals\Controller.cpp" />
     <ClCompile Include="src\visuals\ListView.cpp" />
+    <ClCompile Include="src\visuals\StickyNote.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json\json.h" />
@@ -41,9 +43,11 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\visuals\Controller.h" />
     <ClInclude Include="src\visuals\ImageTextButton.h" />
     <ClInclude Include="src\visuals\ListView.h" />
     <ClInclude Include="src\visuals\StickyNote.h" />
+    <ClInclude Include="src\visuals\Visual.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test.json" />

@@ -1,6 +1,7 @@
 #pragma once
 #include "../pch.h"
 #include "json/json.h"
+#include "controls/texteditor/EditorDoc.h"
 
 namespace idea{
 
@@ -10,9 +11,9 @@ class Node
         Node() {}
     public:
         int id = -1;
-        std::string title;
-        std::string dscr;
-        std::string body;
+        SkEd::EditorDoc title;
+        SkEd::EditorDoc dscr;
+        SkEd::EditorDoc body;
         friend class Document;
         const json::Object to_json() const;
         Node(json::Object& object);

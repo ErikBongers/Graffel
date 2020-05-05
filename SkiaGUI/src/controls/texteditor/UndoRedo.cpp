@@ -66,3 +66,9 @@ void UndoRedo::execute(Cmd* cmd)
     ignore = oldIgnore;
     add(cmd);
     }
+
+void UndoRedo::clear()
+    {
+    clear(undoStack);
+    clear(redoStack);
+    }

@@ -26,4 +26,5 @@ class UndoRedo
         void redo();
         void add(Cmd* cmd);
         void execute(Cmd* cmd);
+        void clear();
     };
