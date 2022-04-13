@@ -1,0 +1,33 @@
+EBNF of C++ : http://www.externsoft.ch/download/cpp-iso.html
+left or right associativity: https://stackoverflow.com/questions/41784524/preferred-way-of-removing-left-recursion-of-ebnf
+
+graffel = { statement }
+statement =  assignment ";" | 
+             block  |
+             blockComment
+block = "{" 
+        { statement } 
+        "}" [";"] // zero or one statement allowed, semi-colon optional
+assignment = id "=" ( variator | block | timeline )
+
+
+blockComment = "/{" (blockCommentContent | string) "}" // other comments already removed by tokenizer
+blockCommentContent = (blockComment | ...all tokens except "}")
+
+//timelines:
+
+timeline = "[" timelineMarker { "," timelineMarker } "]"
+timelineMarker = ((["@"] timeValue) | "~") [ markerId ]
+
+markerId = "#" identifier
+
+//variator:
+
+variator = numericExpression |
+           [ "_" ] numericPrimitive [ "_" ] markerId
+//how much backtracking does the above need?
+//solution: start by parsing a numericExpression. If this returns just a numericPrimitive, try to parse a variator.
+
+numericPrimitive = constantNumber |
+                   "(" numericExpression ")" |
+                   id

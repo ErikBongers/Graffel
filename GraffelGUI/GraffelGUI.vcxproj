@@ -18,11 +18,43 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\GraffelWindowClient.cpp" />
+    <ClCompile Include="src\graffel\Block.cpp" />
+    <ClCompile Include="src\graffel\Error.cpp" />
+    <ClCompile Include="src\graffel\helper.cpp" />
+    <ClCompile Include="src\graffel\Range.cpp" />
+    <ClCompile Include="src\graffel\Timeline.cpp" />
+    <ClCompile Include="src\graffel\Tick.cpp" />
+    <ClCompile Include="src\graffel\Variant.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\GraffelWindowClient.h" />
+    <ClInclude Include="src\graffel\Block.h" />
+    <ClInclude Include="src\graffel\Error.h" />
+    <ClInclude Include="src\graffel\helper.h" />
+    <ClInclude Include="src\graffel\Range.h" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <FileType>CppCode</FileType>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\graffel\Timeline.h" />
+    <ClInclude Include="src\graffel\Tick.h" />
+    <ClInclude Include="src\graffel\Variant.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{686D3A0D-F92B-4601-A5F2-24354683246F}</ProjectGuid>
-    <RootNamespace>Graffel</RootNamespace>
+    <ProjectGuid>{DF4503D7-CC11-4C61-A11A-4DB510DBD931}</ProjectGuid>
+    <RootNamespace>GraffelGUI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>GraffelGUI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,22 +101,41 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\Graffel\TestSkia\src;D:\Documents\Programming\CppProjects\libraries\skia\skia;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Documents\Programming\CppProjects\Graffel\TestSkia\src;D:\Documents\Programming\CppProjects\libraries\skia\skia;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Documents\Programming\CppProjects\libraries\skia\skia;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\include;$(ProjectDir)\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Documents\Programming\CppProjects\libraries\skia\skia\out\Test;D:\Documents\Programming\CppProjects\libraries\SDL2-2.0.10\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\Documents\Programming\CppProjects\SkiaGUI_graffel_branch\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Documents\Programming\CppProjects\Graffel\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -95,20 +146,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,39 +173,18 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Error.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="parser\Parser.cpp" />
-    <ClCompile Include="parser\Token.cpp" />
-    <ClCompile Include="parser\Tokenizer.cpp" />
-    <ClCompile Include="parser\TokenType.cpp" />
-    <ClCompile Include="syntaxtree\nodes.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="graffel.ebnf" />
-    <None Include="specs.graffel" />
-    <None Include="test.graffel" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="defines.h" />
-    <ClInclude Include="main.h" />
-    <ClInclude Include="parser\Parser.h" />
-    <ClInclude Include="parser\Token.h" />
-    <ClInclude Include="parser\Tokenizer.h" />
-    <ClInclude Include="parser\TokenType.h" />
-    <ClInclude Include="syntaxtree\nodes.h" />
-    <ClInclude Include="syntaxtree\printTree.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
