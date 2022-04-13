@@ -10,7 +10,7 @@ graffel::Timeline::Timeline(Timeline& parent) : parent(parent)
 graffel::Timeline* graffel::Timeline::createMasterTimeline() { 
     auto newT = new Timeline();
     newT->init();
-    return newT; 
+    return newT; //TODO: memoryleak !
     }
 
 graffel::Timeline& graffel::Timeline::createChild()

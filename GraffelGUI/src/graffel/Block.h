@@ -1,20 +1,17 @@
 #pragma once
-
+#include "core/UIElement.h"
+#include "Timeline.h"
 namespace graffel
 {
 
-class Timeline;
-
-class Block
+class Block : public UIElement
     {
-    private:
-        SkFont font;
-        SkPaint paint;
     public:
-        Block();
-        void draw(Timeline& timeline, SkCanvas& canvas);
-
-
+        Timeline& timeline;
+        Block(Timeline& timeline) : timeline(timeline) {}
+        virtual void drawMe() override;
+        virtual void drawBlock() = 0;
+        virtual void update(std::chrono::duration<double> now) = 0;
     };
 
 }

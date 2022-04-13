@@ -15,15 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\TestSkia\src\graffel\Block.cpp">
-      <Filter>graffel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp">
-      <Filter>graffel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp">
-      <Filter>graffel</Filter>
-    </ClCompile>
     <ClCompile Include="parser\Parser.cpp">
       <Filter>parser</Filter>
     </ClCompile>
@@ -52,21 +43,6 @@
     <None Include="graffel.ebnf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\TestSkia\src\graffel\Range.h">
-      <Filter>graffel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TestSkia\src\graffel\Tick.h">
-      <Filter>graffel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TestSkia\src\graffel\Timeline.h">
-      <Filter>graffel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TestSkia\src\graffel\Block.h">
-      <Filter>graffel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TestSkia\src\graffel\Error.h">
-      <Filter>graffel</Filter>
-    </ClInclude>
     <ClInclude Include="parser\Parser.h">
       <Filter>parser</Filter>
     </ClInclude>
@@ -87,8 +63,5 @@
     <ClInclude Include="syntaxtree\printTree.h">
       <Filter>syntaxtree</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="todo.txt" />
   </ItemGroup>
 </Project>

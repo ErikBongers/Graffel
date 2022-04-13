@@ -8,18 +8,26 @@ statement =  assignment ";" |
 block = "{" 
         { statement } 
         "}" [";"] // zero or one statement allowed, semi-colon optional
-assignment = id "=" ( rval | block | string)
+assignment = id "=" ( variator | block | timeline )
 
-expressions: top line has lowest precedence:
-addExpr = multExpr |  
-          addExpr ("+" | "-") multExpr 
-multExpr = unaryExpr |
-           multExpr ("*" | "/") unaryExpr
-unaryExpr = primaryExpr |
-            unaryOp unaryExpr
-primaryExpr = const | 
-              id | 
-              "(", addExpr, ")"
 
 blockComment = "/{" (blockCommentContent | string) "}" // other comments already removed by tokenizer
 blockCommentContent = (blockComment | ...all tokens except "}")
+
+//timelines:
+
+timeline = "[" timelineMarker { "," timelineMarker } "]"
+timelineMarker = ((["@"] timeValue) | "~") [ markerId ]
+
+markerId = "#" identifier
+
+//variator:
+
+variator = numericExpression |
+           [ "_" ] numericPrimitive [ "_" ] markerId
+//how much backtracking does the above need?
+//solution: start by parsing a numericExpression. If this returns just a numericPrimitive, try to parse a variator.
+
+numericPrimitive = constantNumber |
+                   "(" numericExpression ")" |
+                   id

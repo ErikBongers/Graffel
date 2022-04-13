@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -146,9 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\TestSkia\src\graffel\Block.cpp" />
-    <ClCompile Include="..\TestSkia\src\graffel\Tick.cpp" />
-    <ClCompile Include="..\TestSkia\src\graffel\Timeline.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser\Parser.cpp" />
@@ -163,11 +160,6 @@
     <None Include="test.graffel" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\TestSkia\src\graffel\Block.h" />
-    <ClInclude Include="..\TestSkia\src\graffel\Error.h" />
-    <ClInclude Include="..\TestSkia\src\graffel\Range.h" />
-    <ClInclude Include="..\TestSkia\src\graffel\Tick.h" />
-    <ClInclude Include="..\TestSkia\src\graffel\Timeline.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="parser\Parser.h" />
@@ -176,9 +168,6 @@
     <ClInclude Include="parser\TokenType.h" />
     <ClInclude Include="syntaxtree\nodes.h" />
     <ClInclude Include="syntaxtree\printTree.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="todo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

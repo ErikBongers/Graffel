@@ -1,3 +1,139 @@
+TEST CASE
+------------
+[
+@10s #startMove //#1 @10s
+5s #nothing //#2 @15s
+15s #endMove  //#3 @30s
+]
+{ //main block: keep background clear.
+
+    { //test block. set a bkg
+    .background = YELLOW.
+    .x = 0_ #startMove //timeline1.#1
+        _100 #endMove //timeline1.#3
+    }
+}
+
+GENERATED CODE
+----------------
+timeline1_lastPassedMarker(NOW) //returns the last past marker number
+{
+T = NOW - offset;
+if(T >= 30s)
+  return #3; // #endMove
+if(T >= 15s)
+  return #2; // #nothing
+if (T >= 10s)
+  return #1; // #startMove
+return 0; //this code works
+}
+
+block1_drawMe()
+{
+// resolving .x = ...see above
+if(timeline_1_isPastMarker(#endMove) //#2
+  .x = -10;
+else if(past(#startMove)) //between markers #startMove and #endMove
+  {
+  alpha = timeline1.getAlpha(#startMove, #endMove); //position is determined by current time.
+  .x =  variantX.interpolate(##startMove, alpha); //##startMove translates to "variant's value at index #startMove".
+  }
+else //before #startMove, thus betwen #0 and #startMove
+  {
+  //do the same as above.
+  }
+
+  variantX.addMarker(0, #startMove(#0), fadein=false, fadeOut=true);
+  variantX.addMarker(100, #endMove(#1), fadein=true, fadeOut=false);
+
+
+What do I need a timeline to do?
+---------------------------------
+Define where we are in time. A cursor.
+A cursor starts at time zero. It updates based on a steady_clock, which is a stopwatch, not actual world time.
+Every timeLine has a offset that defines it's local zero in relation to the steady_clock.
+Since steady_clock ticks further on it's own, timeline doesn't actively have to do anything.
+
+So, timeline is:
+  - an offset, which is passed at construction (or init) time, and accumulates the ancesters' offsets.
+    > this can be done at compile time and does not require an actual tree structure.
+  - some functions like lastPassedMarker() that gives some information about where we are at in the timeline(s).
+A timeline is passive. It is consulted, but doesn't drive anything.
+The eventloop with onIdle() -> update() is the driver.
+
+When a timeline is consulted, it needs to know what the time is.
+This means steady_clock::now() - startTime.
+Who keeps this startTime?
+Not the timeline, because it's a hierarchy.
+Store startTime in a 'global' variable, above the main timeline.
+  > Currently in GraffelWindowClient, but clearly we need a graffel parent object above the main Block and timeline, 
+  that is part of the generated code.
+
+When Block.update() is called, pass the currentTime (- startTime) to the main block.
+The main block will trickle NOW down to the nested blocks.
+Blocks will use this value to consult timelines. Thus a timeline takes a GLOBAL NOW value and subtracts it's offset from it.
+This means a timeline's function can be called with a NOW value, BEFORE the timeline actually starts!
+  > try to check this at compile time, to avoid unnessasary execution of code that shouldn't start yet.
+
+Draw a block:
+---------------
+Same as draw a UIArea: 
+  - do the transformation.
+  - let the block draw itself.
+  > create C++ code that represents a block
+    > a block can be assigned to a var, so it must be an instance of a class.
+  > A block needs to know the current value of a variant:
+    > A variant 'lives' between 2 (or more) markers.
+    > Ask the timeline how far between marker A and B we are.
+    > Variant uses that value (0->1) to get interpolated value
+
+
+Mechanics of animation
+-------------------------
+> see Blender
+  > Timeline
+  > Dope sheep
+  > Action editor
+  > NLA - None Linear Editor
+- Graphics can be grouped (into blocks)
+- A property of a graphic can be 
+    > a constant ( a fixed position, color,...)
+    > a variator (the word 'variable' is confusing)
+      > a variator is like a path, but restricted: it cannot go back in time.
+        > it moves from value A to B to C,...
+        > every node in the path MUST be attached to a marker in an above timeline.
+        > a variator has no length, but has markers at the beginning, the end and optionally, inbetween.
+        > the markers can be anonymous: #0,...#10, and #start and #end (or regex values #^ and #$).
+        > when setting a variator to a property, you must include a Duration or a Timeslice
+          - constant Duration (10 seconds)
+            - must include a Repetition value, being 1, n or infinite (~)
+            - starts immediately.
+          - Duration can be the length between 2 markers : #y-#x
+          - a a timeSlice, defined by a start and an end marker: #x..#y
+            > A TimeSlice is defined by FIXED start and end points in time. It can thus not be repeated (perhaps unless in a looping Timeline?)
+
+How to animate an object
+-------------------------
+e.g. tranlation on x-axis
+- Start with a block (that has it's own timeline).
+- A block has no position.
+- A block can have internal animation. (spinning, ...)
+Use a block:
+myBlock = {<block>};
+myBlock.x = 0_   #startMove //the underscores mean fade in or fade out.
+            _10_ #midMove
+            _0   #endmove
+            ; //where #startMove and endMove are markers of the current timeline.
+
+BASIC PRINCIPLES
+------------------
+* primitives should be implicit, with little syntax.
+  - (...) for tuples like points.
+  - {} for blocks of graphics
+  - \...\ for paths? Or is this too exreg?
+    > []? Already used by timelines
+    > ~...~
+
 TEST SCENARIOS
 ----------------
 
@@ -51,13 +187,28 @@ eg: canvas =  { ...}
 
 TIMELINE
 ------------
+A timeline is a continuous and well determined stretch of time.
+Determined: it has no unknowns and is continuous: it has no gaps.
+It always starts at relative zero. Relative, because when a timeline starts is outside it's scope.
+It may run infinitely, which is considered determined.
+A timeline may be cyclic.
+A cyclic timeline can be infinitely cyclic or limited to n iterations.
+A timeline can contain a limited cyclic part, halfway as this is stil well determined.
+
+Timelines can be nested: a sub-timeline can start at a marker of the parent timeline.
+A parent block can start an animation (a sub-block) at a given marker.
+  > the child block+timeline does not know the exact timeoffset, nor any possible repetition.
+
   time notation = HH:MM:SS.mmm; 
-    - oneSecond = 1;
+    - oneSecond = 1; //is just a number, but can be implicitely converted to a time in seconds.
     - oneMinute = 1:00;
     - oneAndHaflMinute = 1:30;
     - ...andFiveMillis = 1:30.005
-    - onMilli = .001;
-
+    - onMilli = .001; // is there a risk that a normal decimal value doesn't work as millis? IT should be bigger that .001, or it's microseconds, which is too small? If it's 1.234, it's can be converted to 1 seconds, 234 millis.
+  - time POINT:
+     : @12:33
+  - duration:
+     : 12:33
   - is linear (or stretchable?)
   - has nodes/markers/keys/bullets/timepoints
     > these can be absolute or relative
@@ -72,6 +223,130 @@ TIMELINE
     - marker from parent
     - random
 
+Notation: 
+  - always between [ and ]
+  : [ 10 ] // a timeline that lasts 10 seconds.
+  : [ @10 ] // a timeline that ends at 10 seconds. (effectively same as above)
+  : [ 0#^ , ~#$] //default timeline. From zero to infinity
+    > note that the #$ marker will never be reached.
+    > the #^ marker is also the #0 marker. Perhaps #0 is enough?
+  : [ ~ ] //same as above, but more more implicit. The start marker 0#^ is always assumed.
+  : [ @10#start, @20#end ] // same as above, but with markers.
+  : [       
+    @10 #start  //a timeline with timepoints
+    @20 #end
+        #$      //end marker. Does not have to be mentioned explicitely.
+    ] // same as above: in a timeline, a newline means a range/duration
+   
+  > Cyclic timelines
+  : [
+    @10 #start  //at 10 seconds...
+        [  // a inner timeline starts, with the same name as the marker it starts at.
+        @10 #start  //at 10 seconds in the INNER timeline, with markerId: #start.#start.0 <...1,2,3,...>
+        @20 #end
+        ]*3 // loop 3 times
+    @20 #atTwenty: //error: starts before previous section ends.
+    20 #nextLoop //no error: just 20s past previous marker (or loop)
+        [
+        @10 // #nextLoop.#0.0
+        @20
+        ]<>~ // bounce infinitely --> a bounce will insert a mirror image inside the loop, to unwrap the bounce into an ordinary loop
+    20 #nextLoop //no error: just 20s past previous marker (or loop)
+        [
+        @10 // #nextLoop.#1.0
+        ]<10 // bounce 10 times, end at start position
+    @1:00:00 //error, can't have a marker past infinity.
+    ]
+  > Timelines can be segmented:
+  : [ duration1, duration2, ...]
+  > combinations of Timepoints and Durations:
+  : [ tp1..tp2..tp3, duration1, duration2 ]
+  : [ duration, tp ] //is this illegal? What if duration lasts longer than TP? Can this be checked at compile time?
+
+Compilation:
+A timeline compiles to map of timepoints, and for each timepoint, the related markers.
+But what about cyclic timelines?
+  > the timepointer of the timeline gets reset to 0.
+  > this implies every timeline has it's own timepointer.
+  > this also implies a timeline is no constexpr, but calculated at runtime.
+    > that's only the case for an infinitely looping timeline.
+  > can a timeline loop x times and stop?
+    > syntax?
+  > can a timeline contain a finite loop segment?
+
+Timeline unpacking:
+Since a timeline is fully determined, it can be 'unpacked' for perforamnce reasons.
+T = [
+    @20s #at20
+    10s #tenFurther
+        [
+        15s #endOfOneLoop
+        ]*2 #endOfFullLoop
+    2:00 #plus2minutes
+        [
+        10s #atTenInLoop2 //Note that a looping timeline cannot have timepoints, only durations!
+        5s #endOfOneLoop
+        ]*2 #endOfFullLoop
+    20 #plus20secs
+    ];
+
+Unpacked:
+whereIs(t)
+    {
+    if(t < 20s) 
+        return #0, #at20, lerp(0s, 20s, t)
+    if(t < 30s) // #at20 + #tenFurther
+        return #at20, #at20 + 10s, lerp(20s, 30s, t)
+    if(t < 30s + loop1.end())
+        return 30s + loop1.whereIs(t-30s);
+    ...
+    }
+
+loop2.whereIs(t)
+    {
+    loopCnt = t / len_of_loop;
+    remainder = t % len_of_loop;
+    t_inloop = t - len_of_loop * loopCnt;
+    //TODO: if more markers in the loop, figure out which markers we are in between.
+    //this is essentially the same construction as for the outer whereIs(): but use t_inloop instead of t.
+    if(t_inloop < 10s)
+      return { loop2.#0, loop2.atTenInLoop2, lerp(0s, 10s, t_inloop), LOOPCNT !!!!! }          //note that loop2.#0 == #plus2minutes of main timeline. Also, loopcounter is returned as well!
+    if(t_inloop < 15s) //is always the case, so this test can be skipped?
+      return {loop2.#atTenInLoop2, # loop2.#endOfOneLoop, lerp(t-10s), loopCnt ]
+    //else: impossible, if t is checked beforehand.
+    }
+    
+variant.getValue(marker1, marker2, alpha); // the markers must be the timeValues of those markers.
+//what if variant doesn't exist between these 2 markers.
+Must a variant be fully defined for the whole timeline?
+A variant has an initial value, a value @marker1, a value @marker2 which is kept till the end.
+
+myVariant =  0_   //no marker! this is the initial value!
+            _10_ #startMove //#startMove is determined. ...is that also the case if it's in a loop?
+            _0   #endmove
+            ; //where #startMove and endMove are markers of the current timeline.
+myBlock.x = myVariant;
+
+timeline.whereIs() will return 2 markers and the alpha between them.
+variantValue = variant.valueAt(#startMove, #midMove, alpha);
+For markers A, B, C, D, E and a variant between B and D,
+it wants to know if the timeline is before B, between B and D or after D.
+  - in case before B: use start value.
+  - between B and D: use alpha between B and D to calculate value.
+  - after D: use end value.
+perhaps simpler: a variant needs to know which markers have been passed.
+  - passed D: use end value
+  - else, passed B: it's between B and D
+  - else, use start value.
+  > this system works for multiple markers in the variant.
+  > this way, the timeline does NOT have to calculate anything. Just keep track of the last past marker. Also works for a loop!
+    > a timeline can have a isPastMarker() function. Easy, because every marker also has an index (#0, #1,...)
+
+
+Usage:
+When time moves past a timepoint at a tick() call, all the not yet reported markers get reported.
+
+
 TRANSFORMS
 ---------------
 - translate, rotate, matrix,...
@@ -83,6 +358,17 @@ Variables
 - number != degrees; //warning? - what about multipliyng degrees?
 - degrees != radians; //but implicit conversion - no warning;
   > maybe radians and degrees should be same type...
+
+Units
+---------
+In the extreme there's no such thing as numbers.
+Force every number to have a unit?
+In graphics have the following units: (conversion to the var happens implicitely)
+  - <no unit> is the default and, in most cases will be (logical) points, that is, transformed points.
+  - 123px = screen pixels. 
+  - mm, in, ft,...real world units: based on device metrix (with option to tweak the conversion factors?)
+  * again, all these units are implicitely converted to one another.
+  > how to define a var contains mm?
 
  SHAPE/PATH
  ------------
@@ -138,7 +424,13 @@ TYPES/PRIMITIVES
 1d //days
 (1,2) // 2-tuple, can be used as Point or Vector
 (1,2,3,4) // 4-tuple, van be used as rect, bounds, clip,...
-(1,2,+3,+4) // LTWH rect
+(1,2,+3,+ -4) // LTWH rect
+(1,2..3,4) //line (1,2) -> (3,4)
+  > ambiguous with a 2..3 range? Range has to ALWAYS be in brackets? (1, [2..3], 4)
+  > or (1,2)..(3,4)
+  > or (1,2)(3,4)
+  > or (1,2,3,4) can be interpreted as a line or a rect and must be cast when both are possible.
+  > also (1..3, 2..4) is 2 lines, usable as a rectangle.
 (+3, +4) //WH rect with (0,0) starting point
 (+-3, +4), //4-tupple negative offset
 
@@ -153,6 +445,15 @@ DYNAMIC RANGE
 - range ends with INFINITE, ENDPOINT or LOOPPOINT
 
 *Syntax:
+
+Python: 1:10:0.5 -->  from 1 to 10, step 0.5
+Mathlab 1:0.1:10  --> step is the middle value!
+Ruby: 1..10 --> including 10
+      1...10 --> excluding 10
+
+Math: https://en.wikipedia.org/wiki/Interval_%28mathematics%29#Notations_for_intervals
+(1,10) --> excluding 1 and 10
+[1, 10] --> including
 range = [slice, slice, slice] : sequencial/chronological slices
   - Slices:
     .. : slice, as in 1..99 or mark1..mark2

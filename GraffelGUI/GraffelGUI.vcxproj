@@ -21,15 +21,20 @@
   <ItemGroup>
     <ClCompile Include="src\GraffelWindowClient.cpp" />
     <ClCompile Include="src\graffel\Block.cpp" />
+    <ClCompile Include="src\graffel\Error.cpp" />
+    <ClCompile Include="src\graffel\helper.cpp" />
     <ClCompile Include="src\graffel\Range.cpp" />
     <ClCompile Include="src\graffel\Timeline.cpp" />
     <ClCompile Include="src\graffel\Tick.cpp" />
+    <ClCompile Include="src\graffel\Variant.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\GraffelWindowClient.hpp" />
+    <ClInclude Include="src\GraffelWindowClient.h" />
     <ClInclude Include="src\graffel\Block.h" />
+    <ClInclude Include="src\graffel\Error.h" />
+    <ClInclude Include="src\graffel\helper.h" />
     <ClInclude Include="src\graffel\Range.h" />
-    <ClInclude Include="src\HelloWorld.h" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pch.cpp">
       <FileType>CppCode</FileType>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -42,6 +47,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\graffel\Timeline.h" />
     <ClInclude Include="src\graffel\Tick.h" />
+    <ClInclude Include="src\graffel\Variant.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -54,26 +60,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -121,11 +127,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\Documents\Programming\CppProjects\SkiaGUI_graffel_branch\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>skia.lib;SDL2.lib;OpenGL32.Lib;SkiaGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Documents\Programming\CppProjects\Graffel\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

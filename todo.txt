@@ -1,0 +1,32 @@
+* Parse timelines, which has it's own syntax, independent of the main syntax. This means it has, at least, it's own tokenizer.
+  > create nested tokenizers:
+    > A tokenizer can pass a stream to a sub-tokenizer.
+    > a stream for a tokenizer is:
+      
+* Timers:
+    > SteadyTimer: doesn't skip ticks, but has a max. speed
+    > ClockTimer : follows real time, and thus my skip a tick
+
+* Block: Make it a UIElement(for now, model will be split off later)
+
+see specs.graffel...
+
+* set up a canvas that can draw a cube and a circle.
+* create API for translating graffel scripts to actual drawing
+
+
+GRAFFEL API
+--------------
+
+mainTimeline = new Timeline(...);
+block = canvas.addBlock(mainTimeline, ...); //>> no block without a timeline?
+cube = block.addCube(...);
+cube.topLeft = pointRef(...); // >>> a binding to a timeline value or other dynamic value.
+
+...
+
+loop timeline:
+    mainTimeline.update(); // >>>increase dynamic values
+
+
+Traverse a path: SkPathMeasure::getPosTan()
