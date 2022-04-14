@@ -1,25 +1,62 @@
 #pragma once
-#include "TokenType.h"
 #include <string>
+
+enum class TokenType
+    {
+    BRAC_OPEN,
+    BRAC_CLOSE,
+    CURL_OPEN,
+    CURL_CLOSE,
+    PAR_OPEN,
+    PAR_CLOSE,
+    PLUS,
+    MIN,
+    DIV,
+    MULT,
+    INC,
+    DEC,
+    EQ,
+    EQ_PLUS,
+    EQ_MIN,
+    EQ_MULT,
+    EQ_DIV,
+    EQ_UNIT,
+    NUMBER,
+    POWER,
+    ID,
+    SEMI_COLON,
+    COMMA,
+    DOT, //except for the decimal dot.
+    PIPE,
+    QUOTED_STR,
+    AT,
+
+    UNKNOWN,
+    EOT,
+    NULLPTR
+    };
 
 class Token
     {
     public:
+        static Token Null() { return Token(TokenType::NULLPTR, 0, 0); }
+        bool isNull() const { return type == TokenType::NULLPTR;}
         TokenType type;
-        std::string str_value = "";
-        double double_value;
-        long line;
-        long pos;
+        std::string stringValue;
 
-    public:
-        Token(TokenType type, const std::string& str_value, double double_value, long line, long pos) :type(type), str_value(str_value), double_value(double_value), line(line), pos(pos) {}
-        Token(TokenType type, const std::string& str_value, long line, long pos) :Token(type, str_value, 0.0, line, pos) {}
-        Token(TokenType type, long line, long pos) :Token(type, "", 0.0, line, pos) {}
-        bool operator==(TokenType tt) { return type == tt; }
-        bool operator!=(TokenType tt) { return type != tt; }
-        static Token UNDEFINED;
-        Token() :Token(TokenType::UNDEFINED, -1, -1) {}
+        double numberValue = 0;
+        //Timepoint
+        //Duration
+        //Calendar
+
+        unsigned int pos;
+        unsigned int line;
+        bool isFirstOnLine = false;
+        Token() : Token(TokenType::NULLPTR, 0, 0) {}
+        Token(TokenType type, char c, unsigned int line, unsigned int pos);
+        Token(TokenType type, double n, unsigned int line, unsigned int pos);
+        Token(TokenType type, std::string str, unsigned int line, unsigned int pos);
+        Token(TokenType type, unsigned int line, unsigned int pos);
     };
 
-std::ostream& operator << (std::ostream& os, const Token& token);
 

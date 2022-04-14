@@ -63,5 +63,6 @@
     <ClInclude Include="syntaxtree\printTree.h">
       <Filter>syntaxtree</Filter>
     </ClInclude>
+    <ClInclude Include="parser\BaseTokenizer.h" />
   </ItemGroup>
 </Project>

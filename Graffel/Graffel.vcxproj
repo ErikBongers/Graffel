@@ -103,7 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="defines.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="parser\BaseTokenizer.h" />
     <ClInclude Include="parser\Parser.h" />
     <ClInclude Include="parser\Token.h" />
     <ClInclude Include="parser\Tokenizer.h" />

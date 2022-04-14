@@ -1,30 +1,33 @@
 #pragma once
-#include <istream>
+#include <string>
+#include <map>
+#include <vector>
+#include <iostream>
 #include "Token.h"
+#include "BaseTokenizer.h"
 
-class Tokenizer
+class Tokenizer : public BaseTokenizer<Token>
     {
-    private:
-        std::istream &is;
-        Token parseIdentifier();
-        bool nextTokenChar();
-        void putBack();
-        bool getChar();
-        char curr_c = 0; //current char
-        char back_c= -1;
-        int curr_line = 1;
-        int curr_pos = 0;
-        int back_line = -1;
-        int back_pos = -1;
-
     public:
-        Tokenizer(std::istream &is) :is(is) {}
+        Tokenizer(const char* stream);
+        Token peekSecond();
         Token next();
-        Token parseEquals();
-        Token parseNumber();
-        Token parseString();
-        void parseLineComment();
-        void parseComment();
-        void parseBlockComment();
+
+        bool peekComments = false;
+    private:
+        void getNextState();
+        bool peekWord(std::string str);
+        Token parseId(char c);
+
+        double parseDecimal(char c);
+        double parseBinary();
+        double parseHex();
+        int parseInteger();
+
+        Token parseNumber(char c);
+
+        void skipToEndOfComment();
+        Token getNextToken();
+        bool matchWord(const std::string& str);
     };
 
