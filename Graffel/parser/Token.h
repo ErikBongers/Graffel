@@ -30,6 +30,7 @@ enum class TokenType
     PIPE,
     QUOTED_STR,
     AT,
+    BLOCK_COMMENT_OPEN,
 
     UNKNOWN,
     EOT,

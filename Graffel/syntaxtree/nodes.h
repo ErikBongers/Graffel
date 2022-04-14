@@ -25,7 +25,7 @@ struct UnaryExpr
         if (primExpr)
             return primExpr->getConstValue();
         Token const1 = unaryExpr->getConstValue();
-        if (const1 == TokenType::NUMBER)
+        if (const1.type == TokenType::NUMBER)
             {
             double sign = (unaryOp == TokenType::MINUS) ? -1 : 1;
             return Token(TokenType::NUMBER, "", sign * const1.double_value, 0, 0);
@@ -37,7 +37,7 @@ struct UnaryExpr
         if (primExpr)
             return primExpr->optimize();
         Token const1 = unaryExpr->getConstValue();
-        if (const1 == TokenType::NUMBER)
+        if (const1.type == TokenType::NUMBER)
             {
             double sign = (unaryOp == TokenType::MINUS) ? -1 : 1;
             primExpr = new PrimaryExpr();
@@ -66,11 +66,11 @@ struct MultExpr
 
         Token const1 =  mulExpr->getConstValue();
         Token const2 = unaryExpr->getConstValue();
-        if (const1 != TokenType::NUMBER || const2 != TokenType::NUMBER)
+        if (const1.type != TokenType::NUMBER || const2.type != TokenType::NUMBER)
             return Token();
         
         double d;
-        if (op == TokenType::MULTIPLY)
+        if (op.type == TokenType::MULTIPLY)
             d = const1.double_value * const2.double_value;
         else
             d = const1.double_value / const2.double_value;
@@ -88,7 +88,7 @@ struct MultExpr
                 return;
 
             double d;
-            if (op == TokenType::MULTIPLY)
+            if (op.type == TokenType::MULTIPLY)
                 d = const1.double_value * const2.double_value;
             else
                 d = const1.double_value / const2.double_value;
@@ -171,13 +171,3 @@ struct Statement
     void optimize();
     };
 
-struct Block
-    {
-    std::vector<Statement*> statements;
-    void optimize()
-        {
-        for (auto it = std::begin(statements); it != std::end(statements); ++it) {
-            (*it)->optimize();
-            }
-        }
-    };

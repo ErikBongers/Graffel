@@ -27,11 +27,12 @@
     <ClCompile Include="parser\TokenType.cpp">
       <Filter>parser</Filter>
     </ClCompile>
-    <ClCompile Include="Error.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="syntaxtree\nodes.cpp">
       <Filter>syntaxtree</Filter>
     </ClCompile>
+    <ClCompile Include="parser\Error.cpp" />
+    <ClCompile Include="parser\Range.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test.graffel">
@@ -64,5 +65,7 @@
       <Filter>syntaxtree</Filter>
     </ClInclude>
     <ClInclude Include="parser\BaseTokenizer.h" />
+    <ClInclude Include="parser\Error.h" />
+    <ClInclude Include="parser\Range.h" />
   </ItemGroup>
 </Project>

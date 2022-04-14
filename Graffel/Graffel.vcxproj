@@ -146,9 +146,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Error.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser\Error.cpp" />
     <ClCompile Include="parser\Parser.cpp" />
+    <ClCompile Include="parser\Range.cpp" />
     <ClCompile Include="parser\Token.cpp" />
     <ClCompile Include="parser\Tokenizer.cpp" />
     <ClCompile Include="parser\TokenType.cpp" />
@@ -163,7 +164,9 @@
     <ClInclude Include="defines.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="parser\BaseTokenizer.h" />
+    <ClInclude Include="parser\Error.h" />
     <ClInclude Include="parser\Parser.h" />
+    <ClInclude Include="parser\Range.h" />
     <ClInclude Include="parser\Token.h" />
     <ClInclude Include="parser\Tokenizer.h" />
     <ClInclude Include="parser\TokenType.h" />
