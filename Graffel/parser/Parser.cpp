@@ -24,16 +24,7 @@ Statement* Parser::parseStatement()
     auto t = tok.peek();
     if (t.type == TokenType::SEMI_COLON)
         {
-        tok.peekComments = true;//from here on, include comments in the next peek! Must be set BEFORE next(), as next() will already peek.
         tok.next(); //consume
-        if(stmt->echo)
-            {
-            stmt->text = t.stringValue;
-            if(stmt->text.starts_with("\r\n"))
-                stmt->text.erase(0, 2);
-            else if(stmt->text.starts_with("\n"))
-                stmt->text.erase(0, 1);
-            }
         }
     else if (t.type == TokenType::EOT)
         {
@@ -403,7 +394,53 @@ std::vector<Node*> Parser::parseListExpr()
     return list;
     }
 
+Node* Parser::parseKeyframe()
+    {
+    bool isTimepoint = false;
+    if(tok.peek().type == TokenType::AT)
+        {
+        tok.next();
+        isTimepoint = true;
+        }
+    //expecting an expression that is constexpr (timevalue), but an actual primitive constExpr (just a number, not a time) will do for now.
+    if (tok.peek().type == TokenType::NUMBER)
+        {
+        auto t = tok.next();
+        auto keyframe = createKeyframeExpr();
+        keyframe->isTimepoint = isTimepoint;
+        keyframe->value = t;
+        if(tok.peek().type == TokenType::HASH)
+            {
+            tok.next();
+            if(tok.peek().type == TokenType::ID)
+                keyframe->markerId = tok.next();
+            // else error
+            }
+        return keyframe;
+        }
+    //else error
+    return createNoneExpr();//TODO: returning an allocated object, just to signal that nothing has been found is absolute overkill! Return nullptr? Same in MathParser!
+    }
 
+Timeline* Parser::parseTimeline()
+    {
+    auto timeline = createTimelineExpr();
+    while (true)
+        {
+        auto expr = parseKeyframe();
+        if(expr->is(NodeType::NONE))
+            break;
+        timeline->keyframes.push_back((Keyframe*)expr);
+        if (tok.peek().type == TokenType::COMMA)
+            tok.next();
+        }
+    return timeline;
+    }
+
+
+
+Timeline* Parser::createTimelineExpr() { Timeline* p = new Timeline(); nodes.push_back(p); return p; }
+Keyframe* Parser::createKeyframeExpr() { Keyframe* p = new Keyframe(); nodes.push_back(p); return p; }
 Block* Parser::createBlockExpr() { Block* p = new Block(); nodes.push_back(p); return p; }
 NoneExpr* Parser::createNoneExpr() { NoneExpr* p = new NoneExpr(); nodes.push_back(p); return p; }
 ConstExpr* Parser::createConst() { ConstExpr* p = new ConstExpr(); nodes.push_back(p); return p; }
@@ -491,6 +528,24 @@ Range Block::range() const
     Range r = statements[0]->range();
     for( auto&stmt: statements)
         r += stmt->range();
+    return r;
+    }
+
+Range Timeline::range() const
+    {
+    if(keyframes.empty())
+        return Range();
+    Range r = keyframes[0]->range();
+    for( auto&kf: keyframes)
+        r += kf->range();
+    return r;
+    }
+
+Range Keyframe::range() const
+    {
+    auto r = (Range)value;
+    if(!markerId.isNull())
+        r += markerId;
     return r;
     }
 

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Range.h"
 #include "Token.h"
 #include <sstream>

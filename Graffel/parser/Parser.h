@@ -4,7 +4,7 @@
 #include "Tokenizer.h"
 #include <vector>
 
-enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE, BLOCK};
+enum class NodeType {CONSTEXPR, POSTFIXEXPR, IDEXPR, CALLEXPR, BINARYOPEXPR, UNARYOPEXPR, ASSIGNMENT, STATEMENT, DEFINE, LIST, NONE, BLOCK, KEYFRAME, TIMELINE};
 class Parser;
 
 class Node
@@ -154,10 +154,32 @@ class Variable
 struct Block : public Node
     {
     public:
-       std::vector<Statement*> statements;
-       Range range() const;
+        std::vector<Statement*> statements;
+        Range range() const;
     private:
         Block() : Node(NodeType::BLOCK) {}
+        friend class Parser;
+    };
+
+struct Keyframe : public Node
+    {
+    public:
+        Token value; //TODO: should be a timepoint or duration
+        bool isTimepoint = false; //false = duration
+        Token markerId; //markerNo is determined by index of list of keyframes.
+        Range range() const;
+    private:
+        Keyframe() : Node(NodeType::KEYFRAME) {}
+        friend class Parser;
+    };
+
+struct Timeline: public Node
+    {
+    public:
+        std::vector<Keyframe*> keyframes;
+        Range range() const;
+    private:
+        Timeline() : Node(NodeType::TIMELINE) {}
         friend class Parser;
     };
 
@@ -189,9 +211,15 @@ class Parser
         ConstExpr* parseNumber(Token currentToken, bool negative);
         CallExpr* parseCallExpr(Token functionName);
         std::vector<Node*> parseListExpr();
+        Node* parseKeyframe();
+    public: //TEST
+        Timeline* parseTimeline();
+    private:
         Block* parseBlock();
         bool parseBlockComment();
 
+        Keyframe* createKeyframeExpr();
+        Timeline* createTimelineExpr();
         Block* createBlockExpr();
         NoneExpr* createNoneExpr();
         ConstExpr* createConst();

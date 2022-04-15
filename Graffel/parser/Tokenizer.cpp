@@ -45,6 +45,7 @@ Token Tokenizer::getNextToken()
     switch (c)
         {
         using enum TokenType;
+        case '#': return Token(HASH, c, getLine(), getLinePos());
         case '@': return Token(AT, c, getLine(), getLinePos());
         case '{': return Token(CURL_OPEN, c, getLine(), getLinePos());
         case '}': return Token(CURL_CLOSE, c, getLine(), getLinePos());

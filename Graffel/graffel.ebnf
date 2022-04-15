@@ -16,7 +16,7 @@ blockCommentContent = (blockComment | ...all tokens except "}")
 
 //timelines:
 
-timeline = "[" timelineMarker { "," timelineMarker } "]"
+timeline = "[" timelineMarker { [","] timelineMarker } "]"
 timelineMarker = ((["@"] timeValue) | "~") [ markerId ]
 
 markerId = "#" identifier

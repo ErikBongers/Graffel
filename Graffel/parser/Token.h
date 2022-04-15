@@ -31,6 +31,7 @@ enum class TokenType
     QUOTED_STR,
     AT,
     BLOCK_COMMENT_OPEN,
+    HASH,
 
     UNKNOWN,
     EOT,

@@ -1,6 +1,4 @@
-#include "pch.h"
 #include "Error.h"
-#include "json.h"
 #include <sstream>
 #ifdef _MSC_VER
 #include <format>
@@ -77,20 +75,6 @@ Error::Error(ErrorId id, const Range& range)
     {
     this->id = id;
     this->errorMsg = ErrorDefs::get(id).message;
-    }
-
-const std::string Error::to_json()
-    {
-    std::ostringstream sstr;
-    bool isWarning = false;
-    sstr << "{";
-    auto& ed = ErrorDefs::get(id);
-    sstr << "\"id\":\"" << ed.name << "\",\"message\":\"" + escape_json(errorMsg) + "\"";
-    isWarning = ed.name[0] == 'W';
-    sstr << ",\"isWarning\":" << (isWarning ? "true":"false");
-    sstr << ",\"range\":" << range.to_json();
-    sstr << "}";
-    return sstr.str();
     }
 
 bool Error::isWarning()

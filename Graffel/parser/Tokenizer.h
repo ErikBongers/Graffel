@@ -13,7 +13,6 @@ class Tokenizer : public BaseTokenizer<Token>
         Token peekSecond();
         Token next();
 
-        bool peekComments = false;
     private:
         void getNextState();
         bool peekWord(std::string str);

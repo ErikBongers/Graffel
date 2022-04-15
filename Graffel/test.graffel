@@ -1,22 +1,3 @@
-/*
-a = {
-  test = 1;
-  volgende = (3+ 4) * 2;
-
-  rad = 1.2r;
-  deg = 90d;
-  range = 3.4..5.6;
-  }; //semi-colon is optional.
-*/
-
-{
-a = 1 + 2 -3;
-string = "bro\" sdfsdfsdfl";
-   /{
-    c = 5;
-    a = test;
-      /{
-      test = x;
-      }
-   }
-}
+@12 #markerOne
+34 #markerTwo
+56 #markerThree
