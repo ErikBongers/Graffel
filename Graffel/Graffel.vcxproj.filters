@@ -54,5 +54,6 @@
     <ClInclude Include="parser\Error.h" />
     <ClInclude Include="parser\Range.h" />
     <ClInclude Include="parser\Generator.h" />
+    <ClInclude Include="generated.h" />
   </ItemGroup>
 </Project>

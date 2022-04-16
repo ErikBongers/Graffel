@@ -5,10 +5,10 @@
 struct TimelineMarker
     {
     int index;
-    std::string marker;
+    std::string markerId;
     double time; //TODO: replace with (relative) timepoint.
-    TimelineMarker(int index, const std::string& marker, double time)
-        : index(index), marker(marker), time(time) {}
+    TimelineMarker(int index, const std::string& markerId, double time)
+        : index(index), markerId(markerId), time(time) {}
     };
 
 class Generator

@@ -3,6 +3,23 @@
 #include "graffel/Block.h"
 #include "graffel/Variant.h"
 #include "graffel/helper.h"
+/*
+TEST CASE
+------------
+[
+@10s #startMove //#1 @10s
+5s #nothing //#2 @15s
+15s #endMove  //#3 @30s
+]
+{ //main block: keep background clear.
+
+    { //test block. set a bkg
+    .background = YELLOW.
+    .x = 0_ #startMove //timeline1.#1
+        _100 #endMove //timeline1.#3
+    }
+}
+*/
 
 //GENERATED CODE
 using namespace std::chrono_literals;

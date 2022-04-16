@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defines.h" />
+    <ClInclude Include="generated.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="parser\BaseTokenizer.h" />
     <ClInclude Include="parser\Error.h" />
